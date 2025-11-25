@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import CourseCard from "@/components/CourseCard";
@@ -1025,6 +1026,9 @@ const Home = () => {
 
 
         {/* ================== END NEW TESTIMONIAL SECTION ================== */}
+
+
+        
 
         <Footer />
       </main>

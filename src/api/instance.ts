@@ -1,7 +1,7 @@
 // src/api/instance.ts
 import axios from "axios";
 
-export const BASE_URL = "http://192.168.0.105:8000"; // Change in dev/prod as needed
+export const BASE_URL = "http://192.168.0.109:10000"; // Change in dev/prod as needed
 
 const api = axios.create({
   baseURL: BASE_URL,

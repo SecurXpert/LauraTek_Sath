@@ -9,7 +9,7 @@
 // import loginImage from "@/assets/login.png";
 // import logo from "@/assets/techlogo.png";
 
-// const BASE_URL = "http://192.168.0.105:8000";
+// const BASE_URL = "http://192.168.0.109:10000";
 
 // export default function SignInDialog() {
 //   const [open, setOpen] = useState(false);

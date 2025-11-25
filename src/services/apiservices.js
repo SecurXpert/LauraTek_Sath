@@ -2,7 +2,7 @@ const BASE_URL =
   (typeof import.meta !== 'undefined' &&
     import.meta.env &&
     import.meta.env.VITE_API_BASE_URL) ||
-  'http://192.168.0.105:8000';
+  'http://192.168.0.109:10000';
 
 const getHeaders = (includeToken = false) => {
   const headers = { 'Content-Type': 'application/json' };
