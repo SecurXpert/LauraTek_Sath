@@ -1026,6 +1026,44 @@ const Home = () => {
 
 
         {/* ================== END NEW TESTIMONIAL SECTION ================== */}
+          {/* Alumni Recognition Section */}
+        <section className="py-[2rem] xs:py-[2rem] sm:py-[2rem] md:py-[2rem] lg:py-[2rem] xl:py-[2rem] 2xl:py-[2rem] bg-white text-gray-900">
+          <div className="container mx-auto px-2 xs:px-4 sm:px-6 md:px-6 lg:px-8 xl:px-8 2xl:px-10 text-center">
+           
+
+           
+
+            <div className="mt-12">
+              <h3 className="text-2xl xs:text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-4xl 2xl:text-5xl font-bold mb-6">Recognized By</h3>
+              <div className="relative overflow-hidden">
+                <div className="flex animate-marquee-reverse whitespace-nowrap">
+                  {[...recognized, ...recognized].map((src, i) => (
+                    <div key={i} className="flex flex-col items-center justify-center mx-4">
+                      <div className="w-48 h-24 rounded-lg flex items-center justify-center bg-white p-2 shadow">
+                        <img src={src} alt="" className="w-full h-full object-contain" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <style>{`
+            @keyframes marquee {
+              0% { transform: translateX(0); }
+              100% { transform: translateX(-50%); }
+            }
+            @keyframes marquee-reverse {
+              0% { transform: translateX(-50%); }
+              100% { transform: translateX(0); }
+            }
+            .animate-marquee { animation: marquee 20s linear infinite; }
+            .animate-marquee-reverse { animation: marquee-reverse 20s linear infinite; }
+          `}</style>
+        </section>
+
+
 
 
         
