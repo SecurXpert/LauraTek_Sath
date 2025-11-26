@@ -18,6 +18,7 @@ import guestApi from "@/api/guestApi";
 import logo from "@/assets/techlogo.png";
 import signupIllustration from "@/assets/signup-illustration.png";
 
+
 const technicalSkills = ["Java", "Python", "React", "Node.js", "SQL", "HTML/CSS", "Cloud+Devops", "UI/UX"];
 const nonTechnicalSkills = ["Communication", "Management", "Marketing", "Sales", "Design"];
 const qualifications = ["High School", "Diploma", "B.Tech", "B.E", "B.Sc", "B.Com", "B.A", "M.Tech", "M.Sc", "MCA", "MBA", "Ph.D", "Other"];

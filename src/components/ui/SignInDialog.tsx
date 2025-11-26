@@ -928,6 +928,7 @@ export default function SignInDialog() {
     try {
       const res = await authApi.login({ email, password });
       const data = res.data;
+      console.log("dattttttttttttttttttta",data,res)
 
       if (data.access_token) {
         localStorage.setItem("access_token", data.access_token);
