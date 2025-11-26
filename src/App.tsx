@@ -31,6 +31,8 @@ import Profileheader from "./components/ui/Profileheader";
 import ProfilePage from "./pages/ProfilePage";
 import ScrollToTop from "./components/ScrollToTop";
 import Alumni from "./pages/Alumni";
+import Resume from "./components/ui/Resume";
+
 // import Contactus from "./components/ui/contactus";
 
 const queryClient = new QueryClient();
@@ -48,7 +50,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard/>}/>
           <Route path="/courses" element={<Courses />} />
           <Route path="/jobs" element={<Jobs/>}/>
-          <Route path="/dashboard" element={<Dashboard/>}/>
+          {/* <Route path="/dashboard" element={<Dashboard/>}/> */}
           {/* <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} /> */}
           <Route path="/course/:id" element={<CourseDetail />} />
           <Route path="*" element={<NotFound />} />
@@ -66,6 +68,8 @@ const App = () => (
           <Route path="/dashboard/certificates" element={<Certificates/>} />
           <Route path="/dashboard/analytics" element={<Analytics/>} />
           <Route path="/dashboard/leaderboard" element={<Leaderboard/>} />
+          <Route path="/dashboard/resume" element={<Resume />} />
+
           <Route path="/dashboard/settings" element={<Settings/>} />
           <Route path="/profile" element={<StudentProfileDashboard/>} />
           <Route path="/about" element={<AboutUs />} />
@@ -74,6 +78,7 @@ const App = () => (
           <Route path="/support" element={<Support />} />
           <Route path="/bootcamp" element={<Bootcamp/>} />
           <Route path="/dashboard/course/:id" element={<StudentCourseDetail />} />
+          
 
           <Route path="/dashboard/profile" element={<ProfilePage />} />
           <Route path="/alumni" element={<Alumni />} />
