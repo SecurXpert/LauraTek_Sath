@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Footer from './Footer';
 import hackton from '../assets/hackton.png'
 import learning from '../assets/learning.png'
+import Header from './Header';
+import kishore from '@/assets/kishorel.png'
 
 const PythonAPICourse = () => {
   const [activeTab, setActiveTab] = useState('hero');
@@ -13,6 +15,32 @@ const PythonAPICourse = () => {
     { id: 'benefits', label: 'Benefits' },
     { id: 'faqs', label: 'FAQs' }
   ];
+    const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    experience: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    // Name → only characters
+     if (name === "name") {
+    if (!/^[A-Za-z\s]*$/.test(value)) return;
+    if (value.length > 40) return; //  limit here (change to 20 if needed)
+  }
+
+
+    // Phone → only numbers, max 10 digits
+    if (name === "phone") {
+      if (!/^\d*$/.test(value)) return;
+      if (value.length > 10) return;
+    }
+
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -48,10 +76,12 @@ const PythonAPICourse = () => {
   }, []);
 
   return (
+    <>
+   
     <div className="bg-gradient-to-b from-[#0b0d17] to-[#1a1d2e] font-sans text-white">
       {/* Sticky Header */}
-      <header className="fixed top-0 left-0 right-0 bg-white px-8 py-4 flex items-center justify-between border-b border-gray-200 z-50 shadow-md">
-        {/* Logo */}
+      {/* <header className="fixed top-0 left-0 right-0 bg-white px-8 py-4 flex items-center justify-between border-b border-gray-200 z-50 shadow-md">
+        
         <div className="flex items-center">
           <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center mr-3">
             <span className="text-white font-bold text-lg">S</span>
@@ -62,12 +92,28 @@ const PythonAPICourse = () => {
           </div>
         </div>
 
-        {/* Request Callback Button */}
+   
         <button className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-full text-sm font-medium shadow-lg">
           Request callback
         </button>
-      </header>
+      </header> */}
+      {/*  SCROLLBAR HIDDEN GLOBALLY (ONLY ADDITION) */}
+      <style>{`
+        ::-webkit-scrollbar {
+          width: 0;
+          height: 0;
+        }
+        * {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+      `}</style>
 
+
+       {/* <div className="sticky top-0 z-50 bg-background"> */}
+       <div className="sticky top-0 z-50 bg-white text-black">
+               <Header />
+             </div>
       {/* Main Content - Hero Section */}
       <section id="hero" className="pt-20 flex flex-col md:flex-row min-h-screen">
         {/* Left Section - Banner Content */}
@@ -151,116 +197,131 @@ const PythonAPICourse = () => {
             {/* Form */}
             <form className="space-y-2">
               {/* Name */}
-              <div className="form-field">
-                <label className="block text-xs font-medium text-gray-700 mb-2">
-                  Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  placeholder="Enter name"
-                  required
-                />
-              </div>
+           <div className="form-field">
+  <label className="block text-xs font-medium text-gray-700 mb-2">
+    Name <span className="text-red-500">*</span>
+  </label>
 
-              {/* Email */}
-              <div className="form-field">
-                <label className="block text-xs font-medium text-gray-700 mb-2">
-                  Email <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="email"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  placeholder="Email"
-                  required
-                />
-              </div>
+  <input
+    type="text"
+    name="name"
+    value={formData.name}
+    maxLength={40}
+    onChange={(e) => {
+      const value = e.target.value;
 
-              {/* Phone */}
-              <div className="form-field">
-                <label className="block text-xs font-medium text-gray-700 mb-2">
-                  Phone Number <span className="text-red-500">*</span>
-                </label>
-                <div className="flex">
-                  <div className="flex items-center px-3 py-3 bg-gray-100 rounded-l-lg border border-gray-300 border-r-0">
-                    <img
-                      src="https://files.codingninjas.com/flag-5-1732876121.webp"
-                      alt="Indian Flag"
-                      className="h-4 w-4 mr-1"
-                      height="16"
-                      width="16"
-                    />
-                    <span className="text-xs font-medium">+91</span>
-                  </div>
-                  <input
-                    type="tel"
-                    className="flex-1 px-4 py-3 border border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    placeholder="Phone number"
-                    required
-                    pattern="[0-9]{10}"
-                  />
-                </div>
-              </div>
+      // ✅ Allow clearing input (BACKSPACE FIX)
+      if (value === "") {
+        setFormData((prev) => ({ ...prev, name: "" }));
+        return;
+      }
 
-              {/* Experience Radio Buttons */}
-              <div className="experience-type-list-container space-y-2">
-                <label className="block text-xs font-medium text-gray-700">
-                  Experience <span className="text-red-500">*</span>
-                </label>
-                <div className="space-y-2">
-                  <label className="flex items-start py-2 cursor-pointer">
-                    <input type="radio" className="mt-1 mr-3 w-4 h-4 text-purple-500" name="experience" value="1" required />
-                    <span className="text-sm text-gray-600 leading-relaxed">
-                      Working professional - Technical roles
-                    </span>
-                  </label>
-                  <label className="flex items-start py-2 cursor-pointer">
-                    <input type="radio" className="mt-1 mr-3 w-4 h-4 text-purple-500" name="experience" value="2" required />
-                    <span className="text-sm text-gray-600 leading-relaxed">
-                      Working professional - Non technical
-                    </span>
-                  </label>
-                  <label className="flex items-start py-2 cursor-pointer">
-                    <input type="radio" className="mt-1 mr-3 w-4 h-4 text-purple-500" name="experience" value="3" required />
-                    <span className="text-sm text-gray-600 leading-relaxed">
-                      College student - Final year
-                    </span>
-                  </label>
-                  <label className="flex items-start py-2 cursor-pointer">
-                    <input type="radio" className="mt-1 mr-3 w-4 h-4 text-purple-500" name="experience" value="23" required />
-                    <span className="text-sm text-gray-600 leading-relaxed">
-                      College student - 1st to pre-final year
-                    </span>
-                  </label>
-                  <label className="flex items-start py-2 cursor-pointer">
-                    <input type="radio" className="mt-1 mr-3 w-4 h-4 text-purple-500" name="experience" value="5" required />
-                    <span className="text-sm text-gray-600 leading-relaxed">Others</span>
-                  </label>
-                </div>
-              </div>
+      // ❌ First character must be a LETTER (no starting space/symbol)
+      if (value.length === 1 && !/^[A-Za-z]$/.test(value)) return;
 
-              {/* Submit Button */}
-              <div className="shimmer-button">
-                <button
-                  type="submit"
-                  className="w-full bg-purple-500 hover:bg-purple-600 text-white font-medium py-3 rounded-lg text-sm flex items-center justify-center space-x-2 transition-colors"
-                >
-                  <span>Continue booking webinar</span>
-                  <span>→</span>
-                </button>
-              </div>
+      // ✅ After first letter, allow letters and spaces only
+      if (/^[A-Za-z][A-Za-z ]*$/.test(value)) {
+        setFormData((prev) => ({ ...prev, name: value }));
+      }
+    }}
+    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+    placeholder="Enter your full name"
+    required
+  />
 
-              {/* Disclaimer */}
-              <div className="disclaimer-note-container text-xs text-gray-500 text-center leading-relaxed">
-                I authorise SecurXperts to contact me with course updates & offers via Email/SMS/Whatsapp/Call. I have read and agree to{' '}
-                <a href="https://www.securxperts.com/policy/privacy.pdf" target="_blank" rel="noopener noreferrer" className="text-purple-500 underline">
-                  Privacy Policy
-                </a>{' '}
-                &{' '}
-                <a href="https://www.securxperts.com/policy/tnc.pdf" target="_blank" rel="noopener noreferrer" className="text-purple-500 underline">
-                  Terms of use
-                </a>
-              </div>
+  {/* ❌ Minimum length error (ignore spaces) */}
+  {formData.name.trim().length > 0 &&
+    formData.name.trim().length < 3 && (
+      <p className="text-red-500 text-xs mt-1">
+        Name must be at least 3 characters
+      </p>
+    )}
+</div>
+
+
+
+      {/* Email */}
+      <div className="form-field">
+        <label className="block text-xs font-medium text-gray-700 mb-2">
+          Email <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          placeholder="Enter your email address"
+          required
+        />
+      </div>
+
+      {/* Phone */}
+      <div className="form-field">
+        <label className="block text-xs font-medium text-gray-700 mb-2">
+          Phone Number <span className="text-red-500">*</span>
+        </label>
+        <div className="flex">
+          <div className="flex items-center px-3 py-3 bg-gray-100 rounded-l-lg border border-gray-300 border-r-0">
+            <img
+              src="https://files.codingninjas.com/flag-5-1732876121.webp"
+              alt="Indian Flag"
+              className="h-4 w-4 mr-1"
+            />
+            <span className="text-xs font-medium">+91</span>
+          </div>
+          <input
+            type="tel"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            className="flex-1 px-4 py-3 border border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            placeholder="Enter 10-digit mobile number"
+            required
+          />
+        </div>
+      </div>
+
+      {/* Experience */}
+      <div className="experience-type-list-container space-y-2">
+        <label className="block text-xs font-medium text-gray-700">
+          Experience <span className="text-red-500">*</span>
+        </label>
+        <div className="space-y-2">
+          {[
+            { id: "1", label: "Working professional - Technical roles" },
+            { id: "2", label: "Working professional - Non technical" },
+            { id: "3", label: "College student - Final year" },
+            { id: "23", label: "College student - 1st to pre-final year" },
+            { id: "5", label: "Others" },
+          ].map((item) => (
+            <label key={item.id} className="flex items-start py-2 cursor-pointer">
+              <input
+                type="radio"
+                name="experience"
+                value={item.id}
+                onChange={handleChange}
+                required
+                className="mt-1 mr-3 w-4 h-4 text-purple-500"
+              />
+              <span className="text-sm text-gray-600 leading-relaxed">
+                {item.label}
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* Submit */}
+      <div className="shimmer-button">
+        <button
+          type="submit"
+          className="w-full bg-purple-500 hover:bg-purple-600 text-white font-medium py-3 rounded-lg text-sm flex items-center justify-center space-x-2 transition-colors"
+        >
+          <span>Continue booking webinar</span>
+          <span>→</span>
+        </button>
+      </div>
             </form>
           </div>
         </div>
@@ -360,6 +421,31 @@ const PythonAPICourse = () => {
                 </div>
               </div>
             </div>
+
+             <div className="flex items-start gap-6">
+              <div className="flex flex-col items-center flex-shrink-0">
+                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg border border-gray-200">
+                  <span className="text-2xl">📚</span>
+                </div>
+                <div className="mt-2 bg-red-400 text-white px-4 py-1 rounded-full text-xs font-bold shadow-md">
+                  Step 3
+                </div>
+                <div className="flex-1 w-0.5 bg-gray-300 min-h-0 mt-4"></div>
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="bg-white rounded-2xl p-6 shadow-lg w-80 max-w-xs min-h-[140px] flex flex-col justify-between">
+                  <div>
+                    <h4 className="font-bold text-lg text-gray-800 mb-3">Choose Your Core Program</h4>
+                    <ul className="text-sm text-gray-600 space-y-2">
+                      <li>• The core program is the primary skill track you will focus on throughout your learning journey.</li>
+                      <li>• Each core program has a step-by-step roadmap designed by industry experts</li>
+                      <li>• Pick the one that matches your goals</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+ 
 
             {/* Stage 3 */}
             <div className="flex items-start gap-6">
@@ -501,7 +587,7 @@ const PythonAPICourse = () => {
           <h2 className="text-3xl font-bold text-gray-800 mb-4">Meet Your Mentor – L. Kishore</h2>
           <p className="text-xl text-gray-600 mb-8">Python Developer & Team Lead at SecurXperts</p>
           <img 
-            src="https://ui-avatars.com/api/?name=L.+Kishore&background=purple&color=white&size=128" 
+            src={kishore} 
             alt="L. Kishore" 
             className="w-32 h-32 rounded-full mx-auto mb-6" 
           />
@@ -910,6 +996,7 @@ const PythonAPICourse = () => {
 
       <Footer />
     </div>
+    </>
   );
 };
 

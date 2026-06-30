@@ -5,6 +5,7 @@ import { Trophy, Users, CheckCircle, Clock, TrendingUp, Crown, BarChart3 } from 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Sidebar from "./sidebar";
 import Profileheader from "@/components/ui/Profileheader";
+import { Menu, X } from "lucide-react";
 
 const mockStudents = [
   {
@@ -105,13 +106,16 @@ const Leaderboard = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-white via-sky-50 to-teal-50">
+    <div className="fixed inset-0 w-full h-full flex bg-gradient-to-br from-white via-sky-50 to-teal-50 overflow-hidden">
       <Sidebar sidebarOpen={sidebarOpen} setActive={setActive} active={active} />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Header */}
         <Profileheader />
+
+                
+
 
         {/* Content Area */}
         <main className="p-6 flex-1 overflow-auto">

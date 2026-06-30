@@ -33,8 +33,29 @@ const guestApi = {
   verifyOtp: (params: VerifyOtpParams) =>
     api.post("/guest/verify_otp", null, { params }),
 
+  login: (credentials: { email: string; password: string }) =>
+    api.post("/student/login", credentials),
+
   register: (payload: RegisterPayload) =>
     api.post("/guest/register", payload),
+
+  forgotSendOtp: (params: { phone: string }) =>
+    api.post("/guest/forgot/send_otp", null, { params }),
+
+  forgotVerifyOtp: (params: { phone: string; otp_code: string }) =>
+    api.post("/guest/forgot/verify_otp", null, { params }),
+
+  forgotReset: (params: { phone: string; new_password: string }) =>
+    api.post("/guest/forgot/reset", null, { params }),
+
+  studentForgotSendOtp: (params: { phone: string }) =>
+    api.post("/guest/student/forgot/send_otp", null, { params }),
+
+  studentForgotVerifyOtp: (params: { phone: string; otp_code: string }) =>
+    api.post("/guest/student/forgot/verify_otp", null, { params }),
+
+  studentForgotReset: (params: { phone: string; new_password: string }) =>
+    api.post("/guest/student/forgot/reset", null, { params }),
 };
 
 export default guestApi;

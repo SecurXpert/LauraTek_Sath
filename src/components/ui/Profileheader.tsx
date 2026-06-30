@@ -7,16 +7,99 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Bell, Search, User, LogOut, Settings } from "lucide-react"; // Assuming Lucide icons for better consistency
+import { Search, User, LogOut, Settings, Menu } from "lucide-react"; // Added Menu icon
 import { useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
+import api from "@/api/instance";
 
-const Profileheader = () => {
+interface ProfileheaderProps {
+  onMenuClick?: () => void;
+}
+
+const globalSearchOptions = [
+  { title: "Dashboard Overview", path: "/dashboard" },
+  { title: "My Courses", path: "/mycourses" },
+  { title: "Calendar", path: "/calendar" },
+  { title: "Attendance", path: "/attendance" },
+  { title: "Playground / Compiler", path: "/exams" },
+  { title: "Assessments & Grades", path: "/assessments" },
+  { title: "Certificates", path: "/certificates" },
+  { title: "Resume Builder", path: "/resume" },
+  { title: "Live Classes", path: "/liveclasses" },
+  { title: "Chat / Messages", path: "/chatsystem" },
+  { title: "Profile", path: "/profile-settings" },
+  { title: "Review", path: "/review" },
+];
+
+const Profileheader = ({ onMenuClick }: ProfileheaderProps) => { // Added onMenuClick prop
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [userData, setUserData] = useState({
+    name: localStorage.getItem("user_name") || "",
+    role: localStorage.getItem("user_role") || "",
+    profilePicture: localStorage.getItem("user_profile_pic") || null,
+  });
   const logoRef = useRef(null);
   const searchRef = useRef(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem("access_token") || localStorage.getItem("token");
+        if (!token) return;
+
+        const BASE_URL = import.meta.env.VITE_API_URL;
+        let res = await fetch(`${BASE_URL}/student/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        let isGuest = false;
+        if (!res.ok) {
+          res = await fetch(`${BASE_URL}/guest/my-profile`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          isGuest = true;
+        }
+
+        if (res.ok) {
+          const data = await res.json();
+          const newName = data.name || "";
+          const newRole = data.role ? data.role.charAt(0).toUpperCase() + data.role.slice(1) : (isGuest ? "Guest" : "Student");
+          const newPic = data.profile_picture || null;
+          
+          setUserData({
+            name: newName,
+            role: newRole,
+            profilePicture: newPic,
+          });
+          
+          if (newName) localStorage.setItem("user_name", newName);
+          if (newRole) localStorage.setItem("user_role", newRole);
+          if (newPic) localStorage.setItem("user_profile_pic", newPic);
+        } else if (res.status === 401) {
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }
+      } catch (err) {
+        console.error("Failed to fetch user profile in header:", err);
+      }
+    };
+
+    fetchUserData();
+
+    const handleStorageChange = () => {
+      fetchUserData();
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+  const getInitials = (name) => {
+    if (!name || name === "Student") return "S";
+    return name.charAt(0).toUpperCase();
+  };
+
 
   useEffect(() => {
     // Animate company logo on mount: subtle glow and slide-in
@@ -31,74 +114,75 @@ const Profileheader = () => {
     }
   }, []);
 
-  const handleSearch = (e) => {
+  const handleSearch = (e: any) => {
     e.preventDefault();
-    // Implement search logic here
-    console.log("Searching for:", searchQuery);
+    if (searchQuery) {
+      const match = globalSearchOptions.find(item => 
+        item.title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      if (match) {
+        navigate(match.path, match.scrollTo ? { state: { scrollTo: match.scrollTo } } : undefined);
+        setSearchQuery("");
+      }
+    }
   };
 
-  // Mock notifications for demo - in real app, fetch from API
-  const notifications = [
-    { id: 1, title: "New course enrolled", time: "2 min ago", type: "success" },
-    { id: 2, title: "Assignment due soon", time: "1 hour ago", type: "warning" },
-    { id: 3, title: "Interview scheduled", time: "Yesterday", type: "info" },
-    { id: 4, title: "Grade updated", time: "2 days ago", type: "success" },
-    { id: 5, title: "System maintenance", time: "3 days ago", type: "warning" },
-  ];
-
   return (
-    <header className="bg-gradient-to-r from-white via-blue-50 to-white border-b border-gray-200/50 shadow-sm h-16 flex items-center justify-between px-4 lg:px-8 relative overflow-hidden">
-      {/* Animated Company Logo - Left Section */}
-      <div className="flex items-center gap-4 relative z-10">
-        <div 
-          ref={logoRef}
-          className="font-bold text-xl md:text-2xl bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent cursor-pointer hover:scale-105 transition-transform duration-300 group"
-          onClick={() => navigate('/dashboard')}
+    <header className="bg-transparent min-h-[64px] flex items-center justify-between px-4 sm:px-6 lg:px-8 relative z-50 w-full lg:mt-4">
+      {/* Left Section: Menu Toggle & Search Bar */}
+      <div className="flex items-center gap-3 lg:gap-4 flex-1">
+        {/* Mobile Menu Toggle */}
+        <button 
+          onClick={() => {
+            if (onMenuClick) onMenuClick();
+            window.dispatchEvent(new CustomEvent('toggle-mobile-sidebar'));
+          }}
+          className="lg:hidden p-2 text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
+          aria-label="Toggle Menu"
         >
-          Laural
-          <span className="ml-1 text-xs text-blue-500 group-hover:translate-x-1 transition-transform duration-300">✨</span>
-        </div>
-        <span className="text-xs text-gray-500 hidden md:block bg-gray-100 px-2 py-1 rounded-full">
-          Powered by{" "}
-          <span className="text-blue-700 font-semibold">SecurXpert</span>
-        </span>
-      </div>
+          <Menu className="w-6 h-6" />
+        </button>
 
-      {/* Scrollable Search Bar - Center Section with individual scroll for suggestions */}
-      <div className="flex items-center gap-4 flex-1 justify-center max-w-md relative">
-        <form onSubmit={handleSearch} className="w-full relative">
+        <form onSubmit={handleSearch} className="relative w-full max-w-md">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
               ref={searchRef}
               type="text"
-              placeholder="Search courses, assessments..."
+              placeholder="Search courses, assessments, or resources..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 w-full bg-white/80 backdrop-blur-sm border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent shadow-sm transition-all duration-300 hover:shadow-md"
+              onChange={(e) => {
+                const value = e.target.value;
+                // Only allow alphabets and spaces, no numbers
+                if (/^[a-zA-Z\s]*$/.test(value)) {
+                  setSearchQuery(value);
+                }
+              }}
+              className="pl-10 pr-4 w-full bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/30 transition-all duration-200"
             />
           </div>
           {/* Scrollable Search Suggestions Dropdown */}
           {searchQuery && (
             <div className="absolute top-full left-0 w-full mt-1 bg-white rounded-xl shadow-lg border border-gray-200 max-h-60 overflow-y-auto z-20 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-              {/* Mock suggestions - replace with real API */}
-              {["Dashboard", "My Courses", "Compiler", "Mock Interviews"].filter(item => 
-                item.toLowerCase().includes(searchQuery.toLowerCase())
-              ).map((suggestion) => (
+              {/* Global search results */}
+              {globalSearchOptions.filter(item =>
+                item.title.toLowerCase().includes(searchQuery.toLowerCase())
+              ).sort((a, b) => a.title.localeCompare(b.title)).map((suggestion) => (
                 <button
-                  key={suggestion}
+                  key={suggestion.title}
+                  type="button"
                   onClick={() => {
-                    setSearchQuery(suggestion);
-                    navigate(`/dashboard/${suggestion.toLowerCase().replace(/\s+/g, '-')}`);
+                    navigate(suggestion.path, suggestion.scrollTo ? { state: { scrollTo: suggestion.scrollTo } } : undefined);
+                    setSearchQuery("");
                   }}
                   className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-blue-50 transition-colors duration-200 flex items-center gap-2"
                 >
                   <Search className="w-3 h-3 text-gray-400" />
-                  {suggestion}
+                  {suggestion.title}
                 </button>
               ))}
-              {searchQuery && !["Dashboard", "My Courses", "Compiler", "Mock Interviews"].some(item => 
-                item.toLowerCase().includes(searchQuery.toLowerCase())
+              {searchQuery && !globalSearchOptions.some(item => 
+                item.title.toLowerCase().includes(searchQuery.toLowerCase())
               ) && (
                 <div className="px-4 py-2 text-sm text-gray-500 italic">No results found</div>
               )}
@@ -107,70 +191,43 @@ const Profileheader = () => {
         </form>
       </div>
 
-      {/* Right Section: Notifications (Scrollable Dropdown) + User Menu */}
-      <div className="flex items-center gap-4 relative z-10">
-        {/* Animated Notifications Bell with Scrollable Dropdown */}
-        <DropdownMenu open={notificationsOpen} onOpenChange={setNotificationsOpen}>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="relative p-2 rounded-full hover:bg-gray-100 transition-all duration-300 group"
-            >
-              <Bell className="h-5 w-5 text-gray-600 group-hover:text-blue-500 transition-colors duration-200" />
-              {notifications.length > 0 && (
-                <span className="absolute -top-1 -right-1 block h-3 w-3 rounded-full bg-red-500 border-2 border-white" />
-              )}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-80 max-h-96 overflow-y-auto p-0 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100" align="end">
-            <div className="p-4 border-b border-gray-200 bg-gray-50 rounded-t-lg">
-              <h3 className="font-semibold text-sm text-gray-900">Notifications</h3>
-              <p className="text-xs text-gray-500">{notifications.length} new</p>
-            </div>
-            <div className="py-2">
-              {notifications.map((notif) => (
-                <DropdownMenuItem key={notif.id} className="flex flex-col items-start p-3 w-full text-sm cursor-pointer hover:bg-blue-50 border-b border-gray-50 last:border-b-0">
-                  <span className={`font-medium ${notif.type === 'success' ? 'text-green-600' : notif.type === 'warning' ? 'text-yellow-600' : 'text-blue-600'}`}>
-                    {notif.title}
-                  </span>
-                  <span className="text-xs text-gray-500">{notif.time}</span>
-                </DropdownMenuItem>
-              ))}
-            </div>
-            {notifications.length === 0 && (
-              <DropdownMenuItem disabled className="text-center text-gray-500 py-8">
-                No notifications
-              </DropdownMenuItem>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
+      {/* Right Section: User Menu */}
+      <div className="flex items-center gap-4 relative z-10 shrink-0">
 
         {/* User Avatar Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative flex items-center gap-2 px-2 hover:bg-gray-100 transition-all duration-300">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src="/placeholder-avatar.jpg" alt="shailu" />
-                <AvatarFallback className="bg-blue-100 text-blue-700">ND</AvatarFallback>
-              </Avatar>
-              <div className="hidden md:flex flex-col items-start min-w-0">
-                <span className="font-medium text-sm truncate max-w-32">shailu</span>
-                <span className="text-xs text-gray-500 truncate max-w-32">shailu@gmail.com</span>
+            <Button variant="ghost" className="relative flex items-center gap-2 px-2 hover:bg-transparent transition-all duration-300">
+              <div className="hidden md:flex flex-col items-end min-w-0 mr-2">
+                <span className="font-semibold text-sm text-gray-900 truncate max-w-32">{userData.name || "\u00A0"}</span>
+                <span className="text-xs text-gray-500 truncate max-w-32">{userData.role || "\u00A0"}</span>
               </div>
-              <span className="hidden md:block ml-1">▼</span>
+              <Avatar className="h-9 w-9 ring-2 ring-gray-100 ring-offset-2">
+                {userData.profilePicture ? (
+                  <AvatarImage src={userData.profilePicture} alt={userData.name} />
+                ) : (
+                  <AvatarFallback className="bg-gradient-to-br from-[#6A5AE0] to-[#5B4FFF] text-white font-semibold text-sm shadow-sm">{getInitials(userData.name)}</AvatarFallback>
+                )}
+              </Avatar>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem onClick={() => navigate("/profile")} className="flex items-center gap-2 cursor-pointer">
+            <DropdownMenuItem onSelect={() => navigate("/profile-settings")} onClick={() => navigate("/profile-settings")} className="flex items-center gap-2 cursor-pointer">
               <User className="h-4 w-4" />
               Profile
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigate("/settings")} className="flex items-center gap-2 cursor-pointer">
+            {/* <DropdownMenuItem onClick={() => navigate("/settings")} className="flex items-center gap-2 cursor-pointer">
               <Settings className="h-4 w-4" />
               Settings
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigate("/")}>
+            </DropdownMenuItem> */}
+            <DropdownMenuItem onClick={() => {
+              localStorage.removeItem("access_token");
+              localStorage.removeItem("token");
+              localStorage.removeItem("user_name");
+              localStorage.removeItem("user_role");
+              localStorage.removeItem("user_profile_pic");
+              navigate("/");
+            }}>
               <LogOut className="h-4 w-4 mr-2" />
               Logout
             </DropdownMenuItem>
@@ -180,7 +237,7 @@ const Profileheader = () => {
 
       {/* Custom Scrollbar Styles */}
       <style>{`
-        .scrollbar-thin::-webkit-scrollbar {
+        .scrollbar-th::-webkit-scrollbar {
           width: 4px;
         }
         .scrollbar-thin::-webkit-scrollbar-track {
@@ -200,3 +257,73 @@ const Profileheader = () => {
 };
 
 export default Profileheader;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

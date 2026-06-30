@@ -1,12 +1,13 @@
 const BASE_URL =
   (typeof import.meta !== 'undefined' &&
     import.meta.env &&
-    import.meta.env.VITE_API_BASE_URL) ||
-  'http://192.168.0.109:10000';
+    import.meta.env.VITE_API_URL) ||
+  '${import.meta.env.VITE_API_URL}';
 
 const getHeaders = (includeToken = false) => {
   const headers = { 'Content-Type': 'application/json' };
   if (includeToken) {
+    
     const token = localStorage.getItem('access_token');
     if (token) headers['Authorization'] = `Bearer ${token}`;
   }
@@ -19,7 +20,7 @@ const fetchWithAuth = async (url, options = {}) => {
     if (response.status === 401) {
       console.warn('Unauthorized - signing out');
       localStorage.removeItem('access_token');
-      window.location.href = '/';
+      window.location.href = '/login';
       throw new Error('Unauthorized');
     }
     if (!response.ok) {
@@ -240,5 +241,27 @@ export async function getquizes() {
   return fetchWithAuth(`${BASE_URL}/admin/guest-quiz/guest/`, {
     method: 'GET',
     headers: getHeaders(true),
+  });
+}
+
+export async function getMyCourses() {
+  return fetchWithAuth(`${BASE_URL}/dashboard/my-courses`, {
+    method: 'GET',
+    headers: getHeaders(true),
+  });
+}
+
+export async function getMyInstructors() {
+  return fetchWithAuth(`${BASE_URL}/dashboard/my-instructors`, {
+    method: 'GET',
+    headers: getHeaders(true),
+  });
+}
+
+export async function submitCourseReview(courseId, trainerId, payload) {
+  return fetchWithAuth(`${BASE_URL}/courses/${courseId}/trainer/${trainerId}/review`, {
+    method: 'POST',
+    headers: getHeaders(true),
+    body: JSON.stringify(payload),
   });
 }

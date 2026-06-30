@@ -130,4 +130,509 @@
     -webkit-line-clamp: 3;
   }
 }
-/* Partner Companies Hexagonal Grid Styles */
+
+
+.scrollbar-hidden {
+  -ms-overflow-style: none;  
+  scrollbar-width: none;    
+}
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;           
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* Hide default browser password reveal icons */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+input[type="password"]::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+  display: none !important;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   COMPREHENSIVE RESPONSIVE UTILITIES
+   Full responsiveness for all screen sizes: mobile, tablet, laptop, desktop
+   ========================================================================== */
+
+@layer utilities {
+  /* --------------------------------------------------------------------------
+     CONTAINER RESPONSIVENESS
+     -------------------------------------------------------------------------- */
+  .responsive-container {
+    @apply w-full mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20;
+    max-width: 100%;
+  }
+
+  @media (min-width: 640px) {
+    .responsive-container { max-width: 640px; }
+  }
+  @media (min-width: 768px) {
+    .responsive-container { max-width: 768px; }
+  }
+  @media (min-width: 1024px) {
+    .responsive-container { max-width: 1024px; }
+  }
+  @media (min-width: 1280px) {
+    .responsive-container { max-width: 1280px; }
+  }
+  @media (min-width: 1536px) {
+    .responsive-container { max-width: 1536px; }
+  }
+  @media (min-width: 1920px) {
+    .responsive-container { max-width: 1920px; }
+  }
+
+  /* --------------------------------------------------------------------------
+     TYPOGRAPHY RESPONSIVENESS
+     -------------------------------------------------------------------------- */
+  .responsive-heading-1 {
+    @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight;
+  }
+  .responsive-heading-2 {
+    @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold leading-tight;
+  }
+  .responsive-heading-3 {
+    @apply text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold leading-tight;
+  }
+  .responsive-body {
+    @apply text-sm sm:text-base md:text-lg leading-relaxed;
+  }
+  .responsive-small {
+    @apply text-xs sm:text-sm md:text-base;
+  }
+
+  /* --------------------------------------------------------------------------
+     GRID RESPONSIVENESS - Auto-adapting grids
+     -------------------------------------------------------------------------- */
+  .responsive-grid-1 {
+    @apply grid grid-cols-1;
+  }
+  .responsive-grid-2 {
+    @apply grid grid-cols-1 sm:grid-cols-2;
+  }
+  .responsive-grid-3 {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3;
+  }
+  .responsive-grid-4 {
+    @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4;
+  }
+  .responsive-grid-5 {
+    @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5;
+  }
+  .responsive-grid-6 {
+    @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6;
+  }
+
+  /* --------------------------------------------------------------------------
+     FLEX RESPONSIVENESS
+     -------------------------------------------------------------------------- */
+  .responsive-flex-col {
+    @apply flex flex-col;
+  }
+  .responsive-flex-row {
+    @apply flex flex-col sm:flex-row;
+  }
+  .responsive-flex-wrap {
+    @apply flex flex-wrap;
+  }
+
+  /* --------------------------------------------------------------------------
+     SPACING RESPONSIVENESS
+     -------------------------------------------------------------------------- */
+  .responsive-py {
+    @apply py-8 sm:py-12 md:py-16 lg:py-20 xl:py-24;
+  }
+  .responsive-px {
+    @apply px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16;
+  }
+  .responsive-gap {
+    @apply gap-4 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12;
+  }
+
+  /* --------------------------------------------------------------------------
+     CARD RESPONSIVENESS
+     -------------------------------------------------------------------------- */
+  .responsive-card {
+    @apply w-full rounded-lg overflow-hidden;
+  }
+  .responsive-card-padding {
+    @apply p-4 sm:p-5 md:p-6 lg:p-8;
+  }
+
+  /* --------------------------------------------------------------------------
+     IMAGE RESPONSIVENESS
+     -------------------------------------------------------------------------- */
+  .responsive-img {
+    @apply w-full h-auto object-cover;
+  }
+  .responsive-img-contain {
+    @apply w-full h-auto object-contain;
+  }
+
+  /* --------------------------------------------------------------------------
+     SIDEBAR RESPONSIVENESS
+     -------------------------------------------------------------------------- */
+  .responsive-sidebar {
+    @apply fixed inset-y-0 left-0 z-50 w-64 transform -translate-x-full lg:translate-x-0 lg:static transition-transform duration-300;
+  }
+  .responsive-sidebar-open {
+    @apply translate-x-0;
+  }
+
+  /* --------------------------------------------------------------------------
+     MAIN CONTENT AREA (with sidebar consideration)
+     -------------------------------------------------------------------------- */
+  .responsive-main-with-sidebar {
+    @apply w-full lg:ml-64 transition-all duration-300;
+  }
+
+  /* --------------------------------------------------------------------------
+     DASHBOARD SPECIFIC
+     -------------------------------------------------------------------------- */
+  .responsive-dashboard-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6;
+  }
+  .responsive-stats-card {
+    @apply w-full p-4 sm:p-5 md:p-6;
+  }
+
+  /* --------------------------------------------------------------------------
+     TABLE RESPONSIVENESS
+     -------------------------------------------------------------------------- */
+  .responsive-table-container {
+    @apply w-full overflow-x-auto;
+  }
+  .responsive-table {
+    @apply w-full min-w-[640px];
+  }
+
+  /* --------------------------------------------------------------------------
+     FORM RESPONSIVENESS
+     -------------------------------------------------------------------------- */
+  .responsive-form-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6;
+  }
+  .responsive-input {
+    @apply w-full px-3 sm:px-4 py-2 sm:py-3;
+  }
+
+  /* --------------------------------------------------------------------------
+     BUTTON RESPONSIVENESS
+     -------------------------------------------------------------------------- */
+  .responsive-button {
+    @apply px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base;
+  }
+  .responsive-button-lg {
+    @apply px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg;
+  }
+
+  /* --------------------------------------------------------------------------
+     HERO SECTION RESPONSIVENESS
+     -------------------------------------------------------------------------- */
+  .responsive-hero {
+    @apply w-full py-12 sm:py-16 md:py-20 lg:py-24 xl:py-32;
+  }
+  .responsive-hero-grid {
+    @apply grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center;
+  }
+
+  /* --------------------------------------------------------------------------
+     NAVIGATION RESPONSIVENESS
+     -------------------------------------------------------------------------- */
+  .responsive-nav {
+    @apply hidden md:flex items-center gap-4 lg:gap-6 xl:gap-8;
+  }
+  .responsive-nav-mobile {
+    @apply flex md:hidden flex-col items-center gap-4 py-4;
+  }
+
+  /* --------------------------------------------------------------------------
+     HIDE/SHOW RESPONSIVENESS
+     -------------------------------------------------------------------------- */
+  .hide-on-mobile {
+    @apply hidden sm:block;
+  }
+  .hide-on-desktop {
+    @apply sm:hidden;
+  }
+  .show-on-tablet {
+    @apply hidden md:block lg:hidden;
+  }
+
+  /* --------------------------------------------------------------------------
+     ASPECT RATIO UTILITIES
+     -------------------------------------------------------------------------- */
+  .aspect-video-responsive {
+    @apply aspect-video w-full;
+  }
+  .aspect-square-responsive {
+    @apply aspect-square w-full;
+  }
+}
+
+/* ==========================================================================
+   GLOBAL RESPONSIVE FIXES
+   ========================================================================== */
+
+/* Small screens (320px - 479px) */
+@media (max-width: 479px) {
+  html {
+    font-size: 14px;
+  }
+  .container {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+}
+
+/* Extra small screens (480px - 639px) */
+@media (min-width: 480px) and (max-width: 639px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+/* Small screens (640px - 767px) */
+@media (min-width: 640px) and (max-width: 767px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+/* Medium screens (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+/* Large screens (1024px - 1279px) */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+/* Extra large screens (1280px - 1535px) */
+@media (min-width: 1280px) and (max-width: 1535px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+/* 2XL screens (1536px - 1919px) */
+@media (min-width: 1536px) and (max-width: 1919px) {
+  html {
+    font-size: 17px;
+  }
+}
+
+/* 3XL screens (1920px+) */
+@media (min-width: 1920px) {
+  html {
+    font-size: 18px;
+  }
+  .container {
+    max-width: 1800px;
+  }
+}
+
+/* ==========================================================================
+   COMPONENT-SPECIFIC RESPONSIVE FIXES
+   ========================================================================== */
+
+/* Ensure all images are responsive by default */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Ensure videos are responsive */
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Ensure iframes are responsive */
+iframe {
+  max-width: 100%;
+}
+
+/* Prevent horizontal overflow */
+body {
+  overflow-x: hidden;
+}
+
+/* Dashboard layout responsive fixes */
+@media (max-width: 1023px) {
+  .dashboard-layout {
+    flex-direction: column;
+  }
+  .sidebar-overlay {
+    @apply fixed inset-0 bg-black/50 z-40 lg:hidden;
+  }
+}
+
+/* Course cards responsive */
+.course-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6;
+}
+
+/* Footer responsive */
+@media (max-width: 767px) {
+  .footer-grid {
+    @apply grid-cols-1 gap-6;
+  }
+}
+
+/* Header navigation responsive */
+@media (max-width: 767px) {
+  .header-nav {
+    @apply hidden;
+  }
+  .mobile-menu-btn {
+    @apply block;
+  }
+}
+
+/* Chat system responsive */
+@media (max-width: 1023px) {
+  .chat-layout {
+    @apply flex-col;
+  }
+  .chat-sidebar {
+    @apply w-full h-auto max-h-[200px];
+  }
+  .chat-main {
+    @apply flex-1;
+  }
+}
+
+/* Form responsive */
+@media (max-width: 639px) {
+  .form-row {
+    @apply flex-col gap-3;
+  }
+  .form-input {
+    @apply w-full;
+  }
+}
+
+/* Table responsive */
+@media (max-width: 767px) {
+  .data-table th,
+  .data-table td {
+    @apply px-2 py-2 text-sm;
+  }
+}
+
+/* Modal/Dialog responsive */
+@media (max-width: 639px) {
+  .modal-content {
+    @apply mx-4 w-auto max-w-none;
+  }
+  .dialog-content {
+    @apply mx-4 w-auto max-w-none;
+  }
+}
+
+/* Calendar responsive */
+@media (max-width: 767px) {
+  .calendar-grid {
+    @apply text-xs;
+  }
+  .calendar-day {
+    @apply p-1;
+  }
+}
+
+/* Profile page responsive */
+@media (max-width: 1023px) {
+  .profile-layout {
+    @apply flex-col;
+  }
+  .profile-sidebar {
+    @apply w-full;
+  }
+  .profile-content {
+    @apply w-full;
+  }
+}
+
+/* Assessment/Quiz responsive */
+@media (max-width: 767px) {
+  .quiz-container {
+    @apply px-4;
+  }
+  .quiz-options {
+    @apply flex-col gap-3;
+  }
+}
+
+/* Scrollbar styling for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    font-size: 12pt;
+    line-height: 1.5;
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .border-border {
+    border-width: 2px;
+  }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@layer utilities {
+  .animate-marquee {
+    animation: marquee 25s linear infinite;
+  }
+}

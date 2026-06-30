@@ -1,175 +1,225 @@
-// src/pages/ProfilePage.tsx
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Mail, Phone, Calendar, MapPin, Briefcase, Globe, Linkedin, Instagram, Twitter, Facebook } from "lucide-react";
+import { Pencil } from "lucide-react";
+import Sidebar from "../components/sidebar";
+import Profileheader from "@/components/ui/Profileheader";
+import ProfileSkeleton from "./profile-components/ProfileSkeleton";
+import ProfileHeroBanner from "./profile-components/ProfileHeroBanner";
+import PersonalInfoCard from "./profile-components/PersonalInfoCard";
+import SocialProfilesCard from "./profile-components/SocialProfilesCard";
+import QuickStatsCard from "./profile-components/QuickStatsCard";
+import PasswordSecuritySettings from "./profile-components/PasswordSecuritySettings";
+import { useProfileData } from "@/hooks/useProfileData";
+
+type Tab = "My Account" | "Password & Security";
 
 const ProfilePage = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [active, setActive] = useState("Profile");
+
+  const {
+    activeTab, setActiveTab,
+    firstName, setFirstName,
+    lastName, setLastName,
+    email, setEmail,
+    phone, setPhone,
+    dob, setDob,
+    gender, setGender,
+    address, setAddress,
+    aboutMe, setAboutMe,
+    linkedin, setLinkedin,
+    github, setGithub,
+    resumeUrl, setResumeUrl,
+    resumeFile, setResumeFile,
+    loadingProfile,
+    profileError,
+    updatingProfile,
+    updateSuccess,
+    isEditMode, setIsEditMode,
+    fileInputRef,
+    oldPassword, setOldPassword,
+    newPassword, setNewPassword,
+    confirmPassword, setConfirmPassword,
+    changingPassword,
+    passwordMessage,
+    passwordError,
+    showOldPassword, setShowOldPassword,
+    showNewPassword, setShowNewPassword,
+    showConfirmPassword, setShowConfirmPassword,
+    courseCount,
+    certificateCount,
+    completionPercentage,
+    handleFileChange,
+    handleUpdateProfile,
+    handleChangePassword,
+    displayImage,
+    fullName,
+    initials
+  } = useProfileData();
+
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      {/* Header Card */}
-      <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-3xl p-8 text-white shadow-2xl">
-        <h1 className="text-2xl font-bold mb-2">Profile Edit</h1>
-        <p className="text-sm opacity-90">Get a chance to change your profile.</p>
-      </div>
+    <div className="fixed inset-0 w-full h-full flex bg-gradient-to-br from-[#f7fafd] to-blue-50 overflow-hidden">
+      <Sidebar sidebarOpen={sidebarOpen} setActive={setActive} active={active} />
 
-      <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left: Avatar + Info */}
-        <div className="space-y-6">
-          <div className="bg-white rounded-2xl shadow-lg p-6 text-center">
-            <Avatar className="w-32 h-32 mx-auto ring-4 ring-blue-100">
-              <AvatarImage src="/assets/profile-avatar.jpg" />
-              <AvatarFallback className="text-3xl font-bold bg-gradient-to-br from-blue-500 to-purple-600 text-white">
-                MB
-              </AvatarFallback>
-            </Avatar>
-            <h2 className="mt-4 text-xl font-bold">Mr. Beems</h2>
-            <p className="text-gray-600">Sr. Designer</p>
-            <p className="text-sm text-gray-500 mt-2">
-              Lorem ipsum dolor sit amet consectetur. Pulvinar Donec Quam Tortor sit sit, Nulla Feugiat Senectus in Consectetur.
-            </p>
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <Profileheader />
 
-            <div className="mt-6">
-              <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
-                <Briefcase className="w-4 h-4" /> Skills
-              </h3>
-              <div className="flex flex-wrap gap-2 justify-center">
-                <Badge variant="secondary" className="bg-blue-100 text-blue-700">Web Design</Badge>
-                <Badge variant="secondary" className="bg-green-100 text-green-700">Graphic Design</Badge>
+        <main className="p-4 sm:p-6 lg:p-8 flex-1 overflow-y-auto relative">
+          <div className="max-w-[1400px] mx-auto font-sans">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-4 sm:gap-0">
+              <div>
+                <h1 className="font-inter font-bold text-[20px] sm:text-[23.7px] leading-[28px] sm:leading-[31.6px] tracking-normal text-[#101828]">Profile</h1>
+                <p className="text-xs sm:text-sm text-gray-500 mt-1">Manage your personal information and preferences</p>
               </div>
-            </div>
-
-            <p className="text-xs text-gray-500 mt-6">MEMBER SINCE DECEMBER 12, 2020</p>
-          </div>
-        </div>
-
-        {/* Right: Form Tabs */}
-        <div className="lg:col-span-2">
-          <div className="bg-white rounded-2xl shadow-lg p-6">
-            {/* Tabs */}
-            <div className="flex gap-6 border-b border-gray-200 mb-6">
-              {["My Account", "Password & Security", "Messages"].map((tab) => (
-                <button
-                  key={tab}
-                  className={`pb-3 text-sm font-medium transition-colors ${
-                    tab === "My Account"
-                      ? "text-blue-600 border-b-2 border-blue-600"
-                      : "text-gray-500 hover:text-gray-700"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* My Profile */}
-              <div className="space-y-4">
-                <h3 className="font-semibold text-lg">My Profile</h3>
-
-                <div>
-                  <Label>First Name</Label>
-                  <Input defaultValue="Mr. Beems" />
-                </div>
-
-                <div>
-                  <Label>Phone Number</Label>
-                  <Input defaultValue="+04 1234 5678" />
-                </div>
-
-                <div>
-                  <Label>Date of Birth</Label>
-                  <Input defaultValue="07/05/1987" />
-                </div>
-
-                <div>
-                  <Label>Designer</Label>
-                  <Input defaultValue="Skills" />
-                </div>
-              </div>
-
-              {/* Job Info */}
-              <div className="space-y-4">
-                <h3 className="font-semibold text-lg">Job</h3>
-
-                <div>
-                  <Label>Last Name</Label>
-                  <Input defaultValue="Jok" />
-                </div>
-
-                <div>
-                  <Label>Email</Label>
-                  <Input defaultValue="beems76@gmail.com" />
-                </div>
-
-                <div>
-                  <Label>Gender</Label>
-                  <div className="flex gap-4 mt-2">
-                    <label className="flex items-center gap-2">
-                      <input type="radio" name="gender" defaultChecked className="text-blue-600" />
-                      <span>Male</span>
-                    </label>
-                    <label className="flex items-center gap-2">
-                      <input type="radio" name="gender" className="text-blue-600" />
-                      <span>Female</span>
-                    </label>
-                    <label className="flex items-center gap-2">
-                      <input type="radio" name="gender" className="text-blue-600" />
-                      <span>Other (Not to Say)</span>
-                    </label>
-                  </div>
-                </div>
-
-                <div>
-                  <Label>Sr.UI/UX Designer</Label>
-                  <Input defaultValue="Web Design" />
-                </div>
-              </div>
-            </div>
-
-            <Separator className="my-6" />
-
-            {/* Social Media */}
-            <div>
-              <h3 className="font-semibold text-lg mb-4">Social Media</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label className="flex items-center gap-2">
-                    <Facebook className="w-4 h-4 text-blue-600" /> Facebook Link
-                  </Label>
-                  <Input defaultValue="https://www.facebook.net/beems" />
-                </div>
-                <div>
-                  <Label className="flex items-center gap-2">
-                    <Linkedin className="w-4 h-4 text-blue-600" /> LinkedIn Link
-                  </Label>
-                  <Input defaultValue="https://www.linkedin.net/beems" />
-                </div>
-                <div>
-                  <Label className="flex items-center gap-2">
-                    <Twitter className="w-4 h-4 text-blue-600" /> Twitter Link
-                  </Label>
-                  <Input defaultValue="https://www.twitter.net/beems" />
-                </div>
-                <div>
-                  <Label className="flex items-center gap-2">
-                    <Instagram className="w-4 h-4 text-pink-600" /> Instagram Link
-                  </Label>
-                  <Input defaultValue="https://www.instagram.net/beems" />
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-8 flex justify-end">
-              <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-8">
-                Save Changes
+              <Button
+                onClick={() => setIsEditMode(!isEditMode)}
+                className="w-full sm:w-auto bg-gradient-to-r from-[#2563EB] via-[#4A5AEC] to-[#7C3AED] text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full flex items-center justify-center gap-2 sm:gap-3 text-sm sm:text-base font-medium"
+              >
+                <Pencil size={18} strokeWidth={2} />
+                {isEditMode ? "Cancel Edit" : "Edit Profile"}
               </Button>
             </div>
+
+            {/* Hero Banner */}
+            <ProfileHeroBanner
+              displayImage={displayImage}
+              initials={initials}
+              fullName={fullName}
+              aboutMe={aboutMe}
+              address={address}
+              completionPercentage={completionPercentage}
+              isEditMode={isEditMode}
+              fileInputRef={fileInputRef}
+              handleFileChange={handleFileChange}
+            />
+
+            {/* Tabs */}
+            <div className="overflow-hidden w-full">
+              <div className="flex overflow-x-auto no-scrollbar whitespace-nowrap gap-6 sm:gap-8 border-b border-gray-200 px-4 sm:px-6 pt-4">
+                {(["My Account", "Password & Security"] as Tab[]).map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`pb-3 text-sm font-medium transition-colors border-b-2 whitespace-nowrap flex-shrink-0 ${
+                      activeTab === tab
+                        ? "text-blue-600 border-blue-600"
+                        : "text-gray-500 border-transparent hover:text-gray-700"
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+
+              <div className="p-4 sm:p-6 md:p-8">
+                {/* ────────────────────────────── My Account ────────────────────────────── */}
+                {activeTab === "My Account" && (
+                  loadingProfile ? (
+                    <ProfileSkeleton />
+                  ) : (
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Left Column */}
+                    <div className="lg:col-span-2 space-y-6">
+                      {/* Personal Information */}
+                      <PersonalInfoCard
+                        isEditMode={isEditMode}
+                        firstName={firstName}
+                        setFirstName={setFirstName}
+                        lastName={lastName}
+                        setLastName={setLastName}
+                        email={email}
+                        setEmail={setEmail}
+                        phone={phone}
+                        setPhone={setPhone}
+                        address={address}
+                        setAddress={setAddress}
+                        dob={dob}
+                        setDob={setDob}
+                        gender={gender}
+                        setGender={setGender}
+                        aboutMe={aboutMe}
+                        setAboutMe={setAboutMe}
+                        fullName={fullName}
+                      />
+
+                      {/* Social Profiles */}
+                      <SocialProfilesCard
+                        isEditMode={isEditMode}
+                        linkedin={linkedin}
+                        setLinkedin={setLinkedin}
+                        github={github}
+                        setGithub={setGithub}
+                        resumeUrl={resumeUrl}
+                        setResumeUrl={setResumeUrl}
+                        resumeFile={resumeFile}
+                        setResumeFile={setResumeFile}
+                      />
+
+                      {/* Edit Mode Actions */}
+                      {isEditMode && (
+                        <>
+                          <Separator />
+                          <div className="flex justify-end gap-4">
+                            <Button variant="outline" onClick={() => setIsEditMode(false)}>
+                              Cancel
+                            </Button>
+                            <Button
+                              onClick={handleUpdateProfile}
+                              disabled={updatingProfile}
+                              className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white"
+                            >
+                              {updatingProfile ? "Saving..." : "Save Changes"}
+                            </Button>
+                          </div>
+                        </>
+                      )}
+
+                      {/* Status Messages */}
+                      <div className="text-sm">
+                        {profileError && <span className="text-red-600">{profileError}</span>}
+                        {updateSuccess && <span className="text-green-600">Profile updated successfully!</span>}
+                      </div>
+                    </div>
+
+                    {/* Right Column */}
+                    <div className="space-y-6">
+                      {/* Quick Stats */}
+                      <QuickStatsCard
+                        courseCount={courseCount}
+                        certificateCount={certificateCount}
+                      />
+                    </div>
+                  </div>
+                  )
+                )}
+
+                {/* ─────────────────────── Password & Security Tab ─────────────────────── */}
+                {activeTab === "Password & Security" && (
+                  <PasswordSecuritySettings
+                    oldPassword={oldPassword}
+                    setOldPassword={setOldPassword}
+                    newPassword={newPassword}
+                    setNewPassword={setNewPassword}
+                    confirmPassword={confirmPassword}
+                    setConfirmPassword={setConfirmPassword}
+                    showOldPassword={showOldPassword}
+                    setShowOldPassword={setShowOldPassword}
+                    showNewPassword={showNewPassword}
+                    setShowNewPassword={setShowNewPassword}
+                    showConfirmPassword={showConfirmPassword}
+                    setShowConfirmPassword={setShowConfirmPassword}
+                    changingPassword={changingPassword}
+                    handleChangePassword={handleChangePassword}
+                    passwordMessage={passwordMessage}
+                    passwordError={passwordError}
+                  />
+                )}
+              </div>
+            </div>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );

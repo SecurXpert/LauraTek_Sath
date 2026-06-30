@@ -1,382 +1,625 @@
+
+
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { ContactUs } from "@/services/apiservices";
-import signupIllustration from "@/assets/signup-illustration.png";
-import techlogo from "@/assets/techlogo.png"; // <-- ADDED LOGO
- 
+import guest20Img from "@/assets/guest20.png";
+import guest22Img from "@/assets/guest22.png";
+import techlogo from "@/assets/techlogo.png";
+
 interface ContactUsDialogProps {
   open: boolean;
   setOpen: (open: boolean) => void;
+  onSuccess?: () => void;
 }
- 
-const countryCodes: Record<string, string> = {
-  India: "+91",
-  USA: "+1",
-  UK: "+44",
-  Australia: "+61",
-  Canada: "+1",
+
+const initialFormData = {
+  name: "",
+  email: "",
+  country: "",
+  mobile_number: "",
+  qualification: "",
+  year_of_passedout: "",
+  interest: "",
+  state: "",
+  city: "",
+  description: "",
 };
- 
-const Contactus = ({ open, setOpen }: ContactUsDialogProps) => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    country: "",
-    mobile_number: "",
-    qualification: "",
-    year_of_passedout: "",
-    interest: "",
-    state: "",
-    city: "",
-    description: "",
-  });
- 
-  const [selectedCountryCode, setSelectedCountryCode] = useState("+91");
-  const [errors, setErrors] = useState<Record<string, string>>({});
+
+const Contactus = ({ open, setOpen, onSuccess }: ContactUsDialogProps) => {
+  const [formData, setFormData] = useState(initialFormData);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
- 
-  // When dialog opens, clear previous success/error so they don't show immediately
+
+  /*  Reset form on dialog close */
   useEffect(() => {
-    if (open) {
+    if (!open) {
+      setFormData(initialFormData);
       setSuccess("");
       setError("");
+      setLoading(false);
     }
   }, [open]);
- 
-  const countWords = (text: string) => (text.trim() ? text.trim().split(/\s+/).length : 0);
- 
-  const validateField = (name: string, value: string) => {
-    const newErrors = { ...errors };
- 
-    switch (name) {
-      case "name":
-      case "country":
-      case "state":
-      case "city":
-        if (!/^[A-Za-z\s]*$/.test(value)) newErrors[name] = "Only letters and spaces allowed";
-        else if (!value.trim()) newErrors[name] = "This field is required";
-        else delete newErrors[name];
-        break;
- 
-      case "mobile_number":
-        if (!/^\d*$/.test(value)) newErrors.mobile_number = "Only numbers allowed";
-        else if (value.length > 15) newErrors.mobile_number = "Phone number too long";
-        else if (!value.trim()) newErrors.mobile_number = "This field is required";
-        else delete newErrors.mobile_number;
-        break;
- 
-      case "year_of_passedout":
-        if (!/^\d{4}$/.test(value)) newErrors.year_of_passedout = "Must be a 4-digit year";
-        else if (parseInt(value) < 1900 || parseInt(value) > new Date().getFullYear())
-          newErrors.year_of_passedout = "Invalid year";
-        else delete newErrors.year_of_passedout;
-        break;
- 
-      case "email":
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) newErrors.email = "Invalid email format";
-        else delete newErrors.email;
-        break;
- 
-      case "qualification":
-      case "interest":
-        if (!value.trim()) newErrors[name] = "This field is required";
-        else delete newErrors[name];
-        break;
- 
-      case "description":
-        if (!value.trim()) newErrors.description = "This field is required";
-        else if (countWords(value) > 1000) newErrors.description = "Description must not exceed 1000 words";
-        else delete newErrors.description;
-        break;
-    }
- 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
- 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { id, value } = e.target;
-    // Clear success when user starts editing again
-    if (success) setSuccess("");
-    if (error) setError("");
- 
-    setFormData({ ...formData, [id]: value });
-    validateField(id, value);
+
+    if (
+      ["country", "state", "city", "name", "interest", "qualification"].includes(id) &&
+      !/^[A-Za-z\s]*$/.test(value)
+    )
+      return;
+
+    if (id === "year_of_passedout") {
+      if (!/^\d*$/.test(value)) return;
+      if (value.length > 4) return;
+    }
+
+    if (id === "mobile_number") {
+      if (!/^\d*$/.test(value)) return;
+      if (value.length > 10) return;
+    }
+
+    if (id === "description" && value.length > 100) return;
+
+    setFormData((prev) => ({ ...prev, [id]: value }));
   };
- 
-  const handleCountryCodeChange = (value: string) => {
-    // Clear messages when country code changed too
-    if (success) setSuccess("");
-    if (error) setError("");
-    setSelectedCountryCode(value);
-  };
- 
+
+  /* ================= SUBMIT (BACKEND CONNECTED) ================= */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     setError("");
     setSuccess("");
- 
-    const isValid = Object.entries(formData).every(([k, v]) => validateField(k, v));
- 
-    if (!isValid || Object.keys(errors).length > 0) {
-      setError("Please fix the errors in the form");
+
+    /* Mandatory fields check */
+    if (
+      !formData.name.trim() ||
+      !formData.email.trim() ||
+      !formData.country.trim() ||
+      !formData.mobile_number.trim() ||
+      !formData.qualification.trim() ||
+      !formData.year_of_passedout.trim() ||
+      !formData.interest.trim() ||
+      !formData.state.trim() ||
+      !formData.city.trim()
+    ) {
+      setError("Please fill all mandatory fields");
       return;
     }
- 
-    setLoading(true);
+
+    if (formData.mobile_number.length !== 10) {
+      setError("Please enter a valid 10-digit mobile number");
+      return;
+    }
+
+    if (formData.year_of_passedout.length !== 4) {
+      setError("Please enter a valid 4-digit year");
+      return;
+    }
+
     try {
+      setLoading(true);
+
+      /*  Backend payload mapping (REQUIRED) */
       const payload = {
-        ...formData,
-        mobile_number: selectedCountryCode + formData.mobile_number,
+        name: formData.name,
+        email: formData.email,
+        country: formData.country,
+        mobile_number: formData.mobile_number,
+        qualification: formData.qualification,
+        year_of_passedout: formData.year_of_passedout,
+        interest: formData.interest,
+        state: formData.state,
+        city: formData.city,
+        description: formData.description,
       };
-      await ContactUs(payload);
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/enrollments/submit`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to submit form");
+      }
+
       setSuccess("Message sent successfully!");
- 
-      setFormData({
-        name: "",
-        email: "",
-        country: "",
-        mobile_number: "",
-        qualification: "",
-        year_of_passedout: "",
-        interest: "",
-        state: "",
-        city: "",
-        description: "",
-      });
- 
-      setSelectedCountryCode("+91");
-      setTimeout(() => setOpen(false), 1500);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to send message");
+      if (onSuccess) onSuccess();
+      setOpen(false);
+      setFormData(initialFormData);
+    } catch (err: any) {
+      setError(err.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
   };
- 
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
-        className="p-0 overflow-hidden bg-white rounded-2xl shadow-2xl max-w-5xl max-h-[90vh] grid grid-cols-1 lg:grid-cols-2"
+        className="
+          p-0 bg-white rounded-2xl shadow-2xl
+          max-w-5xl h-[95vh]
+          grid grid-cols-1 lg:grid-cols-2
+          overflow-hidden
+        "
       >
-        {/* LEFT SIDE */}
-        <div className="p-6 sm:p-8 md:p-10 flex flex-col h-full min-h-0">
- 
-          {/* LOGO */}
-          <div className="flex justify-center mb-6">
-            <img src={techlogo} alt="Lautek Logo" className="w-28 h-auto object-contain" />
-          </div>
- 
-          {/* HEADING */}
-          <h3 className="text-center text-lg sm:text-xl font-medium text-gray-700 mb-6">
-            Contact Us
-          </h3>
- 
-          {/* SCROLLABLE FORM */}
-          <div
-            className="flex-1 min-h-0 overflow-y-auto pr-2 -mr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
-            style={{ maxHeight: "calc(90vh - 180px)" }}
-          >
-            <form onSubmit={handleSubmit} className="space-y-5 pb-28">
- 
-              {/* Full Name & Email */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input
-                    id="name"
-                    placeholder="Enter your name.."
-                    value={formData.name}
-                    onChange={handleChange}
-                    className={errors.name ? "border-red-500" : ""}
-                  />
-                  {errors.name && <p className="text-red-500 text-xs">{errors.name}</p>}
-                </div>
- 
-                <div>
-                  <Label htmlFor="email">Email Id</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="info@xyz.com"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className={errors.email ? "border-red-500" : ""}
-                  />
-                  {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
-                </div>
-              </div>
- 
-              {/* Country & Mobile */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <Label>Country</Label>
-                  <Input
-                    id="country"
-                    placeholder="Enter country.."
-                    value={formData.country}
-                    onChange={handleChange}
-                    className={errors.country ? "border-red-500" : ""}
-                  />
-                  {errors.country && <p className="text-red-500 text-xs">{errors.country}</p>}
-                </div>
- 
-                <div>
-                  <Label>Mobile No.</Label>
-                  <div className="flex">
-                    <Select value={selectedCountryCode} onValueChange={handleCountryCodeChange}>
-                      <SelectTrigger className="w-20 rounded-r-none border-r-0">
-                        <SelectValue placeholder="+Code" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Object.entries(countryCodes).map(([name, code]) => (
-                          <SelectItem key={code} value={code}>
-                            {code} ({name})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
- 
-                    <Input
-                      id="mobile_number"
-                      placeholder="98596 58000"
-                      value={formData.mobile_number}
-                      onChange={handleChange}
-                      className={`flex-1 rounded-l-none ${errors.mobile_number ? "border-red-500" : ""}`}
-                    />
-                  </div>
-                  {errors.mobile_number ? (
-                    <p className="text-red-500 text-xs">{errors.mobile_number}</p>
-                  ) : (
-                    <p className="text-gray-500 text-xs">Numbers only</p>
-                  )}
-                </div>
-              </div>
- 
-              {/* Qualification & Year */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <Label>Qualification</Label>
-                  <Input
-                    id="qualification"
-                    placeholder="e.g., B.Tech"
-                    value={formData.qualification}
-                    onChange={handleChange}
-                    className={errors.qualification ? "border-red-500" : ""}
-                  />
-                  {errors.qualification && <p className="text-red-500 text-xs">{errors.qualification}</p>}
-                </div>
- 
-                <div>
-                  <Label>Year (e.g., 2024)</Label>
-                  <Input
-                    id="year_of_passedout"
-                    placeholder="2024"
-                    value={formData.year_of_passedout}
-                    onChange={handleChange}
-                    maxLength={4}
-                    className={errors.year_of_passedout ? "border-red-500" : ""}
-                  />
-                  {errors.year_of_passedout ? (
-                    <p className="text-red-500 text-xs">{errors.year_of_passedout}</p>
-                  ) : (
-                    <p className="text-gray-500 text-xs">Format: YYYY</p>
-                  )}
-                </div>
-              </div>
- 
-              {/* Interest & State */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <Label>Interest</Label>
-                  <Input
-                    id="interest"
-                    placeholder="e.g., Web Development"
-                    value={formData.interest}
-                    onChange={handleChange}
-                    className={errors.interest ? "border-red-500" : ""}
-                  />
-                  {errors.interest && <p className="text-red-500 text-xs">{errors.interest}</p>}
-                </div>
- 
-                <div>
-                  <Label>State</Label>
-                  <Input
-                    id="state"
-                    placeholder="Enter state.."
-                    value={formData.state}
-                    onChange={handleChange}
-                    className={errors.state ? "border-red-500" : ""}
-                  />
-                  {errors.state && <p className="text-red-500 text-xs">{errors.state}</p>}
-                </div>
-              </div>
- 
-              {/* City */}
-              <div>
-                <Label>City</Label>
-                <Input
-                  id="city"
-                  placeholder="Enter city.."
-                  value={formData.city}
-                  onChange={handleChange}
-                  className={errors.city ? "border-red-500" : ""}
-                />
-                {errors.city && <p className="text-red-500 text-xs">{errors.city}</p>}
-              </div>
- 
-              {/* Description */}
-              <div>
-                <Label>Description</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Your message here (max 1000 words)"
-                  value={formData.description}
-                  onChange={handleChange}
-                  className={errors.description ? "border-red-500" : ""}
-                />
-                {errors.description ? (
-                  <p className="text-red-500 text-xs">{errors.description}</p>
-                ) : (
-                  <p className="text-gray-500 text-xs">
-                    Word count: {countWords(formData.description)}/1000
-                  </p>
-                )}
-              </div>
- 
-              {/* SUCCESS / ERROR */}
-              {success && <p className="text-green-600 text-center">{success}</p>}
-              {error && <p className="text-red-600 text-center">{error}</p>}
- 
-              {/* BUTTON */}
-              <Button
-                type="submit"
-                disabled={loading || Object.keys(errors).length > 0}
-                className="w-full bg-[#1e3a8a] hover:bg-[#1e40af] text-white py-2.5 rounded-md"
-              >
-                {loading ? "Sending..." : "Send Message"}
-              </Button>
-            </form>
+        {/* LEFT IMAGE */}
+        <div className="hidden lg:flex relative h-full w-full bg-[#5231A8] overflow-hidden flex-col items-center pt-12">
+          {/* Background pattern */}
+          <img src={guest20Img} className="absolute inset-0 w-full h-full object-cover z-0" alt="Background" />
+          
+          {/* Title */}
+          <h2 className="relative z-10 text-white font-bold text-4xl tracking-wide">
+            Contact US
+          </h2>
+
+          {/* Foreground Illustration */}
+          <div className="relative z-10 flex-1 w-full mt-4 flex items-end justify-center">
+            <img 
+              src={guest22Img} 
+              className="w-[95%] max-h-[100%] object-contain object-bottom" 
+              alt="Contact Us Illustration" 
+            />
           </div>
         </div>
- 
-        {/* RIGHT SIDE IMAGE */}
-        <div className="hidden lg:flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 p-8">
-          <div className="relative">
-            <img src={signupIllustration} alt="Illustration" className="w-full max-w-md" />
-           
+
+        {/* RIGHT FORM */}
+        <div className="py-6 sm:py-6 md:py-10 px-0 overflow-y-auto">
+          <div className="flex justify-center mb-6">
+            <img src={techlogo} className="w-28" />
           </div>
+
+          <h3 className="text-center text-2xl font-bold mb-6 mt-4 md:mt-8">
+            Contact Us
+          </h3>
+
+          {/*  FULL ORIGINAL FORM — UNCHANGED */}
+          <form onSubmit={handleSubmit} className="space-y-4 px-4 sm:px-6">
+            <div className="grid sm:grid-cols-2 gap-4">
+       <div>
+  <Label>
+    Full Name <span className="text-red-500">*</span>
+  </Label>
+
+  <Input
+    id="name"
+    placeholder="Enter your full name"
+    value={formData.name}
+    maxLength={30}
+    onChange={(e) => {
+      const value = e.target.value;
+
+      //  Do not allow space at the beginning
+      if (value.startsWith(" ")) return;
+
+      //  Allow letters and spaces only
+      if (/^[A-Za-z ]*$/.test(value)) {
+        setFormData((prev) => ({
+          ...prev,
+          name: value,
+        }));
+      }
+    }}
+  />
+
+  {/*  Minimum length validation (ignores extra spaces) */}
+  {formData.name.trim().length > 0 &&
+    formData.name.trim().length < 3 && (
+      <p className="text-red-500 text-sm mt-1">
+        Name must be at least 3 characters
+      </p>
+    )}
+
+  {/*  Maximum length info */}
+  {formData.name.length === 30 && (
+    <p className="text-gray-500 text-sm mt-1">
+      Maximum 30 characters reached
+    </p>
+  )}
+</div>
+
+
+              <div>
+  <Label>
+    Email <span className="text-red-500">*</span>
+  </Label>
+
+  <Input
+    id="email"
+    type="email"
+    placeholder="Enter your email address"
+    value={formData.email}
+    onChange={(e) => {
+      //  Remove ALL spaces (typing + paste)
+      const value = e.target.value.replace(/\s/g, "");
+
+      //  Allow only valid email characters
+      if (/^[A-Za-z0-9@._-]*$/.test(value)) {
+        setFormData((prev) => ({
+          ...prev,
+          email: value,
+        }));
+      }
+    }}
+  />
+
+  {/*  Invalid email format message */}
+  {formData.email.length > 0 &&
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) && (
+      <p className="text-red-500 text-sm mt-1">
+        Please enter a valid email address
+      </p>
+    )}
+</div>
+
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-4">
+          <div>
+  <Label>
+    Country <span className="text-red-500">*</span>
+  </Label>
+
+  <Input
+    id="country"
+    placeholder="Enter your country"
+    value={formData.country}
+    maxLength={30}
+    onChange={(e) => {
+      const value = e.target.value;
+
+      //  Prevent starting space
+      if (value.startsWith(" ")) return;
+
+      //  Allow letters and spaces only
+      if (/^[A-Za-z ]*$/.test(value)) {
+        setFormData((prev) => ({
+          ...prev,
+          country: value,
+        }));
+      }
+    }}
+  />
+
+  {/*  Minimum length validation (ignores extra spaces) */}
+  {formData.country.trim().length > 0 &&
+    formData.country.trim().length < 3 && (
+      <p className="text-red-500 text-sm mt-1">
+        Country must be at least 3 characters
+      </p>
+    )}
+
+  {/*  Max length info */}
+  {formData.country.length === 30 && (
+    <p className="text-gray-500 text-sm mt-1">
+      Maximum 30 characters reached
+    </p>
+  )}
+</div>
+
+
+              <div>
+  <Label>
+    Mobile <span className="text-red-500">*</span>
+  </Label>
+
+  <Input
+    id="mobile_number"
+    placeholder="Enter 10-digit mobile number"
+    value={formData.mobile_number}
+    onChange={(e) => {
+      const value = e.target.value;
+
+      // Allow digits only
+      if (!/^\d*$/.test(value)) return;
+
+      // Max 10 digits
+      if (value.length > 10) return;
+
+      setFormData((prev) => ({
+        ...prev,
+        mobile_number: value,
+      }));
+    }}
+  />
+
+  {formData.mobile_number.length > 0 &&
+    formData.mobile_number.length < 10 && (
+      <p className="text-red-500 text-sm mt-1">
+        Mobile number must be exactly 10 digits
+      </p>
+    )}
+</div>
+
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-4">
+         <div>
+  <Label>
+    Qualification <span className="text-red-500">*</span>
+  </Label>
+
+  <Input
+    id="qualification"
+    placeholder="Eg: B.Tech, B.Sc, MCA"
+    value={formData.qualification}
+    maxLength={30}
+    onChange={(e) => {
+      const value = e.target.value;
+
+      //  Allow clearing input (BACKSPACE FIX)
+      if (value === "") {
+        setFormData((prev) => ({ ...prev, qualification: "" }));
+        return;
+      }
+
+      //  First character must be a LETTER
+      if (value.length === 1 && !/^[A-Za-z]$/.test(value)) return;
+
+      //  After first letter, allow letters, spaces, and dot only
+      if (/^[A-Za-z][A-Za-z. ]*$/.test(value)) {
+        setFormData((prev) => ({
+          ...prev,
+          qualification: value,
+        }));
+      }
+    }}
+  />
+
+  {/*  Minimum length validation */}
+  {formData.qualification.trim().length > 0 &&
+    formData.qualification.trim().length < 2 && (
+      <p className="text-red-500 text-sm mt-1">
+        Qualification must be at least 2 characters
+      </p>
+    )}
+
+  {/* ℹ Maximum length info */}
+  {formData.qualification.length === 30 && (
+    <p className="text-gray-500 text-sm mt-1">
+      Maximum 30 characters reached
+    </p>
+  )}
+</div>
+
+
+
+           <div>
+  <Label>
+    Year of Passed Out <span className="text-red-500">*</span>
+  </Label>
+
+  <Input
+    id="year_of_passedout"
+    placeholder="Eg: 2022"
+    value={formData.year_of_passedout}
+    onChange={(e) => {
+      const value = e.target.value;
+      const currentYear = new Date().getFullYear();
+
+      // Allow only digits
+      if (!/^\d*$/.test(value)) return;
+
+      // Max 4 digits
+      if (value.length > 4) return;
+
+      // Prevent future year
+      if (value.length === 4 && Number(value) > currentYear) return;
+
+      setFormData((prev) => ({
+        ...prev,
+        year_of_passedout: value,
+      }));
+    }}
+  />
+
+  {/* Validation messages */}
+  {formData.year_of_passedout.length > 0 &&
+    formData.year_of_passedout.length < 4 && (
+      <p className="text-red-500 text-sm mt-1">
+        Year must be exactly 4 digits
+      </p>
+    )}
+
+  {formData.year_of_passedout.length === 4 &&
+    Number(formData.year_of_passedout) > new Date().getFullYear() && (
+      <p className="text-red-500 text-sm mt-1">
+        Future year is not allowed
+      </p>
+    )}
+</div>
+
+
+            </div>
+<div>
+  <Label>
+    Interest <span className="text-red-500">*</span>
+  </Label>
+
+  <Input
+    id="interest"
+    placeholder="Eg: Web Development, Data Science"
+    value={formData.interest}
+    maxLength={30}
+    onChange={(e) => {
+      const value = e.target.value;
+
+      //  Allow clearing input (BACKSPACE FIX)
+      if (value === "") {
+        setFormData((prev) => ({ ...prev, interest: "" }));
+        return;
+      }
+
+      //  First character must be a LETTER
+      if (value.length === 1 && !/^[A-Za-z]$/.test(value)) return;
+
+      //  After first letter, allow letters, spaces, comma
+      if (/^[A-Za-z][A-Za-z, ]*$/.test(value)) {
+        setFormData((prev) => ({
+          ...prev,
+          interest: value,
+        }));
+      }
+    }}
+  />
+
+  {/*  Minimum length validation (ignores spaces & commas) */}
+  {formData.interest.trim().replace(/,/g, "").length > 0 &&
+    formData.interest.trim().replace(/,/g, "").length < 3 && (
+      <p className="text-red-500 text-sm mt-1">
+        Interest must be at least 3 characters
+      </p>
+    )}
+
+  {/* ℹ Maximum length info */}
+  {formData.interest.length === 30 && (
+    <p className="text-gray-500 text-sm mt-1">
+      Maximum 30 characters reached
+    </p>
+  )}
+</div>
+
+
+
+
+            <div className="grid sm:grid-cols-2 gap-4">
+     <div>
+  <Label>
+    State <span className="text-red-500">*</span>
+  </Label>
+
+  <Input
+    id="state"
+    placeholder="Enter your state"
+    value={formData.state}
+    maxLength={30}
+    onChange={(e) => {
+      const value = e.target.value;
+
+      //  Allow clearing input (IMPORTANT for backspace)
+      if (value === "") {
+        setFormData((prev) => ({ ...prev, state: "" }));
+        return;
+      }
+
+      //  First character must be a LETTER
+      if (value.length === 1 && !/^[A-Za-z]$/.test(value)) return;
+
+      //  After first letter, allow letters and spaces only
+      if (/^[A-Za-z][A-Za-z ]*$/.test(value)) {
+        setFormData((prev) => ({
+          ...prev,
+          state: value,
+        }));
+      }
+    }}
+  />
+
+  {/*  Minimum length validation (ignore spaces) */}
+  {formData.state.trim().length > 0 &&
+    formData.state.trim().length < 3 && (
+      <p className="text-red-500 text-sm mt-1">
+        State must be at least 3 characters
+      </p>
+    )}
+
+  {/* ℹ Maximum length info */}
+  {formData.state.length === 30 && (
+    <p className="text-gray-500 text-sm mt-1">
+      Maximum 30 characters reached
+    </p>
+  )}
+</div>
+
+<div>
+  <Label>
+    City <span className="text-red-500">*</span>
+  </Label>
+
+  <Input
+    id="city"
+    placeholder="Enter your city"
+    value={formData.city}
+    maxLength={30}
+    onChange={(e) => {
+      const value = e.target.value;
+
+      //  Allow clearing input (fixes backspace)
+      if (value === "") {
+        setFormData((prev) => ({ ...prev, city: "" }));
+        return;
+      }
+
+      //  First character must be a LETTER
+      if (value.length === 1 && !/^[A-Za-z]$/.test(value)) return;
+
+      //  After first letter, allow letters and spaces only
+      if (/^[A-Za-z][A-Za-z ]*$/.test(value)) {
+        setFormData((prev) => ({
+          ...prev,
+          city: value,
+        }));
+      }
+    }}
+  />
+
+  {/*  Minimum length validation (ignore spaces) */}
+  {formData.city.trim().length > 0 &&
+    formData.city.trim().length < 3 && (
+      <p className="text-red-500 text-sm mt-1">
+        City must be at least 3 characters
+      </p>
+    )}
+
+  {/*  Maximum length info */}
+  {formData.city.length === 30 && (
+    <p className="text-gray-500 text-sm mt-1">
+      Maximum 30 characters reached
+    </p>
+  )}
+</div>
+
+
+
+            </div>
+
+            <div>
+              <Label>Description</Label>
+              <Textarea
+                id="description"
+                placeholder="Tell us about your background and interests (optional)"
+                value={formData.description}
+                onChange={handleChange}
+              />
+            </div>
+
+            {success && <p className="text-green-600">{success}</p>}
+            {error && <p className="text-red-600">{error}</p>}
+
+            <Button className="w-full" disabled={loading}>
+              {loading ? "Sending..." : "Send Message"}
+            </Button>
+          </form>
         </div>
       </DialogContent>
     </Dialog>
   );
 };
- 
+
 export default Contactus;

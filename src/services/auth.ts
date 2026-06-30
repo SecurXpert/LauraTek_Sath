@@ -5,7 +5,7 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios';
 // 1. Axios instance (base URL from .env – adjust if needed)
 // ---------------------------------------------------------------------------
 const api: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://192.168.0.103:8000',
+  baseURL: import.meta.env.VITE_API_URL || 'http://192.168.0.100:8000',
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
@@ -59,7 +59,7 @@ export const login = async (credentials: {
   password: string;
 }): Promise<LoginResponse> => {
   const res: AxiosResponse<LoginResponse> = await api.post(
-    '/student/login',
+    "/student/login",
     credentials
   );
   return res.data;

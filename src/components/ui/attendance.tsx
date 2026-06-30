@@ -1,281 +1,313 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-} from 'chart.js';
-import { Bar, Pie } from 'react-chartjs-2';
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import { Users, Filter, Calendar, TrendingUp, PieChart } from 'lucide-react';
-import Sidebar from '../sidebar';
-import Profileheader from '../ui/Profileheader';
-
-// Register ChartJS components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement
-);
-
-// Define types for attendance data
-interface AttendanceCategory {
-  totalSessions: number;
-  attended: number;
-  percentage: number;
-}
-
-interface AttendanceData {
-  coding: AttendanceCategory;
-  liveClasses: AttendanceCategory;
-  mcqs: AttendanceCategory;
-  interviews: AttendanceCategory;
-}
-
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Clock, CalendarDays, LogIn, LogOut } from "lucide-react";
+import Sidebar from "../sidebar";
+import Profileheader from "../ui/Profileheader";
+import api from "../../api/instance";
+import MarkAttendanceCard from "./attendance/MarkAttendanceCard";
+import AttendanceStatsCard from "./attendance/AttendanceStatsCard";
+import AttendanceHistoryTable from "./attendance/AttendanceHistoryTable";
 const AttendancePage: React.FC = () => {
+  const [attendance, setAttendance] = useState<any[]>([]);
+  const [totalHours, setTotalHours] = useState(0);
+  const [todayDuration, setTodayDuration] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [active, setActive] = useState('Attendance');
 
-  // Mock data for attendance calculations
-  const attendanceData: AttendanceData = {
-    coding: { totalSessions: 20, attended: 18, percentage: 90 },
-    liveClasses: { totalSessions: 15, attended: 12, percentage: 80 },
-    mcqs: { totalSessions: 10, attended: 9, percentage: 90 },
-    interviews: { totalSessions: 5, attended: 4, percentage: 80 },
-  };
-
-  // Calculate overall attendance percentage
-  const totalAttended = Object.values(attendanceData).reduce((sum, cat) => sum + cat.attended, 0);
-  const totalSessions = Object.values(attendanceData).reduce((sum, cat) => sum + cat.totalSessions, 0);
-  const overallPercentage = Math.round((totalAttended / totalSessions) * 100);
-
-  // Data for Pie Chart: Attendance distribution by category
-  const pieData = {
-    labels: ['Coding', 'Live Classes', 'MCQs', 'Interviews'],
-    datasets: [
-      {
-        label: 'Attendance %',
-        data: [attendanceData.coding.percentage, attendanceData.liveClasses.percentage, attendanceData.mcqs.percentage, attendanceData.interviews.percentage],
-        backgroundColor: [
-          'rgba(75, 192, 192, 0.8)',
-          'rgba(255, 99, 132, 0.8)',
-          'rgba(54, 162, 235, 0.8)',
-          'rgba(255, 205, 86, 0.8)',
-        ],
-        borderColor: [
-          'rgba(75, 192, 192, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 205, 86, 1)',
-        ],
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  // Data for Bar Graph: Sessions attended vs missed
-  const barData = {
-    labels: ['Coding', 'Live Classes', 'MCQs', 'Interviews'],
-    datasets: [
-      {
-        label: 'Attended',
-        data: [attendanceData.coding.attended, attendanceData.liveClasses.attended, attendanceData.mcqs.attended, attendanceData.interviews.attended],
-        backgroundColor: 'rgba(75, 192, 192, 0.8)',
-      },
-      {
-        label: 'Missed',
-        data: [
-          attendanceData.coding.totalSessions - attendanceData.coding.attended,
-          attendanceData.liveClasses.totalSessions - attendanceData.liveClasses.attended,
-          attendanceData.mcqs.totalSessions - attendanceData.mcqs.attended,
-          attendanceData.interviews.totalSessions - attendanceData.interviews.attended,
-        ],
-        backgroundColor: 'rgba(255, 99, 132, 0.8)',
-      },
-    ],
-  };
-
-  const pieOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top' as const,
-      },
-      title: {
-        display: true,
-        text: 'Attendance Distribution by Category (%)',
-      },
-    },
-  };
-
-  const barOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top' as const,
-      },
-      title: {
-        display: true,
-        text: 'Attended vs Missed Sessions',
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
-  };
+  const [courses, setCourses] = useState<any[]>([]);
+  const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
 
   useEffect(() => {
-    document.title = 'Attendance - LauraTek';
+    const fetchCourses = async () => {
+      try {
+        const res = await api.get("/dashboard/my-courses");
+        if (res.data && res.data.length > 0) {
+          setCourses(res.data);
+          const savedCourseId = localStorage.getItem('course_id');
+          if (savedCourseId && res.data.some((c: any) => c.course_id === Number(savedCourseId))) {
+            setSelectedCourseId(Number(savedCourseId));
+          } else {
+            setSelectedCourseId(res.data[0].course_id);
+            localStorage.setItem('course_id', String(res.data[0].course_id));
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch courses:", err);
+      }
+    };
+    fetchCourses();
   }, []);
 
-  const pageVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2
+  // TIMER STATES
+  const [isCheckedIn, setIsCheckedIn] = useState(() => !!localStorage.getItem('checkInTime'));
+  const [seconds, setSeconds] = useState(() => {
+    const localCheckIn = localStorage.getItem('checkInTime');
+    if (localCheckIn) {
+      const checkInDate = new Date(localCheckIn);
+      const now = new Date();
+      const elapsedSeconds = Math.floor((now.getTime() - checkInDate.getTime()) / 1000);
+      return elapsedSeconds > 0 ? elapsedSeconds : 0;
+    }
+    return 0;
+  });
+
+  // ===============================
+  // TIMER EFFECT
+  // ===============================
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (isCheckedIn) {
+      interval = setInterval(() => {
+        const localCheckIn = localStorage.getItem('checkInTime');
+        if (localCheckIn) {
+          const checkInDate = new Date(localCheckIn);
+          const now = new Date();
+          const elapsedSeconds = Math.floor((now.getTime() - checkInDate.getTime()) / 1000);
+          setSeconds(elapsedSeconds > 0 ? elapsedSeconds : 0);
+        } else {
+          // Fallback if no start time is recorded
+          setSeconds((prev) => prev + 1);
+        }
+      }, 1000);
+    }
+
+    return () => clearInterval(interval);
+  }, [isCheckedIn]);
+
+  const formatTime = (secs: number) => {
+    const hrs = Math.floor(secs / 3600);
+    const mins = Math.floor((secs % 3600) / 60);
+    const sec = secs % 60;
+    return `${hrs.toString().padStart(2, "0")}:${mins
+      .toString()
+      .padStart(2, "0")}:${sec.toString().padStart(2, "0")}`;
+  };
+
+  // ===============================
+  // FETCH ATTENDANCE LIST
+  // ===============================
+  const fetchAttendance = async () => {
+    try {
+      const res = await api.get(
+        "/attendance/dashboard/my-attendance"
+      );
+      setAttendance(Array.isArray(res.data?.items) ? res.data.items : []);
+
+      // Check if user is currently checked in
+      // Find the most recent record by date
+      const attendanceData = Array.isArray(res.data?.items) ? res.data.items : [];
+      if (attendanceData.length > 0) {
+        // Find an active session: a record with a check-in time but NO check-out time
+        const activeSession = attendanceData.find((item) => {
+          const hasCheckIn = item.check_in_time && item.check_in_time !== "";
+          const hasCheckOut = item.check_out_time && item.check_out_time !== "";
+          return hasCheckIn && !hasCheckOut;
+        });
+
+        if (activeSession) {
+          setIsCheckedIn(true);
+          
+          if (activeSession.check_in_time) {
+            localStorage.setItem('checkInTime', activeSession.check_in_time);
+            const checkInDate = new Date(activeSession.check_in_time);
+            const now = new Date();
+            const elapsedSeconds = Math.floor((now.getTime() - checkInDate.getTime()) / 1000);
+            setSeconds(elapsedSeconds > 0 ? elapsedSeconds : 0);
+          } else {
+            setSeconds(0);
+          }
+        } else {
+          // Check local storage as a fallback
+          const localCheckIn = localStorage.getItem('checkInTime');
+          
+          // Verify if today's record has a check out time, if so, invalidate local storage
+          const todayDate = new Date().toISOString().split('T')[0];
+          const todayRecord = attendanceData.find((item: any) => item.date && item.date.startsWith(todayDate));
+          
+          if (todayRecord && todayRecord.check_out_time) {
+            localStorage.removeItem('checkInTime');
+            setIsCheckedIn(false);
+            setSeconds(0);
+          } else if (localCheckIn) {
+            setIsCheckedIn(true);
+            const checkInDate = new Date(localCheckIn);
+            const now = new Date();
+            const elapsedSeconds = Math.floor((now.getTime() - checkInDate.getTime()) / 1000);
+            setSeconds(elapsedSeconds > 0 ? elapsedSeconds : 0);
+          } else {
+            setIsCheckedIn(false);
+            setSeconds(0);
+          }
+        }
+      } else {
+        const localCheckIn = localStorage.getItem('checkInTime');
+        if (localCheckIn) {
+            setIsCheckedIn(true);
+            const checkInDate = new Date(localCheckIn);
+            const now = new Date();
+            const elapsedSeconds = Math.floor((now.getTime() - checkInDate.getTime()) / 1000);
+            setSeconds(elapsedSeconds > 0 ? elapsedSeconds : 0);
+        } else {
+            setIsCheckedIn(false);
+            setSeconds(0);
+        }
       }
+    } catch (err) {
+      console.error(err);
     }
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut" }
+  // ===============================
+  // FETCH TOTAL HORS
+  // ===============================
+  const fetchTotalHours = async () => {
+    try {
+      const res = await api.get(
+        "/attendance/dashboard/my-total-hours"
+      );
+      setTotalHours(res.data.total_attended_hours);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // ===============================
+  // CHECK IN
+  // ===============================
+  const handleCheckIn = async () => {
+    if (!selectedCourseId) {
+      alert("Please select a course first.");
+      return;
+    }
+    try {
+      setLoading(true);
+      await api.post(
+        "/attendance/check-in",
+        { course_id: selectedCourseId }
+      );
+ 
+      setIsCheckedIn(true);  
+      setSeconds(0);
+      localStorage.setItem('checkInTime', new Date().toISOString());
+ 
+      fetchTotalHours();
+      fetchAttendance();
+    } catch (err: any) {
+      console.error(err);
+     
+      const responseData = err?.response?.data;
+      const errorMsg = typeof responseData === 'string' ? responseData : (responseData?.detail || responseData?.message || err?.message || "");
+      
+      if (errorMsg.toLowerCase().includes("already checked in")) {
+        setIsCheckedIn(true);
+        if (!localStorage.getItem('checkInTime')) {
+          localStorage.setItem('checkInTime', new Date().toISOString());
+        }
+      } else {
+        alert("Check-in failed: " + JSON.stringify(responseData || errorMsg));
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+ 
+  // ===============================
+  // CHECK OUT
+  // ===============================
+const handleCheckOut = async () => {
+  const confirmCheckout = window.confirm(
+    "checkout successfully"
+  );
+ 
+  if (!confirmCheckout) return;
+ 
+  try {
+    setLoading(true);
+    const res = await api.put(
+      "/attendance/check-out",
+      { course_id: selectedCourseId }
+    );
+      setTodayDuration(res.data.duration_hours || 0);
+      setIsCheckedIn(false);
+      localStorage.removeItem('checkInTime');
+ 
+      fetchAttendance();
+    fetchTotalHours();
+  } catch (err: any) {
+    console.error(err);
+   
+    const responseData = err?.response?.data;
+    const errorMsg = typeof responseData === 'string' ? responseData : (responseData?.detail || responseData?.message || err?.message || "");
+    if (errorMsg.toLowerCase().includes("no active check-in")) {
+      setIsCheckedIn(false);
+      fetchAttendance();
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+  useEffect(() => {
+    fetchAttendance();
+    fetchTotalHours();
+  }, []);
+
+  const getStatusColor = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case "present":
+        return "text-green-600 bg-green-100";
+      case "absent":
+        return "text-red-600 bg-red-100";
+      case "late":
+        return "text-yellow-600 bg-yellow-100";
+      default:
+        return "text-gray-600 bg-gray-100";
     }
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
-      {/* Sidebar */}
-      <Sidebar sidebarOpen={sidebarOpen} setActive={setActive} active={active} />
+    <div className="fixed inset-0 w-full h-full flex bg-gray-50 overflow-hidden">
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} setActive={() => {}} active="Attendance" />
 
-      {/* Main Content */}
-      <div className="flex-1 px-4 sm:px-6">
-        <Profileheader />
-        {/* Mobile Sidebar Toggle */}
-        <div className="lg:hidden py-4">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
-          >
-            {sidebarOpen ? 'Close Menu' : 'Open Menu'}
-          </button>
-        </div>
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <Profileheader onMenuClick={() => setSidebarOpen(true)} />
 
-        {/* Attendance Content */}
-        <motion.div 
-          className="py-6"
-          variants={pageVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <motion.h1 
-            className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-8 flex items-center gap-3"
-            variants={itemVariants}
-          >
-            <Users className="h-10 w-10" />
-            Attendance Dashboard
-          </motion.h1>
-          
-          {/* Overall Attendance Card */}
-          <motion.div 
-            className="bg-white/80 backdrop-blur-sm rounded-xl shadow-md p-8 mb-8 text-center border border-white/20"
-            variants={itemVariants}
-            style={{ 
-              backgroundColor: '#f8f9fa', 
-              borderRadius: '10px', 
-              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-            }}
-          >
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">Overall Attendance</h2>
-            <div className={`text-6xl font-bold ${overallPercentage > 80 ? 'text-green-500' : 'text-yellow-500'}`}>
-              {overallPercentage}%
-            </div>
-            <p className="text-gray-600 mt-2">Attended {totalAttended} out of {totalSessions} sessions</p>
-          </motion.div>
+        <main className="flex-1 overflow-auto p-4 sm:p-6">
+          <div className="max-w-7xl mx-auto w-full">
+          {/* Header */}
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold text-gray-900">Attendance</h1>
+            <p className="text-gray-500 text-sm">Track your daily attendance and hours</p>
+          </div>
 
-          {/* Category Cards */}
-          <motion.div 
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
-            variants={pageVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            {Object.entries(attendanceData).map(([key, data], index) => (
-              <motion.div 
-                key={key} 
-                className="bg-white/80 backdrop-blur-sm rounded-xl p-6 text-center shadow-md border border-white/20"
-                variants={itemVariants}
-                transition={{ delay: index * 0.1 }}
-                style={{ 
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                }}
-              >
-                <h3 className="text-lg font-semibold mb-2 capitalize">
-                  {key.replace(/([A-Z])/g, ' $1')}
-                </h3>
-                <div className={`text-3xl font-bold mb-2 ${data.percentage > 80 ? 'text-green-500' : 'text-yellow-500'}`}>
-                  {data.percentage}%
-                </div>
-                <p className="text-sm text-gray-600">Attended: {data.attended}/{data.totalSessions}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          {/* Charts */}
-          <motion.div 
-            className="grid grid-cols-1 lg:grid-cols-2 gap-8"
-            variants={pageVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            <motion.div 
-              className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-md border border-white/20"
-              variants={itemVariants}
-              style={{ 
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+          {/* Top Cards Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+            <MarkAttendanceCard
+              handleCheckIn={handleCheckIn}
+              handleCheckOut={handleCheckOut}
+              loading={loading}
+              isCheckedIn={isCheckedIn}
+              seconds={seconds}
+              todayDuration={todayDuration}
+              formatTime={formatTime}
+              courses={courses}
+              selectedCourseId={selectedCourseId}
+              onCourseChange={(id) => {
+                setSelectedCourseId(id);
+                localStorage.setItem('course_id', String(id));
               }}
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <PieChart className="h-5 w-5 text-indigo-600" />
-                <h3 className="text-lg font-semibold">Attendance Distribution</h3>
-              </div>
-              <div className="h-80">
-                <Pie data={pieData} options={pieOptions} />
-              </div>
-            </motion.div>
-            <motion.div 
-              className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-md border border-white/20"
-              variants={itemVariants}
-              style={{ 
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-              }}
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <TrendingUp className="h-5 w-5 text-indigo-600" />
-                <h3 className="text-lg font-semibold">Sessions Overview</h3>
-              </div>
-              <div className="h-80">
-                <Bar data={barData} options={barOptions} />
-              </div>
-            </motion.div>
-          </motion.div>
-        </motion.div>
+            />
+
+            <AttendanceStatsCard totalHours={totalHours} />
+          </div>
+
+          {/* Attendance History Table */}
+          <AttendanceHistoryTable
+            attendance={attendance}
+            getStatusColor={getStatusColor}
+          />
+          </div>
+        </main>
       </div>
     </div>
   );

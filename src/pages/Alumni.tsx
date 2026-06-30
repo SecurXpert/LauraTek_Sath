@@ -22,14 +22,14 @@ const Alumni = () => {
             </h1>
           </div>
 
-          <div className="flex gap-2 items-center">
+          {/* <div className="flex gap-2 items-center">
             <button className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-[0_0_10px_rgba(59,130,246,0.2)] border border-blue-100 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all duration-200 hover:scale-105">
               <ChevronLeft className="h-5 w-5 text-blue-600" />
             </button>
             <button className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-[0_0_10px_rgba(59,130,246,0.2)] border border-blue-100 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all duration-200 hover:scale-105">
               <ChevronRight className="h-5 w-5 text-blue-600" />
             </button>
-          </div>
+          </div> */}
         </div>
 
         {/* Testimonial Cards */}

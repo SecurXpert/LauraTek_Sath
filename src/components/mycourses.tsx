@@ -1,372 +1,656 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import { Eye, Calendar, Star, Play, Clock, Users, Award, Filter, BookOpen } from "lucide-react";
-import Sidebar from '../components/sidebar'
-import learn from '../assets/learn.jpg';
-import Profileheader from './ui/Profileheader';
- 
-// Mock data for courses
-const courses = [
-  {
-    id: 1,
-    title: 'Introduction to React',
-    author: 'John Doe',
-    description: 'Learn the fundamentals of React for building dynamic web applications.',
-    image: learn,
-    status: 'inProgress',
-    weeksToComplete: 4,
-    views: 1200,
-    rating: 4.5,
-    progress: 60,
-  },
-  {
-    id: 2,
-    title: 'Advanced JavaScript',
-    author: 'Jane Smith',
-    description: 'Deep dive into JavaScript with modern ES6+ features and patterns.',
-    image: learn,
-    status: 'completed',
-    weeksToComplete: 6,
-    views: 850,
-    rating: 4.8,
-    progress: 100,
-  },
-  {
-    id: 3,
-    title: 'Python for Beginners',
-    author: 'Alice Johnson',
-    description: 'Get started with Python programming for data science and automation.',
-    image: learn,
-    status: 'notStarted',
-    weeksToComplete: 5,
-    views: 600,
-    rating: 4.2,
-    progress: 0,
-  },
-  {
-    id: 4,
-    title: 'Web Development',
-    author: 'Bob Wilson',
-    description: 'Comprehensive course covering HTML, CSS, and JavaScript.',
-    image: learn,
-    status: 'inProgress',
-    weeksToComplete: 8,
-    views: 2000,
-    rating: 4.7,
-    progress: 25,
-  },
-  {
-    id: 5,
-    title: 'Data Science with R',
-    author: 'Emma Brown',
-    description: 'Explore data analysis and visualization using R.',
-    image: learn,
-    status: 'notStarted',
-    weeksToComplete: 7,
-    views: 450,
-    rating: 4.3,
-    progress: 0,
-  },
-  {
-    id: 6,
-    title: 'UI/UX Design',
-    author: 'Michael Lee',
-    description: 'Learn the principles of designing user-friendly interfaces.',
-    image: learn,
-    status: 'completed',
-    weeksToComplete: 3,
-    views: 1800,
-    rating: 4.9,
-    progress: 100,
-  },
-];
- 
-const CourseCard = ({ course }) => {
-  const navigate = useNavigate();
- 
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut" }
-    },
-    hover: { 
-      scale: 1.02,
-      boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-      transition: { duration: 0.2 }
-    }
-  };
+import React, { useState, useEffect } from "react";
 
-  const buttonVariants = {
-    hover: { 
-      scale: 1.05,
-      transition: { duration: 0.2 }
-    },
-    tap: { scale: 0.95 }
-  };
+import { motion } from "framer-motion";
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'completed': return { bg: 'from-green-500 to-emerald-600', text: 'text-green-800', badge: 'bg-green-100' };
-      case 'inProgress': return { bg: 'from-blue-500 to-indigo-600', text: 'text-blue-800', badge: 'bg-blue-100' };
-      default: return { bg: 'from-gray-500 to-gray-600', text: 'text-gray-800', badge: 'bg-gray-100' };
-    }
-  };
+import { useNavigate } from "react-router-dom";
 
-  const statusColors = getStatusColor(course.status);
+import {
 
-  return (
-    <motion.div 
-      className="bg-white/80 backdrop-blur-sm rounded-xl shadow-md overflow-hidden border border-white/20 group hover:bg-white transition-all duration-300"
-      variants={cardVariants}
-      whileHover="hover"
-    >
-      <motion.div 
-        className="relative overflow-hidden"
-        whileHover={{ scale: 1.05 }}
-        transition={{ duration: 0.3 }}
-      >
-        <img src={course.image} alt={course.title} className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110" />
-        <div className="absolute top-3 right-3 bg-gradient-to-r from-black/70 to-transparent text-white px-2 py-1 rounded-full text-xs font-bold">
-          {course.views} views
-        </div>
-      </motion.div>
-      <div className="p-6">
-        <div className="flex justify-between items-start mb-3">
-          <motion.h3 
-            className="text-xl font-bold text-gray-800 line-clamp-1"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            {course.title}
-          </motion.h3>
-          <motion.span
-            className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${statusColors.badge}`}
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.3, type: "spring", stiffness: 300 }}
-          >
-            {course.status === 'completed'
-              ? 'Completed'
-              : course.status === 'inProgress'
-              ? 'In Progress'
-              : 'Not Started'}
-          </motion.span>
-        </div>
-        <p className="text-sm text-gray-600 mb-2">by {course.author}</p>
-        <p className="text-sm text-gray-500 mb-4 line-clamp-3">{course.description}</p>
+  Eye,
+
+  Calendar,
+
+  Star,
+
+  BookOpen,
+
+  Menu,
+
+  X,
+
+  User,
+
+  FileText,
+
+  List,
+
+  BookCheck,
+
+  Search,
+
+  TrendingUp,
+
+  Award,
+
+  Clock,
+  Users,
+  ArrowRight,
+} from "lucide-react";
+
+import Sidebar from "../components/sidebar";
+import Profileheader from "./ui/Profileheader";
+import CurriculumView from "./ui/CurriculumView";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Course, Instructor } from "./ui/mycourses-page/types";
+import CourseCard from "./ui/mycourses-page/CourseCard";
+import InstructorCard from "./ui/mycourses-page/InstructorCard";
+import { decodeJWT } from "@/lib/jwtUtils";
+
+// InstructorCard and CourseCard have been extracted
+
  
-        {/* Progress Bar */}
-        <motion.div 
-          className="mt-4 relative"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-        >
-          <div className="bg-gray-200 rounded-full h-2.5">
-            <motion.div
-              className={`h-2.5 rounded-full ${statusColors.bg}`}
-              initial={{ width: 0 }}
-              animate={{ width: `${course.progress}%` }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
-            />
-          </div>
-          <motion.span 
-            className="absolute top-[-0.5rem] right-0 text-xs text-gray-600 font-semibold"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.5, type: "spring" }}
-          >
-            {course.progress}%
-          </motion.span>
-        </motion.div>
- 
-        {/* Course Info */}
-        <div className="mt-5 flex justify-between items-center text-xs text-gray-600">
-          <span className="flex items-center gap-1">
-            <Calendar className="h-3 w-3" /> {course.weeksToComplete} weeks
-          </span>
-          <span className="flex items-center gap-1">
-            <Eye className="h-3 w-3" /> {course.views} views
-          </span>
-          <span className="flex items-center gap-1 text-yellow-500">
-            <Star className="h-3 w-3 fill-current" /> {course.rating}
-          </span>
-        </div>
- 
-        {/* Action Button */}
-        <motion.div 
-          className="mt-6"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-        >
-          <motion.button
-            className={`w-full py-3 rounded-lg text-white font-semibold transition-all duration-300 shadow-md hover:shadow-lg ${
-              course.status === 'completed'
-                ? 'bg-gradient-to-r from-gray-400 to-gray-500 cursor-not-allowed'
-                : 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700'
-            }`}
-            variants={buttonVariants}
-            whileHover="hover"
-            whileTap="tap"
-            disabled={course.status === 'completed'}
-            onClick={() => navigate(`/dashboard/course/${course.id}`)}
-          >
-            {course.status === 'completed' ? (
-              <>
-                <Award className="inline mr-2 h-4 w-4" />
-                Course Completed
-              </>
-            ) : course.status === 'inProgress' ? (
-              <>
-                <Play className="inline mr-2 h-4 w-4" />
-                Continue Course
-              </>
-            ) : (
-              <>
-                <Play className="inline mr-2 h-4 w-4" />
-                Start Course
-              </>
-            )}
-          </motion.button>
-        </motion.div>
-      </div>
-    </motion.div>
-  );
-};
- 
-const MyCourses = () => {
-  const [filter, setFilter] = useState('all');
+
+const MyCourses: React.FC = () => {
+
+  const [courses, setCourses] = useState<Course[]>([]);
+
+  const [instructors, setInstructors] = useState<Instructor[]>([]);
+
+  const [filter, setFilter] = useState("all");
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [active, setActive] = useState('My Courses');
+  const [showAllCourses, setShowAllCourses] = useState(false);
+  const [showAllMentors, setShowAllMentors] = useState(false);
+  const [selectedCurriculumCourse, setSelectedCurriculumCourse] = useState<Course | null>(null);
+
+  const [active, setActive] = useState("My Courses");
+
+  const [loading, setLoading] = useState(true);
+  const [currentStreak, setCurrentStreak] = useState<number>(0);
+
  
+
+  const navigate = useNavigate();
+
+ 
+
   useEffect(() => {
-    document.title = 'My Courses - LauraTek';
-  }, []);
+
+    document.title = "My Courses - LauraTek";
+
  
-  const filteredCourses = courses.filter((course) => {
-    if (filter === 'all') return true;
-    return course.status === filter;
-  });
 
-  const filterVariants = {
-    hidden: { opacity: 0, y: -10 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.3, staggerChildren: 0.1 }
+    const token = localStorage.getItem("access_token");
+
+ 
+
+    if (!token) {
+
+      console.error("No access_token found");
+
+      setLoading(false);
+
+      return;
+
     }
-  };
 
-  const buttonFilterVariants = {
-    hover: { scale: 1.05, y: -2 },
-    tap: { scale: 0.95 }
-  };
+ 
+
+    const fetchData = async () => {
+
+      try {
+
+        const coursesRes = await fetch(
+
+          `${import.meta.env.VITE_API_URL}/dashboard/my-courses`,
+
+          {
+
+            method: "GET",
+
+            headers: { Authorization: `Bearer ${token}` },
+
+          }
+
+        );
+
+ 
+
+        let instructorsData: Instructor[] = [];
+
+        const instructorsRes = await fetch(
+
+          `${import.meta.env.VITE_API_URL}/dashboard/my-instructors`,
+
+          {
+
+            method: "GET",
+
+            headers: { Authorization: `Bearer ${token}` },
+
+          }
+
+        );
+
+
+
+        if (instructorsRes.ok) {
+
+          instructorsData = await instructorsRes.json();
+
+          setInstructors(instructorsData);
+
+        }
+
+        /*
+        try {
+          const streakRes = await fetch(`${import.meta.env.VITE_API_URL}/student-streaks/my-streak`, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (streakRes.ok) {
+            const streakData = await streakRes.json();
+            setCurrentStreak(streakData.current_streak || 0);
+          }
+        } catch (error) {
+          console.error("Error fetching streak data:", error);
+        }
+        */
+
+        let formattedCourses: Course[] = [];
+
+        if (coursesRes.ok) {
+
+          const result = await coursesRes.json();
+
+          formattedCourses = result.map((item: any) => {
+
+            // Find instructor by matching course title
+
+            const instructor = instructorsData.find((inst: Instructor) =>
+
+              inst.course_titles?.includes(item.course_title)
+
+            );
+
+
+
+            return {
+
+              id: item.course_id,
+
+              title: item.course_title,
+
+              author: instructor?.name || "LauraTek",
+
+              description: item.description,
+
+              image: item.course_image,
+
+              status: item.completed
+
+                ? "completed"
+
+                : item.progress > 0
+
+                ? "inProgress"
+
+                : "notStarted",
+
+              weeksToComplete: item.duration || 0,
+
+              duration: item.duration || 0,
+
+              views: 0,
+
+              rating: instructor?.rating ?? 0,
+              progress: item.progress,
+              instructorId: instructor?.id,
+              authorImage: instructor?.profile_picture,
+            };
+
+          });
+
+          // Fetch progress for each course
+          const decoded = decodeJWT(token);
+          const studentId = decoded?.student_id || Number(decoded?.sub) || 12;
+          formattedCourses = await Promise.all(
+            formattedCourses.map(async (course: any) => {
+              if (!token) return course;
+              try {
+                const progRes = await fetch(
+                  `${import.meta.env.VITE_API_URL}/courses/students/${studentId}/courses/${course.id}/progress`,
+                  {
+                    method: "GET",
+                    headers: { Authorization: `Bearer ${token}` }
+                  }
+                );
+                if (progRes.ok) {
+                  const progData = await progRes.json();
+                  const newProgress = Math.round((progData.completion_ratio || 0) * 100);
+                  const isCompleted = course.completed || (progData.total_modules > 0 && progData.completed_modules === progData.total_modules);
+                  const newStatus = isCompleted ? "completed" : newProgress > 0 ? "inProgress" : "notStarted";
+                  return {
+                    ...course,
+                    completed_modules: progData.completed_modules,
+                    total_modules: progData.total_modules,
+                    progress: newProgress,
+                    status: newStatus,
+                  };
+                }
+              } catch (e) {
+                console.error(`Failed to fetch progress for course ${course.id}:`, e);
+              }
+              return course;
+            })
+          );
+        }
+
+        setCourses(formattedCourses);
+
+      } catch (error) {
+
+        console.error("Error fetching data:", error);
+
+      } finally {
+
+        setLoading(false);
+
+      }
+
+    };
+
+ 
+
+    fetchData();
+
+  }, []);
+
+ 
+
+  const filteredCourses = courses.filter((c) => {
+
+    return filter === "all" ? true : c.status === filter;
+
+  }).reverse();
+
+  const displayedCourses = showAllCourses ? filteredCourses : filteredCourses.slice(0, 3);
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
-      {/* Sidebar */}
-      <Sidebar sidebarOpen={sidebarOpen} setActive={setActive} active={active} />
+
+    <div className="fixed inset-0 w-full h-full flex bg-[#EFF6FF33] overflow-hidden">
+
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} setActive={setActive} active={active} />
+
  
-      {/* Main Content */}
-      <div className="flex-1 px-4 sm:px-6">
-        <Profileheader />
-        {/* Mobile Sidebar Toggle */}
-        <div className="lg:hidden py-4">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
-          >
-            {sidebarOpen ? 'Close Menu' : 'Open Menu'}
-          </button>
-        </div>
+
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+
+        <Profileheader onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
+
  
-        {/* Courses Content */}
-        <motion.div 
-          className="py-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <motion.h1 
-            className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-8 flex items-center gap-3"
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <BookOpen className="h-10 w-10" />
-            My Courses
-          </motion.h1>
+
+        <main className="flex-1 overflow-y-auto p-0 relative">
+          {selectedCurriculumCourse ? (
+            <CurriculumView 
+              course={selectedCurriculumCourse} 
+              onBack={() => setSelectedCurriculumCourse(null)} 
+            />
+          ) : (
+            <div className="p-6">
+              {/* New Learning Journey Hero Section */}
+
+          <div className="mb-10">
+
+            
+
+            <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4 relative z-10 px-1">
+
+              <div>
+
+                <h1 className="font-inter font-bold text-[23.7px] leading-[31.6px] tracking-normal text-[#101828] mb-2 flex items-center gap-2">
+                  My Learning Journey
+                </h1>
+
+                <p className="text-gray-500 font-medium text-sm md:text-base">
+
+                  Track progress, continue learning, and stay consistent 🚀
+
+                </p>
+
+              </div>
+
+            </div>
+
+
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 relative z-10">
+
+              {/* Card 1: Total Courses */}
+
+              <div className="relative overflow-hidden bg-[#F0F7FF] rounded-2xl p-5 border border-[#E0EFFF] shadow-[0px_0.99px_1.97px_-0.99px_#0000001A,0px_0.99px_2.96px_0px_#0000001A] transition-transform hover:scale-[1.02]">
+
+                <div className="absolute -top-6 -right-6 w-24 h-24 bg-[#E0EFFF] rounded-full opacity-70"></div>
+
+                <div className="w-10 h-10 rounded-full bg-[#1A8DFF] flex items-center justify-center text-white mb-4 relative z-10 shadow-sm shadow-blue-200">
+
+                  <BookOpen size={18} />
+
+                </div>
+
+                <div className="relative z-10">
+
+                  <p className="text-[13px] text-gray-500 font-medium mb-1">Total Courses</p>
+
+                  <p className="text-2xl font-bold text-gray-900">{courses.length}</p>
+
+                </div>
+
+              </div>
+
+
+
+              {/* Card 2: In Progress */}
+
+              <div className="relative overflow-hidden bg-[#FAEFFC] rounded-2xl p-5 border border-[#F3E0F6] shadow-[0px_0.99px_1.97px_-0.99px_#0000001A,0px_0.99px_2.96px_0px_#0000001A] transition-transform hover:scale-[1.02]">
+
+                <div className="absolute -top-6 -right-6 w-24 h-24 bg-[#F2DCF5] rounded-full opacity-70"></div>
+
+                <div className="w-10 h-10 rounded-full bg-[#D139E0] flex items-center justify-center text-white mb-4 relative z-10 shadow-sm shadow-fuchsia-200">
+
+                  <TrendingUp size={18} />
+
+                </div>
+
+                <div className="relative z-10">
+
+                  <p className="text-[13px] text-gray-500 font-medium mb-1">In Progress</p>
+
+                  <p className="text-2xl font-bold text-gray-900">{courses.filter(c => c.status === "inProgress").length}</p>
+
+                </div>
+
+              </div>
+
+
+
+              {/* Card 3: Completed */}
+
+              <div className="relative overflow-hidden bg-[#E7FEF1] rounded-2xl p-5 border border-[#CCF6D7] shadow-[0px_0.99px_1.97px_-0.99px_#0000001A,0px_0.99px_2.96px_0px_#0000001A] transition-transform hover:scale-[1.02]">
+
+                <div className="absolute -top-6 -right-6 w-24 h-24 bg-[#CCF6D7] rounded-full opacity-70"></div>
+
+                <div className="w-10 h-10 rounded-full bg-[#00C253] flex items-center justify-center text-white mb-4 relative z-10 shadow-sm shadow-green-200">
+
+                  <Award size={18} />
+
+                </div>
+
+                <div className="relative z-10">
+
+                  <p className="text-[13px] text-gray-500 font-medium mb-1">Completed</p>
+
+                  <p className="text-2xl font-bold text-gray-900">{courses.filter(c => c.status === "completed").length}</p>
+
+                </div>
+
+              </div>
+
+
+
+              {/* Card 4: Avg Completion */}
+
+              <div className="relative overflow-hidden bg-[#FFF7E8] rounded-2xl p-5 border border-[#FFEACB] shadow-[0px_0.99px_1.97px_-0.99px_#0000001A,0px_0.99px_2.96px_0px_#0000001A] transition-transform hover:scale-[1.02]">
+
+                <div className="absolute -top-6 -right-6 w-24 h-24 bg-[#FDE5C5] rounded-full opacity-70"></div>
+
+                <div className="w-10 h-10 rounded-full bg-[#FF8A00] flex items-center justify-center text-white mb-4 relative z-10 shadow-sm shadow-orange-200">
+
+                  <TrendingUp size={18} />
+
+                </div>
+
+                <div className="relative z-10">
+
+                  <p className="text-[13px] text-gray-500 font-medium mb-1">Avg Completion</p>
+
+                  <p className="text-2xl font-bold text-gray-900">
+
+                    {courses.length > 0 ? Math.round(courses.reduce((acc, c) => acc + c.progress, 0) / courses.length) : 0}%
+
+                  </p>
+
+                </div>
+
+              </div>
+
+
+
+              {/* Card 5: Weekly Hours */}
+
+              <div className="relative overflow-hidden bg-[#FFF0F4] rounded-2xl p-5 border border-[#FFE1E8] shadow-[0px_0.99px_1.97px_-0.99px_#0000001A,0px_0.99px_2.96px_0px_#0000001A] transition-transform hover:scale-[1.02]">
+
+                <div className="absolute -top-6 -right-6 w-24 h-24 bg-[#FFE1E8] rounded-full opacity-70"></div>
+
+                <div className="w-10 h-10 rounded-full bg-[#FF2D5F] flex items-center justify-center text-white mb-4 relative z-10 shadow-sm shadow-rose-200">
+
+                  <Clock size={18} />
+
+                </div>
+
+                <div className="relative z-10">
+
+                  <p className="text-[13px] text-gray-500 font-medium mb-1">Weekly Hours</p>
+
+                  <p className="text-2xl font-bold text-gray-900">{courses.reduce((acc, c) => acc + c.duration, 0)}</p>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-5 px-1">
+
+            <div>
+
+              <h2 className="font-inter font-bold text-[23.7px] leading-[31.6px] tracking-normal text-[#101828] mb-1">
+                Your Mentors
+              </h2>
+
+              <p className="text-[13px] font-semibold text-gray-500">
+
+                Learn from industry experts
+
+              </p>
+
+            </div>
+
+              <button 
+                onClick={() => setShowAllMentors(!showAllMentors)}
+                className="text-[13px] font-bold text-[#4A72FF] hover:text-[#3B5BCC] flex items-center transition-colors mt-3 md:mt-0 whitespace-nowrap"
+              >
+                {showAllMentors ? "View Less" : "View All"} <span className="ml-1 text-lg leading-none mb-[2px]">{showAllMentors ? "‹" : "›"}</span>
+              </button>
+
+          </div>
+
  
-          {/* Filter Buttons */}
-          <motion.div 
-            className="flex flex-wrap gap-3 mb-8 justify-center lg:justify-start"
-            variants={filterVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            {['all', 'inProgress', 'completed', 'notStarted'].map((status) => (
-              <motion.button
+
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 justify-items-center gap-[19.75px] mb-12 w-full max-w-[1319.29px] min-h-[317.97px] opacity-100 mx-auto">
+              {[1, 2, 3, 4].map((i, index) => (
+                 <div key={i} className={`w-full flex justify-center ${index === 3 ? 'hidden 2xl:flex' : ''} ${index === 2 ? 'hidden lg:flex' : ''} ${index === 1 ? 'hidden sm:flex' : ''}`}>
+                   <div className="relative bg-[#FFFFFF] rounded-[19.75px] w-full max-w-[315.01px] h-full min-h-[288.35px] p-[23.7px] flex flex-col shadow-sm border border-gray-50 items-center text-center">
+                      <Skeleton className="w-[86px] h-[86px] rounded-full mb-3" />
+                      <Skeleton className="w-32 h-6 mb-1" />
+                      <Skeleton className="w-16 h-4 mb-4" />
+                      <div className="flex gap-2 mb-4">
+                        <Skeleton className="w-16 h-6 rounded-[11.85px]" />
+                        <Skeleton className="w-16 h-6 rounded-[11.85px]" />
+                        <Skeleton className="w-16 h-6 rounded-[11.85px]" />
+                      </div>
+                      <Skeleton className="w-full max-w-[267.61px] mt-auto h-[36px] rounded-[13.82px]" />
+                   </div>
+                 </div>
+              ))}
+            </div>
+          ) : instructors.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 justify-items-center gap-[19.75px] mb-12 w-full max-w-[1319.29px] min-h-[317.97px] opacity-100 mx-auto">
+              {(showAllMentors ? instructors : instructors.slice(0, 4)).map((instructor, index) => (
+                <div 
+                  key={instructor.id} 
+                  className={`w-full flex justify-center ${!showAllMentors && index === 3 ? 'hidden 2xl:flex' : ''} ${!showAllMentors && index === 2 ? 'hidden lg:flex' : ''} ${!showAllMentors && index === 1 ? 'hidden sm:flex' : ''}`}
+                >
+                  <InstructorCard instructor={instructor} />
+                </div>
+              ))}
+            </div>
+          ) : (
+
+            <p className="text-center text-gray-500 mb-12 py-10">No mentors found.</p>
+
+          )}
+
+ 
+
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-7 flex-wrap gap-4 px-1">
+
+            <div>
+
+              <h2 className="font-inter font-bold text-[23.7px] leading-[31.6px] tracking-normal text-[#101828] mb-1">
+                Continue Learning
+              </h2>
+
+              <p className="text-[14px] font-semibold text-[#6B7280]">
+
+                {filteredCourses.length} courses available
+
+              </p>
+
+            </div>
+
+            <span
+              onClick={() => setShowAllCourses(!showAllCourses)}
+              className="text-blue-600 text-sm font-medium flex items-center gap-1 cursor-pointer hover:underline"
+            >
+              {showAllCourses ? 'View Less' : 'View All'} <ArrowRight size={16} className={`transition-transform ${showAllCourses ? 'rotate-180' : ''}`} />
+            </span>
+          </div>
+
+ 
+
+          <div className="flex items-center gap-3 mb-8 px-1 flex-wrap">
+
+            <span className="font-inter font-medium text-[13.82px] leading-[19.75px] tracking-[0px] text-[#0A0A0A] mr-1">Filter:</span>
+
+            {["all", "inProgress", "completed", "notStarted"].map((status) => (
+
+              <button
+
                 key={status}
+
                 onClick={() => setFilter(status)}
-                className={`px-6 py-3 rounded-full font-semibold shadow-md transition-all duration-300 flex items-center gap-2 ${
+
+                className={`px-4 py-[6px] font-inter font-medium text-[13.82px] leading-[19.75px] tracking-[0px] text-center capitalize transition-all focus:outline-none rounded-full ${
+
                   filter === status
-                    ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg hover:shadow-xl'
-                    : 'bg-white/70 backdrop-blur-sm text-gray-700 hover:bg-gray-100 border border-gray-200/50'
+
+                    ? "bg-gradient-to-r from-[#2B58FF] to-[#9B2BFF] text-white shadow-sm border border-transparent"
+
+                    : "bg-white border border-gray-100 text-[#0A0A0A] hover:bg-gray-50"
+
                 }`}
-                variants={buttonFilterVariants}
-                whileHover="hover"
-                whileTap="tap"
+
               >
-                <Filter className="h-4 w-4" />
-                {status === 'all'
-                  ? 'All Courses'
-                  : status === 'inProgress'
-                  ? 'In Progress'
-                  : status === 'completed'
-                  ? 'Completed'
-                  : 'Not Started'}
-              </motion.button>
+
+                {status === "all"
+
+                  ? "All"
+
+                  : status === "inProgress"
+
+                  ? "In Progress"
+
+                  : status === "completed"
+
+                  ? "Completed"
+
+                  : "Not Started"}
+
+              </button>
+
             ))}
-          </motion.div>
+
+          </div>
+
  
-          {/* Courses Grid */}
-          <motion.div 
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
-            variants={{
-              hidden: { opacity: 0 },
-              visible: {
-                opacity: 1,
-                transition: {
-                  staggerChildren: 0.15,
-                  delayChildren: 0.3
-                }
-              }
-            }}
-            initial="hidden"
-            animate="visible"
-          >
-            {filteredCourses.length > 0 ? (
-              filteredCourses.map((course) => <CourseCard key={course.id} course={course} />)
-            ) : (
-              <motion.p 
-                className="col-span-full text-center text-gray-500 text-lg py-12"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-              >
-                No courses found for this filter. <br />
-                <span className="text-sm">Try adjusting your filter above.</span>
-              </motion.p>
-            )}
-          </motion.div>
-        </motion.div>
+
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="bg-[#FFFFFF] rounded-[19.75px] w-full max-w-[423.96px] h-[500px] flex flex-col shadow-sm border border-gray-100/80 mx-auto overflow-hidden">
+                  <Skeleton className="h-[11.5rem] w-full rounded-none" />
+                  <div className="p-5 sm:p-6 md:p-7 flex flex-col flex-1">
+                    <Skeleton className="h-6 w-3/4 mb-2" />
+                    <Skeleton className="h-10 w-full mb-6" />
+                    <div className="flex items-center gap-3.5 mb-6 pb-6 border-b border-gray-100/80">
+                      <Skeleton className="w-11 h-11 rounded-full" />
+                      <div className="space-y-2">
+                         <Skeleton className="h-4 w-24" />
+                         <Skeleton className="h-3 w-16" />
+                      </div>
+                    </div>
+                    <div className="flex flex-col mt-auto">
+                       <Skeleton className="h-4 w-full mb-2" />
+                       <Skeleton className="h-8 w-full rounded-full" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+              {displayedCourses.length > 0 ? (
+
+                displayedCourses.map((course) => (
+
+                  <CourseCard key={course.id} course={course} onViewCurriculum={(c) => setSelectedCurriculumCourse(c)} currentStreak={currentStreak} />
+
+                ))
+
+              ) : (
+
+                <p className="text-center col-span-full text-gray-500 py-10">
+
+                  No courses found.
+
+                </p>
+
+              )}
+
+            </div>
+
+          )}
+
+            </div>
+          )}
+        </main>
+
       </div>
+
     </div>
+
   );
+
 };
+
  
+
 export default MyCourses;

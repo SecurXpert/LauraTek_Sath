@@ -1,48 +1,247 @@
-// src/components/SignInDialog.tsx
-import React, { useState } from "react";
-import { Mail, Lock, Shield, AlertCircle, Smartphone } from "lucide-react";
+
+import React, { useState, useEffect } from "react";
+import { Mail, Lock, Shield, AlertCircle, Smartphone, ChevronLeft, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
 import authApi from "@/api/authApi";
-
+import guestApi from "@/api/guestApi";
+ 
 import logo from "@/assets/techlogo.png";
-import mainImage from "@/assets/login.png";      // ← Main woman image
-import bgLogin from "@/assets/bg_login.png";      // ← Background pattern
-
+import mainImage from "@/assets/userside.png";
+ 
 export default function SignInDialog() {
   const [open, setOpen] = useState(false);
+  const [view, setView] = useState<"login" | "signup" | "forgot">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [mobile, setMobile] = useState("");
   const [otp, setOtp] = useState("");
   const [backupCode, setBackupCode] = useState("");
   const [tempToken, setTempToken] = useState<string | null>(null);
   const [qrImage, setQrImage] = useState("");
   const [backupCodes, setBackupCodes] = useState<string[]>([]);
-
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [timer, setTimer] = useState(180);
+  const [maskedMobile, setMaskedMobile] = useState("");
+ 
   const [step, setStep] = useState<"login" | "mfa" | "enroll" | "reenroll" | "backupCodes" | "finalMfa">("login");
   const [showBackupInput, setShowBackupInput] = useState(false);
-
+  const [showPassword, setShowPassword] = useState(false);
+  const [resetRole, setResetRole] = useState<"student" | "guest">("student");
+ 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
+ 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (otpSent && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [otpSent, timer]);
+ 
   const resetAll = () => {
     setEmail("");
     setPassword("");
+    setCurrentPassword("");
+    setNewPassword("");
+    setMobile("");
     setOtp("");
     setBackupCode("");
     setTempToken(null);
     setQrImage("");
     setBackupCodes([]);
+    setOtpSent(false);
+    setOtpVerified(false);
+    setTimer(180);
+    setMaskedMobile("");
+    setView("login");
     setStep("login");
     setShowBackupInput(false);
     setError("");
     setSuccess("");
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}.${secs.toString().padStart(2, "0")} min`;
+  };
+
+  const maskMobileNumber = (number: string) => {
+    if (number.length < 4) return number;
+    return `+91-${number.slice(0, 2)}****${number.slice(-4)}`;
+  };
+
+  const handleSendOTP = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (mobile.length < 10) {
+      setError("Please enter a valid mobile number");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setOtpSent(true);
+      setTimer(180);
+      setMaskedMobile(maskMobileNumber(mobile));
+      setSuccess("OTP sent successfully");
+    } catch (err: any) {
+      setError(err.message || "Failed to send OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyOTP = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (otp.length !== 6) {
+      setError("Please enter a valid 6-digit OTP");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setSuccess("Mobile verified successfully");
+      setTimeout(() => {
+        setOpen(false);
+        resetAll();
+      }, 1000);
+    } catch (err: any) {
+      setError(err.message || "Invalid OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendOTP = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setTimer(180);
+      setSuccess("OTP resent successfully");
+    } catch (err: any) {
+      setError(err.message || "Failed to resend OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+ 
+  // === FORGOT PASSWORD ===
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!mobile || !newPassword) {
+      setError("Please fill in all fields");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      if (resetRole === "student") {
+        await guestApi.studentForgotReset({
+          phone: `+91${mobile}`,
+          new_password: newPassword,
+        });
+      } else {
+        await guestApi.forgotReset({
+          phone: `+91${mobile}`,
+          new_password: newPassword,
+        });
+      }
+      setSuccess("Password reset successfully!");
+      setTimeout(() => {
+        resetAll();
+        setView("login");
+      }, 1500);
+    } catch (err: any) {
+      setError(err.response?.data?.detail || err.message || "Failed to reset password");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgotSendOTP = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (mobile.length < 10) {
+      setError("Please enter a valid mobile number");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      if (resetRole === "student") {
+        await guestApi.studentForgotSendOtp({ phone: `+91${mobile}` });
+      } else {
+        await guestApi.forgotSendOtp({ phone: `+91${mobile}` });
+      }
+      setOtpSent(true);
+      setTimer(180);
+      setMaskedMobile(maskMobileNumber(mobile));
+      setSuccess("OTP sent successfully");
+    } catch (err: any) {
+      setError(err.response?.data?.detail || "Failed to send OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgotVerifyOTP = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (otp.length !== 6) {
+      setError("Please enter a valid 6-digit OTP");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      if (resetRole === "student") {
+        await guestApi.studentForgotVerifyOtp({ phone: `+91${mobile}`, otp_code: otp });
+      } else {
+        await guestApi.forgotVerifyOtp({ phone: `+91${mobile}`, otp_code: otp });
+      }
+      setSuccess("OTP verified successfully");
+      setOtpVerified(true);
+    } catch (err: any) {
+      setError(err.response?.data?.detail || "Invalid OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgotResendOTP = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      if (resetRole === "student") {
+        await guestApi.studentForgotSendOtp({ phone: `+91${mobile}` });
+      } else {
+        await guestApi.forgotSendOtp({ phone: `+91${mobile}` });
+      }
+      setTimer(180);
+      setSuccess("OTP resent successfully");
+    } catch (err: any) {
+      setError(err.response?.data?.detail || "Failed to resend OTP");
+    } finally {
+      setLoading(false);
+    }
   };
 
   // === LOGIN ===
@@ -50,20 +249,35 @@ export default function SignInDialog() {
     e.preventDefault();
     setError("");
     setLoading(true);
-
+ 
     try {
-      const res = await authApi.login({ email, password });
+      let res;
+      let userRole = "student";
+      try {
+        res = await authApi.login({ email, password });
+        userRole = "student";
+      } catch (err: any) {
+        if (err.response?.status === 401 || err.response?.status === 404) {
+          res = await guestApi.login({ email, password });
+          userRole = "guest";
+        } else {
+          throw err;
+        }
+      }
       const data = res.data;
-
+ 
       if (data.access_token) {
         localStorage.setItem("access_token", data.access_token);
+        localStorage.setItem("token", data.access_token); // ✅ add this line
+        localStorage.setItem("userRole", userRole);
+        localStorage.setItem("role", userRole);
         setTimeout(() => {
           navigate("/dashboard");
           setOpen(false);
         }, 1000);
         return;
       }
-
+ 
       if (data.temp_token) {
         setTempToken(data.temp_token);
         setStep("mfa");
@@ -75,23 +289,28 @@ export default function SignInDialog() {
       setLoading(false);
     }
   };
-
+ 
   // === NORMAL MFA ===
   const handleMfa = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!tempToken || otp.length !== 6) return;
-
-    if (showBackupInput && backupCode.trim()) {
+    if (!tempToken) return;
+ 
+    if (showBackupInput) {
+      if (!backupCode.trim()) return;
       await startReEnrollWithBackupCode();
       return;
     }
 
+    if (otp.length !== 6) return;
+ 
     setLoading(true);
     setError("");
-
+ 
     try {
       const res = await authApi.verifyMfa({ temp_token: tempToken, code: otp });
       localStorage.setItem("access_token", res.data.access_token);
+localStorage.setItem("token", res.data.access_token); // ✅ add this line
+      
       setSuccess("Login successful!");
       setTimeout(() => {
         navigate("/dashboard");
@@ -103,7 +322,7 @@ export default function SignInDialog() {
       setLoading(false);
     }
   };
-
+ 
   // === FIRST-TIME ENROLLMENT ===
   const startEnrollment = async () => {
     if (!tempToken) return;
@@ -119,15 +338,15 @@ export default function SignInDialog() {
       setLoading(false);
     }
   };
-
+ 
   // === RE-ENROLL WITH BACKUP CODE ===
   const startReEnrollWithBackupCode = async () => {
     if (!tempToken || !backupCode.trim()) return;
-
+ 
     setLoading(true);
     setError("");
     setSuccess("Processing backup code...");
-
+ 
     try {
       await authApi.startReEnroll({ token: tempToken, current_code: backupCode.trim() });
       const blob = (await authApi.getReEnrollQr(tempToken)).data;
@@ -140,23 +359,23 @@ export default function SignInDialog() {
       setLoading(false);
     }
   };
-
+ 
   // === VERIFY ENROLL / RE-ENROLL ===
   const handoffToFinalMfa = async (e: React.FormEvent) => {
     e.preventDefault();
     if (otp.length !== 6 || !tempToken) return setError("Invalid code");
-
+ 
     setLoading(true);
     setError("");
-
+ 
     try {
       const res = await authApi.verifyEnroll(tempToken, otp);
       const data = res.data;
-
+ 
       if (data.backup_codes) {
         setBackupCodes(data.backup_codes);
-        setStep("finalMfa");
-        setSuccess("Setup complete! Now enter your authenticator code to log in.");
+        setStep("backupCodes");
+        setSuccess("Setup complete! Please save these backup codes.");
         setOtp("");
       }
     } catch (err: any) {
@@ -165,18 +384,19 @@ export default function SignInDialog() {
       setLoading(false);
     }
   };
-
+ 
   // === FINAL LOGIN AFTER SETUP ===
   const handleFinalMfaLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (otp.length !== 6 || !tempToken) return;
-
+ 
     setLoading(true);
     setError("");
-
+ 
     try {
       const res = await authApi.verifyMfa({ temp_token: tempToken, code: otp });
       localStorage.setItem("access_token", res.data.access_token);
+localStorage.setItem("token", res.data.access_token); // ✅ add this line
       setSuccess("Welcome back!");
       setTimeout(() => {
         navigate("/dashboard");
@@ -188,213 +408,543 @@ export default function SignInDialog() {
       setLoading(false);
     }
   };
-
+ 
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) resetAll(); setOpen(o); }}>
       <DialogTrigger asChild>
         <Button variant="ghost" className="font-medium text-base">Sign In</Button>
       </DialogTrigger>
-
-      <DialogContent className="p-0 max-w-6xl w-full h-screen md:h-auto rounded-none  overflow-hidden border-0">
-        <div className="flex flex-col md:flex-row h-full">
-          {/* LEFT SIDE – Background + Main Image */}
-          <div className="relative w-full md:w-1/2 hidden md:flex items-center justify-center overflow-hidden">
-            {/* Background pattern */}
-            <div
-              className="absolute inset-0 bg-cover bg-center opacity-30"
-              style={{ backgroundImage: `url(${bgLogin})` }}
-            />
-
-            {/* Main Woman Image */}
-            <img
-              src={mainImage}
-              alt="Welcome"
-              className="relative z-10 w-[82%] max-w-lg rounded-3xl shadow-2xl border-8 border-white/30 object-cover mt-5 mb-5"
-            />
-          </div>
-
-          {/* RIGHT SIDE – Login Form */}
-          <div className="w-full md:w-1/2 bg-white flex items-center justify-center px-8 py-12 md:px-16">
-            <div className="w-full max-w-md space-y-8">
-              {/* Logo & Heading */}
-              <div className="text-center space-y-6">
-                <img src={logo} alt="LAURATEK" className="h-12 mx-auto" />
-                <div>
-                  <h1 className="text-2xl font-extrabold text-gray-900 leading-tight">
-                    Let the Journey Begin!
-                  </h1>
-                  <p className="text-sm text-gray-900 mt-3">
-                    Unlock a world of education with a single click! <br /> Please login in to your account.
-                  </p>
-                </div>
+ 
+      <DialogContent className="!p-0 !m-0 !left-0 !top-0 !translate-x-0 !translate-y-0 !max-w-none !w-screen !h-screen !max-h-screen !rounded-none sm:!rounded-none !border-none !shadow-none overflow-hidden bg-white [&>button]:hidden">
+        <div className="flex w-full h-full">
+          {/* LEFT SIDE – Image on top + Purple gradient welcome section below */}
+          <div className="w-1/2 hidden md:flex flex-col">
+            {/* Student Image on top */}
+            <div className="h-[55%] w-full overflow-hidden">
+              <img
+                src={mainImage}
+                alt="Students learning"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            {/* Purple gradient welcome section */}
+            <div className="h-[45%] w-full bg-gradient-to-br from-blue-600 via-purple-600 to-purple-500 flex items-center justify-center p-8">
+              <div className="border-l-4 border-white pl-6 py-2">
+                <h2 className="text-white text-3xl font-semibold mb-3">Welcome To <span className="font-normal">Lauratek</span></h2>
+                <p className="text-white/90 text-sm leading-relaxed max-w-sm">
+                  A powerful platform designed to streamline learning, assessments, and student success with a modern, centralized experience.
+                </p>
               </div>
+            </div>
+          </div>
+ 
+          {/* RIGHT SIDE – Forms */}
+          <div className="w-full md:w-1/2 bg-white flex flex-col h-full">
+            {/* Header with Logo and Back button */}
+            <div className="flex items-center justify-between px-8 pt-6 pb-4">
+              <img src={logo} alt="LAURATEK" className="h-8" />
+              <button
+                type="button"
+                onClick={() => (view === "signup" || view === "forgot") ? setView("login") : setOpen(false)}
+                className="px-4 py-1.5 text-xs font-medium text-white bg-gradient-to-r from-blue-500 to-purple-600 rounded-md hover:from-blue-600 hover:to-purple-700 transition-all"
+              >
+                Back
+              </button>
+            </div>
 
-              {/* LOGIN STEP */}
-              {step === "login" && (
-                <form onSubmit={handleLogin} className="space-y-6">
-                  <div className="space-y-2">
-                    <Label className="text-base font-medium text-gray-700">Email Address</Label>
-                    <div className="relative">
-                      <Input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="@example.com"
-                        required
-                        className="h-10 pl-12 pr-4 text-base border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500"
-                      />
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            {/* Form Content */}
+            <div className="flex-1 flex items-center justify-center px-10 pb-8">
+              <div className="w-full max-w-sm">
+                {/* LOGIN VIEW */}
+                {view === "login" && step === "login" && (
+                  <div className="space-y-5">
+                    <div>
+                      <h1 className="text-2xl font-semibold text-gray-900 mb-1">Login</h1>
+                      <p className="text-gray-500 text-sm">Enter your credentials to login your account</p>
                     </div>
-                  </div>
 
-                  <div className="space-y-2">
-                    <Label className="text-base font-medium text-gray-700">Password</Label>
-                    <div className="relative">
-                      <Input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        className="h-10 pl-12 pr-4 text-base border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 mb-9"
-                      />
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <form onSubmit={handleLogin} className="space-y-4">
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-semibold text-gray-700">Email <span className="text-red-500">*</span></Label>
+                        <Input
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="Enter your email"
+                          required
+                          className="h-10 text-sm border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-semibold text-gray-700">Password <span className="text-red-500">*</span></Label>
+                        <div className="relative">
+                          <Input
+                            type={showPassword ? "text" : "password"}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Enter your password"
+                            required
+                            className="h-10 text-sm border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 pr-10"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                          >
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </button>
+                        </div>
+                      </div>
+
+                      {error && <p className="text-red-500 text-xs">{error}</p>}
+
+                      <div className="text-right">
+                        <button
+                          type="button"
+                          onClick={() => { setView("forgot"); setError(""); setSuccess(""); }}
+                          className="text-xs text-blue-600 hover:underline font-medium"
+                        >
+                          Forgot password?
+                        </button>
+                      </div>
+
+                      <Button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full h-10 text-sm font-medium bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all"
+                      >
+                        {loading ? "Loading..." : "Login"}
+                      </Button>
+
+                      <p className="text-center text-xs text-gray-600 pt-2">
+                        Don't have an account?{" "}
+                        <button
+                          type="button"
+                          onClick={() => setView("signup")}
+                          className="font-semibold text-blue-600 hover:underline"
+                        >
+                          Sign up
+                        </button>
+                      </p>
+                    </form>
+                  </div>
+                )}
+
+                {/* FORGOT PASSWORD VIEW */}
+                {view === "forgot" && (
+                  <div className="space-y-5">
+                    <div>
+                      <h1 className="text-2xl font-semibold text-gray-900 mb-1">Forgot Password</h1>
+                      <p className="text-gray-500 text-sm">Select your role and enter your phone number</p>
                     </div>
+
+                    {!otpVerified ? (
+                      !otpSent ? (
+                        <form onSubmit={handleForgotSendOTP} className="space-y-4">
+                          <div className="flex bg-gray-100 p-1 rounded-lg">
+                            <button
+                              type="button"
+                              className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-all ${resetRole === 'student' ? 'bg-white shadow-sm text-purple-600' : 'text-gray-500 hover:text-gray-700'}`}
+                              onClick={() => setResetRole('student')}
+                            >
+                              Student
+                            </button>
+                            <button
+                              type="button"
+                              className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-all ${resetRole === 'guest' ? 'bg-white shadow-sm text-purple-600' : 'text-gray-500 hover:text-gray-700'}`}
+                              onClick={() => setResetRole('guest')}
+                            >
+                              Guest
+                            </button>
+                          </div>
+                          <div className="space-y-1.5">
+                            <Label className="text-xs font-semibold text-gray-700">Phone Number <span className="text-red-500">*</span></Label>
+                            <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-purple-500 focus-within:border-purple-500 bg-white">
+                              <span className="px-3 py-2 bg-gray-50 text-sm font-medium text-gray-700 border-r border-gray-200 h-10 flex items-center">+91</span>
+                              <Input
+                                type="tel"
+                                value={mobile}
+                                onChange={(e) => setMobile(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                                placeholder="Enter your Mobile number"
+                                required
+                                className="flex-1 h-10 text-sm border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                              />
+                            </div>
+                          </div>
+
+                          {error && <p className="text-red-500 text-xs">{error}</p>}
+                          {success && <p className="text-green-500 text-xs">{success}</p>}
+
+                          <Button
+                            type="submit"
+                            disabled={loading || mobile.length !== 10}
+                            className="w-full h-10 text-sm font-medium bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all"
+                          >
+                            {loading ? "Sending..." : "Send OTP"}
+                          </Button>
+
+                          <p className="text-center text-xs text-gray-600 pt-2">
+                            Remember your password?{" "}
+                            <button
+                              type="button"
+                              onClick={() => { resetAll(); setView("login"); }}
+                              className="font-semibold text-blue-600 hover:underline"
+                            >
+                              Login
+                            </button>
+                          </p>
+                        </form>
+                      ) : (
+                        <div className="space-y-4">
+                          <div className="border border-purple-200 rounded-xl p-4 bg-white">
+                            <p className="text-xs font-medium text-gray-800 mb-3">
+                              <span className="font-semibold">Mobile Verification</span>
+                              <span className="text-gray-500"> (An OTP has been sent to the {maskedMobile})</span>
+                            </p>
+    
+                            <form onSubmit={handleForgotVerifyOTP} className="space-y-3">
+                              <Input
+                                value={otp}
+                                onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                                placeholder="Enter 6-digit OTP"
+                                maxLength={6}
+                                className="h-10 text-sm text-center tracking-widest border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 font-mono"
+                                autoFocus
+                              />
+    
+                              <div className="flex items-center justify-between text-xs">
+                                <span className="text-gray-600">Time left <span className="text-purple-600 font-medium">{formatTime(timer)}</span></span>
+                                <button
+                                  type="button"
+                                  onClick={handleForgotResendOTP}
+                                  disabled={timer > 0 || loading}
+                                  className="text-purple-600 hover:underline font-medium disabled:text-gray-400 disabled:no-underline"
+                                >
+                                  Resend OTP
+                                </button>
+                              </div>
+    
+                              {error && <p className="text-red-500 text-xs">{error}</p>}
+                              {success && <p className="text-green-500 text-xs">{success}</p>}
+    
+                              <Button
+                                type="submit"
+                                disabled={loading || otp.length !== 6}
+                                className="w-full h-9 text-xs font-medium border border-purple-300 bg-white text-purple-600 hover:bg-purple-50 rounded-lg transition-all"
+                              >
+                                {loading ? "Verifying..." : "Verify OTP"}
+                              </Button>
+                            </form>
+                          </div>
+    
+                          <p className="text-center text-xs text-gray-600 pt-2">
+                            Remember your password?{" "}
+                            <button
+                              type="button"
+                              onClick={() => { resetAll(); setView("login"); }}
+                              className="font-semibold text-blue-600 hover:underline"
+                            >
+                              Login
+                            </button>
+                          </p>
+                        </div>
+                      )
+                    ) : (
+                      <form onSubmit={handleForgotPassword} className="space-y-4">
+                        <div className="bg-green-50 border border-green-200 text-green-800 p-3 rounded-lg text-center text-sm font-medium">
+                          Verified: +91{mobile}
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <Label className="text-xs font-semibold text-gray-700">New Password <span className="text-red-500">*</span></Label>
+                          <div className="relative">
+                            <Input
+                              type={showNewPassword ? "text" : "password"}
+                              value={newPassword}
+                              onChange={(e) => setNewPassword(e.target.value)}
+                              placeholder="Enter new password"
+                              required
+                              className="h-10 text-sm border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 pr-10"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowNewPassword(!showNewPassword)}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                            >
+                              {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            </button>
+                          </div>
+                        </div>
+
+                        {error && <p className="text-red-500 text-xs">{error}</p>}
+                        {success && <p className="text-green-500 text-xs">{success}</p>}
+
+                        <Button
+                          type="submit"
+                          disabled={loading || !newPassword}
+                          className="w-full h-10 text-sm font-medium bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all"
+                        >
+                          {loading ? "Resetting..." : "Reset Password"}
+                        </Button>
+
+                        <p className="text-center text-xs text-gray-600 pt-2">
+                          Remember your password?{" "}
+                          <button
+                            type="button"
+                            onClick={() => { resetAll(); setView("login"); }}
+                            className="font-semibold text-blue-600 hover:underline"
+                          >
+                            Login
+                          </button>
+                        </p>
+                      </form>
+                    )}
                   </div>
+                )}
 
-                  {error && <p className="text-red-600 text-center text-sm">{error}</p>}
+                {/* SIGNUP / MOBILE VERIFICATION VIEW */}
+                {view === "signup" && (
+                  <div className="space-y-5">
+                    <div>
+                      <h1 className="text-2xl font-semibold text-gray-900 mb-1">Verify your Mobile Number</h1>
+                      <p className="text-gray-500 text-sm">We need to verify your phone for security</p>
+                    </div>
 
-                  <Button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full h-10 text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800  shadow-lg mt-6 transition-all"
-                  >
-                    {loading ? "Loading..." : "Login"}
-                  </Button>
+                    {!otpSent ? (
+                      <form onSubmit={handleSendOTP} className="space-y-4">
+                        <div className="space-y-1.5">
+                          <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-purple-500 focus-within:border-purple-500">
+                            <span className="px-3 py-2 bg-gray-50 text-sm font-medium text-gray-700 border-r border-gray-200">+91</span>
+                            <Input
+                              type="tel"
+                              value={mobile}
+                              onChange={(e) => setMobile(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                              placeholder="Enter your Mobile number"
+                              required
+                              className="flex-1 h-10 text-sm border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                            />
+                          </div>
+                        </div>
 
-                  <div className="text-center space-y-4 pt-4">
-                    <a href="#" className="text-indigo-600 text-sm hover:underline block">
-                      Forgot Password?
-                    </a>
-                    <p className="text-gray-600 text-base">
-                      Don't have an account?{" "}
+                        {error && <p className="text-red-500 text-xs">{error}</p>}
+                        {success && <p className="text-green-500 text-xs">{success}</p>}
+
+                        <Button
+                          type="submit"
+                          disabled={loading || mobile.length < 10}
+                          className="w-full h-10 text-sm font-medium bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all"
+                        >
+                          {loading ? "Sending..." : "Send OTP"}
+                        </Button>
+
+                        <p className="text-center text-xs text-gray-600 pt-2">
+                          Already have an account?{" "}
+                          <button
+                            type="button"
+                            onClick={() => setView("login")}
+                            className="font-semibold text-blue-600 hover:underline"
+                          >
+                            Login
+                          </button>
+                        </p>
+                      </form>
+                    ) : (
+                      <div className="space-y-4">
+                        {/* OTP Verification Card */}
+                        <div className="border border-purple-200 rounded-xl p-4 bg-white">
+                          <p className="text-xs font-medium text-gray-800 mb-3">
+                            <span className="font-semibold">Mobile Verification</span>
+                            <span className="text-gray-500"> (An OTP has been sent to the {maskedMobile})</span>
+                          </p>
+
+                          <form onSubmit={handleVerifyOTP} className="space-y-3">
+                            <Input
+                              value={otp}
+                              onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                              placeholder="Enter 6-digit OTP"
+                              maxLength={6}
+                              className="h-10 text-sm text-center tracking-widest border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 font-mono"
+                              autoFocus
+                            />
+
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-gray-600">Time left <span className="text-purple-600 font-medium">{formatTime(timer)}</span></span>
+                              <button
+                                type="button"
+                                onClick={handleResendOTP}
+                                disabled={timer > 0 || loading}
+                                className="text-purple-600 hover:underline font-medium disabled:text-gray-400 disabled:no-underline"
+                              >
+                                Resend OTP
+                              </button>
+                            </div>
+
+                            {error && <p className="text-red-500 text-xs">{error}</p>}
+                            {success && <p className="text-green-500 text-xs">{success}</p>}
+
+                            <Button
+                              type="submit"
+                              disabled={loading || otp.length !== 6}
+                              className="w-full h-9 text-xs font-medium border border-purple-300 bg-white text-purple-600 hover:bg-purple-50 rounded-lg transition-all"
+                            >
+                              {loading ? "Verifying..." : "Verify OTP"}
+                            </Button>
+                          </form>
+                        </div>
+
+                        <p className="text-center text-xs text-gray-600">
+                          Already have an account?{" "}
+                          <button
+                            type="button"
+                            onClick={() => setView("login")}
+                            className="font-semibold text-blue-600 hover:underline"
+                          >
+                            Login
+                          </button>
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+ 
+                {/* MFA STEP */}
+                {step === "mfa" && (
+                  <form onSubmit={handleMfa} className="space-y-6 text-center">
+                    <Shield className="w-12 h-12 text-purple-600 mx-auto" />
+                    <h3 className="text-xl font-bold">Two-Factor Authentication</h3>
+                    <p className="text-gray-600 text-sm">Enter the 6-digit code from your authenticator app</p>
+ 
+                    {!showBackupInput ? (
+                      <Input
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                        placeholder="000000"
+                        maxLength={6}
+                        className="text-center text-3xl font-mono tracking-widest h-14"
+                        autoFocus
+                      />
+                    ) : (
+                      <Input
+                        value={backupCode}
+                        onChange={(e) => setBackupCode(e.target.value)}
+                        placeholder="Enter backup code"
+                        className="text-center font-mono text-base"
+                        autoFocus
+                      />
+                    )}
+ 
+                    <div className="space-y-2">
                       <button
                         type="button"
-                        onClick={() => setOpen(false)}
-                        className="font-bold text-indigo-600 hover:underline"
+                        onClick={() => {
+                          setShowBackupInput(!showBackupInput);
+                          setOtp("");
+                          setBackupCode("");
+                        }}
+                        className="text-xs text-purple-600 hover:underline block"
                       >
-                        Sign Up For Free
+                        {showBackupInput ? "Use authenticator app" : "Lost access? Use backup code"}
                       </button>
-                    </p>
-                  </div>
-                </form>
-              )}
-
-              {/* MFA STEP */}
-              {step === "mfa" && (
-                <form onSubmit={handleMfa} className="space-y-8 text-center">
-                  <Shield className="w-16 h-16 text-indigo-600 mx-auto" />
-                  <h3 className="text-2xl font-bold">Two-Factor Authentication</h3>
-                  <p className="text-gray-600">Enter the 6-digit code from your authenticator app</p>
-
-                  {!showBackupInput ? (
+                      <button type="button" onClick={startEnrollment} className="text-xs text-purple-600 hover:underline block">
+                        First time? Set up 2FA
+                      </button>
+                    </div>
+ 
+                    {error && <p className="text-red-500 text-sm">{error}</p>}
+                    <Button
+                      type="submit"
+                      disabled={loading || (showBackupInput ? !backupCode.trim() : otp.length !== 6)}
+                      className="w-full h-11 bg-gradient-to-r from-blue-500 to-purple-600 text-sm font-medium rounded-lg"
+                    >
+                      Verify
+                    </Button>
+                  </form>
+                )}
+ 
+                {/* ENROLL / RE-ENROLL */}
+                {(step === "enroll" || step === "reenroll") && (
+                  <form onSubmit={handoffToFinalMfa} className="space-y-6 text-center">
+                    <Smartphone className="w-12 h-12 text-green-600 mx-auto" />
+                    <h3 className="text-xl font-bold text-green-700">Scan QR Code</h3>
+                    <p className="text-gray-600 text-sm">Open your authenticator app and scan the QR code</p>
+                    {qrImage && <img src={qrImage} alt="QR Code" className="w-48 h-48 mx-auto rounded-xl border-4 border-gray-200" />}
+                    <p className="text-gray-700 font-medium text-sm mt-2">Then enter the 6-digit code</p>
                     <Input
                       value={otp}
                       onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
                       placeholder="000000"
                       maxLength={6}
-                      className="text-center text-4xl font-mono tracking-widest h-16"
+                      className="text-center text-3xl font-mono tracking-widest h-14"
                       autoFocus
                     />
-                  ) : (
-                    <Input
-                      value={backupCode}
-                      onChange={(e) => setBackupCode(e.target.value)}
-                      placeholder="Enter backup code"
-                      className="text-center font-mono text-lg"
-                      autoFocus
-                    />
-                  )}
-
-                  <div className="space-y-3">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowBackupInput(!showBackupInput);
-                        setOtp("");
-                        setBackupCode("");
-                      }}
-                      className="text-sm text-indigo-600 hover:underline"
+                    {error && <p className="text-red-500 text-sm">{error}</p>}
+                    <Button
+                      type="submit"
+                      disabled={loading || otp.length !== 6}
+                      className="w-full h-11 bg-gradient-to-r from-green-500 to-emerald-600 text-sm font-medium rounded-lg"
                     >
-                      {showBackupInput ? "Use authenticator app" : "Lost access? Use backup code"}
-                    </button>
-                    <button type="button" onClick={startEnrollment} className="text-sm text-indigo-600 hover:underline block">
-                      First time? Set up 2FA
-                    </button>
+                      Verify Setup
+                    </Button>
+                  </form>
+                )}
+ 
+                {/* BACKUP CODES VIEW */}
+                {step === "backupCodes" && (
+                  <div className="space-y-6 text-center">
+                    <Shield className="w-12 h-12 text-purple-600 mx-auto" />
+                    <h3 className="text-xl font-bold text-purple-700">Save Your Backup Codes</h3>
+                    <p className="text-gray-600 text-sm">
+                      These codes can be used to access your account if you lose your authenticator device.
+                      Please save them securely. Each code can only be used once.
+                    </p>
+                    
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                      <div className="grid grid-cols-2 gap-3">
+                        {backupCodes.map((code, index) => (
+                          <div key={index} className="font-mono text-sm bg-white py-1.5 rounded border border-gray-100 shadow-sm text-center">
+                            {code}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <Button
+                      type="button"
+                      onClick={() => { setStep("finalMfa"); setSuccess(""); }}
+                      className="w-full h-11 bg-gradient-to-r from-blue-500 to-purple-600 text-sm font-medium rounded-lg text-white shadow-md hover:shadow-lg transition-all"
+                    >
+                      I have saved these codes
+                    </Button>
                   </div>
+                )}
 
-                  {error && <p className="text-red-600">{error}</p>}
-                  <Button
-                    type="submit"
-                    disabled={loading || (showBackupInput ? !backupCode.trim() : otp.length !== 6)}
-                    className="w-full h-14 bg-gradient-to-r from-indigo-600 to-purple-700 text-lg font-bold rounded-full"
-                  >
-                    Verify
-                  </Button>
-                </form>
-              )}
-
-              {/* ENROLL / RE-ENROLL */}
-              {(step === "enroll" || step === "reenroll") && (
-                <form onSubmit={handoffToFinalMfa} className="space-y-8 text-center">
-                  <Smartphone className="w-16 h-16 text-green-600 mx-auto" />
-                  <h3 className="text-2xl font-bold text-green-700">Scan QR Code</h3>
-                  <p className="text-gray-600">Open your authenticator app and scan the QR code</p>
-                  {qrImage && <img src={qrImage} alt="QR Code" className="w-64 h-64 mx-auto rounded-2xl border-4 border-gray-200" />}
-                  <p className="text-gray-700 font-medium mt-4">Then enter the 6-digit code</p>
-                  <Input
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                    placeholder="000000"
-                    maxLength={6}
-                    className="text-center text-4xl font-mono tracking-widest h-16"
-                    autoFocus
-                  />
-                  {error && <p className="text-red-600">{error}</p>}
-                  <Button
-                    type="submit"
-                    disabled={loading || otp.length !== 6}
-                    className="w-full h-14 bg-gradient-to-r from-green-600 to-emerald-700 text-lg font-bold rounded-full"
-                  >
-                    Verify Setup
-                  </Button>
-                </form>
-              )}
-
-              {/* FINAL MFA AFTER ENROLLMENT */}
-              {step === "finalMfa" && (
-                <form onSubmit={handleFinalMfaLogin} className="space-y-8 text-center">
-                  <Shield className="w-16 h-16 text-green-600 mx-auto" />
-                  <h3 className="text-2xl font-bold text-green-700">You're all set!</h3>
-                  <p className="text-gray-600">Enter your authenticator code to complete login</p>
-                  <Input
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                    placeholder="000000"
-                    maxLength={6}
-                    className="text-center text-4xl font-mono tracking-widest h-16"
-                    autoFocus
-                  />
-                  {success && <p className="text-green-600 font-medium mt-4">{success}</p>}
-                  {error && <p className="text-red-600">{error}</p>}
-                  <Button
-                    type="submit"
-                    disabled={loading || otp.length !== 6}
-                    className="w-full h-14 bg-gradient-to-r from-green-600 to-emerald-700 text-lg font-bold rounded-full"
-                  >
-                    Complete Login
-                  </Button>
-                </form>
-              )}
+                {/* FINAL MFA AFTER ENROLLMENT */}
+                {step === "finalMfa" && (
+                  <form onSubmit={handleFinalMfaLogin} className="space-y-6 text-center">
+                    <Shield className="w-12 h-12 text-green-600 mx-auto" />
+                    <h3 className="text-xl font-bold text-green-700">You're all set!</h3>
+                    <p className="text-gray-600 text-sm">Enter your authenticator code to complete login</p>
+                    <Input
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                      placeholder="000000"
+                      maxLength={6}
+                      className="text-center text-3xl font-mono tracking-widest h-14"
+                      autoFocus
+                    />
+                    {success && <p className="text-green-600 font-medium text-sm mt-2">{success}</p>}
+                    {error && <p className="text-red-500 text-sm">{error}</p>}
+                    <Button
+                      type="submit"
+                      disabled={loading || otp.length !== 6}
+                      className="w-full h-11 bg-gradient-to-r from-green-500 to-emerald-600 text-sm font-medium rounded-lg"
+                    >
+                      Complete Login
+                    </Button>
+                  </form>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -402,3 +952,4 @@ export default function SignInDialog() {
     </Dialog>
   );
 }
+ 

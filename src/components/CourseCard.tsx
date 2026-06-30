@@ -20,9 +20,11 @@ const CourseCard = ({ id, title, image, description, duration, level }: CourseCa
       w-full max-w-sm mx-auto
     ">
 
+      
+      
       {/* Image with 5px Margin */}
 <div className="relative overflow-hidden rounded-t-2xl bg-white">
-  <div className="m-[5px]">
+  <div className="m-[2px]">
     <img 
       src={image} 
       alt={title}
@@ -40,7 +42,7 @@ const CourseCard = ({ id, title, image, description, duration, level }: CourseCa
 
       <CardContent className="p-5 space-y-3">
         {/* Title + Duration */}
-        <div className="flex items-center justify-between">
+        {/* <div className="flex items-center justify-between">
           <h3 className="
             text-lg font-semibold text-blue-900 line-clamp-1
             group-hover:text-[#001BB7] transition-colors
@@ -51,7 +53,28 @@ const CourseCard = ({ id, title, image, description, duration, level }: CourseCa
             <Clock className="w-4 h-4" />
             <span>{duration}</span>
           </div>
-        </div>
+        </div> */}
+
+        <div className="flex items-center justify-between gap-3">
+  <h3
+    className="
+      flex-1
+      min-w-0
+      text-lg font-semibold text-blue-900
+      truncate
+      group-hover:text-[#001BB7]
+      transition-colors
+    "
+  >
+    {title}
+  </h3>
+
+  <div className="flex items-center gap-1 text-sm text-[#001BB7] shrink-0 whitespace-nowrap">
+    <Clock className="w-4 h-4" />
+    <span>{duration}</span>
+  </div>
+</div>
+
 
         {/* Description */}
         <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed">
@@ -74,6 +97,8 @@ const CourseCard = ({ id, title, image, description, duration, level }: CourseCa
         </Button>
       </CardFooter>
     </Card>
+
+    
   );
 };
 

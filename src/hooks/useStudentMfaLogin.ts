@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE = "http://192.168.0.103:8000";
+const API_BASE = "http://192.168.0.100:8000";
 
 interface QrData {
   otpAuthUrl: string;

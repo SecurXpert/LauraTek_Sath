@@ -96,6 +96,8 @@
 
 
 // src/api/authApi.ts
+
+// src/api/authApi.ts
 import api from "./instance";
 
 export type LoginCredentials = { email: string; password: string };
@@ -126,6 +128,9 @@ const authApi = {
 
   verifyReEnroll: (token: string, code: string) =>
     api.post("/mfa/re-enroll/verify", { token, data: { code } }),
+
+  changePassword: (data: { current_password: string; new_password: string }) =>
+    api.put("/student/change-password", data),
 };
 
 export default authApi;

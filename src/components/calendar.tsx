@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar as CalendarIcon, Clock, Zap } from "lucide-react";
+import { Calendar as CalendarIcon, Clock, Video, CalendarPlus, Zap, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Sidebar from "./sidebar";
+import { Menu, X } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,63 +14,35 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Profileheader from "@/components/ui/Profileheader";
+import CalendarGrid from "./ui/calendar-page/CalendarGrid";
+import UpcomingEvents from "./ui/calendar-page/UpcomingEvents";
+import QuickActions from "./ui/calendar-page/QuickActions";
 
-// Dummy student-related calendar data (removed appointments and emergency)
-const calendarEvents = [
-  { 
-    id: 1, 
-    date: "2025-10-01", 
-    time: "9:00 AM", 
-    type: "live-class", 
-    title: "Daily Live Class - Calculus Basics", 
-    status: "confirmed" 
-  },
-  { 
-    id: 5, 
-    date: "2025-10-25", 
-    time: "10:30 AM", 
-    type: "live-class", 
-    title: "Prof. Reddy - Interactive Q&A Session", 
-    status: "confirmed" 
-  },
-  { 
-    id: 7, 
-    date: "2025-10-28", 
-    time: "11:00 AM", 
-    type: "event", 
-    title: "Special Guest Lecture: AI in Education", 
-    status: "confirmed" 
-  },
-  { 
-    id: 8, 
-    date: "2025-10-28", 
-    time: "2:00 PM", 
-    type: "live-class", 
-    title: "Daily Live Class - Data Structures", 
-    status: "confirmed" 
-  },
-  { 
-    id: 9, 
-    date: "2025-10-30", 
-    time: "3:00 PM", 
-    type: "special-event", 
-    title: "Midterm Exam Review Workshop", 
-    status: "confirmed" 
-  },
-  { 
-    id: 10, 
-    date: "2025-10-25", 
-    time: "2:00 PM", 
-    type: "special-event", 
-    title: "Group Study Session - Chemistry", 
-    status: "confirmed" 
-  },
-];
+// Calendar data - only API fetched live classes will be displayed
 
-const currentYear = 2025;
-const initialMonth = 9; // October
-const currentDate = new Date(currentYear, initialMonth, 28); // Current date: Oct 28, 2025
-const selectedDateInit = 28;
+// API response type
+interface LiveClass {
+  id: number;
+  course_id: number;
+  title: string;
+  scheduled_at: string;
+  join_link: string;
+  recorded_link: string;
+}
+
+interface Quiz {
+  id: number;
+  title: string;
+  description: string;
+  timer: number;
+}
+
+// Use actual current date
+const now = new Date();
+const currentYear = now.getFullYear();
+const initialMonth = now.getMonth();
+const currentDate = now;
+const selectedDateInit = now.getDate();
 
 // Generate calendar days
 const generateCalendarDays = (year, month) => {
@@ -97,7 +70,105 @@ const Calendar = () => {
   const [currentMonth, setCurrentMonth] = useState(initialMonth);
   const [currentYearState, setCurrentYearState] = useState(currentYear);
   const [selectedDate, setSelectedDate] = useState(selectedDateInit);
+  const [liveClasses, setLiveClasses] = useState([]);
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [apiInfo, setApiInfo] = useState<{method: string, endpoint: string, duration: number} | null>(null);
+  const [showApiDetails, setShowApiDetails] = useState(false);
   const days = generateCalendarDays(currentYearState, currentMonth);
+
+  // Fetch upcoming live classes from API
+  useEffect(() => {
+    const fetchLiveClasses = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/dashboard/upcoming-live-classes`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (res.ok) {
+          const data = await res.json();
+          const sortedData = [...data].sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime());
+          setLiveClasses(sortedData);
+
+          // Navigate to the month of the first upcoming event
+          if (sortedData.length > 0) {
+            const firstEvent = sortedData[0];
+            const eventDate = new Date(firstEvent.scheduled_at);
+            setCurrentYearState(eventDate.getFullYear());
+            setCurrentMonth(eventDate.getMonth());
+            setSelectedDate(eventDate.getDate());
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching live classes:", error);
+      }
+    };
+
+    fetchLiveClasses();
+  }, []);
+
+  // Fetch available quizzes from API
+  useEffect(() => {
+    const fetchQuizzes = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+        const startTime = performance.now();
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/dashboard/available-quizzes`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const endTime = performance.now();
+        const duration = Math.round(endTime - startTime);
+        
+        if (res.ok) {
+          const data = await res.json();
+          setQuizzes(data);
+          setApiInfo({
+            method: 'GET',
+            endpoint: "/dashboard/available-quizzes",
+            duration: duration
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching quizzes:", error);
+      }
+    };
+
+    fetchQuizzes();
+  }, []);
+
+  // Convert API live classes to calendar event format
+  const apiEvents = liveClasses.map((liveClass) => {
+    const scheduledDate = new Date(liveClass.scheduled_at);
+    const dateStr = scheduledDate.toISOString().split('T')[0];
+    const timeStr = scheduledDate.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+
+    return {
+      id: `api-${liveClass.id}`,
+      date: dateStr,
+      time: timeStr,
+      type: "live-class",
+      title: liveClass.title,
+      shortTitle: liveClass.title.length > 12 ? liveClass.title.substring(0, 12) + '...' : liveClass.title,
+      status: "confirmed",
+      joinLink: liveClass.join_link
+    };
+  });
+
+  // Only API events (no hardcoded events)
+  const calendarEvents = apiEvents;
   const monthNames = ["January", "February", "March", "April", "May", "June", 
     "July", "August", "September", "October", "November", "December"];
 
@@ -109,24 +180,37 @@ const Calendar = () => {
   const getEventTypeColor = (type: string) => {
     switch (type) {
       case "live-class":
-        return "bg-success";
-      case "event":
-        return "bg-purple-500";
-      case "special-event":
-        return "bg-amber-500";
+        return "bg-blue-100 text-blue-600";
+      case "assignment":
+        return "bg-amber-100 text-amber-600";
+      case "quiz":
+        return "bg-teal-100 text-teal-600";
       default:
-        return "bg-muted";
+        return "bg-gray-100 text-gray-600";
+    }
+  };
+
+  const getUpcomingEventBadgeColor = (type: string) => {
+    switch (type) {
+      case "live-class":
+        return "bg-gradient-to-r from-blue-500 to-purple-600 text-white";
+      case "assignment":
+        return "bg-gradient-to-r from-amber-400 to-red-500 text-white";
+      case "quiz":
+        return "bg-teal-500 text-white";
+      default:
+        return "bg-gray-500 text-white";
     }
   };
 
   const getTypeLabel = (type: string) => {
     switch (type) {
       case "live-class":
-        return "Live Class";
-      case "event":
-        return "Event";
-      case "special-event":
-        return "Special Class";
+        return "Live Classes";
+      case "assignment":
+        return "Assignments";
+      case "quiz":
+        return "Quizzes";
       default:
         return type;
     }
@@ -153,235 +237,113 @@ const Calendar = () => {
   const totalSpecialClasses = calendarEvents.filter(e => e.type === "event" || e.type === "special-event").length;
 
   const handlePreviousMonth = () => {
-    if (currentMonth === 0) {
-      setCurrentMonth(11);
-      setCurrentYearState(currentYearState - 1);
+    const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    const prevYear = currentMonth === 0 ? currentYearState - 1 : currentYearState;
+    setCurrentMonth(prevMonth);
+    setCurrentYearState(prevYear);
+
+    const prefix = `${prevYear}-${String(prevMonth + 1).padStart(2, '0')}`;
+    const monthEvents = calendarEvents.filter(e => e.date.startsWith(prefix));
+    if (monthEvents.length > 0) {
+      const firstEventDay = new Date(monthEvents[0].date).getDate();
+      setSelectedDate(firstEventDay);
     } else {
-      setCurrentMonth(currentMonth - 1);
-    }
-    // Reset selected if needed
-    if (selectedDate > new Date(currentYearState, currentMonth, 0).getDate()) {
-      setSelectedDate(1);
+      setSelectedDate(0);
     }
   };
 
   const handleNextMonth = () => {
-    if (currentMonth === 11) {
-      setCurrentMonth(0);
-      setCurrentYearState(currentYearState + 1);
+    const nextMonth = currentMonth === 11 ? 0 : currentMonth + 1;
+    const nextYear = currentMonth === 11 ? currentYearState + 1 : currentYearState;
+    setCurrentMonth(nextMonth);
+    setCurrentYearState(nextYear);
+
+    const prefix = `${nextYear}-${String(nextMonth + 1).padStart(2, '0')}`;
+    const monthEvents = calendarEvents.filter(e => e.date.startsWith(prefix));
+    if (monthEvents.length > 0) {
+      const firstEventDay = new Date(monthEvents[0].date).getDate();
+      setSelectedDate(firstEventDay);
     } else {
-      setCurrentMonth(currentMonth + 1);
+      setSelectedDate(0);
     }
-    // Reset selected if needed
-    const daysInNextMonth = new Date(currentYearState, currentMonth + 1, 0).getDate();
-    if (selectedDate > daysInNextMonth) {
-      setSelectedDate(1);
+  };
+
+  const handleScheduleEvent = async () => {
+    try {
+      const token = localStorage.getItem("access_token");
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/dashboard/upcoming-live-classes`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        if (data.length > 0 && data[0].join_link) {
+          window.open(data[0].join_link, '_blank');
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching live classes for schedule event:", error);
     }
   };
 
   return (
-    <div className="flex h-screen bg-[#f7fafd]">
+    <div className="fixed inset-0 w-full h-full flex bg-[#f7fafd] overflow-hidden">
       <Sidebar sidebarOpen={sidebarOpen} setActive={setActive} active={active} />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Header */}
         <Profileheader />
 
+
+
         {/* Content Area */}
-        <main className="p-6 flex-1 overflow-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <main className="p-4 md:p-6 flex-1 overflow-auto">
+          {/* Page Header */}
+          <div className="mb-6 flex justify-between items-start md:items-center">
+            <div>
+              <h1 className="font-inter font-bold text-xl md:text-[23.7px] leading-tight md:leading-[31.6px] tracking-normal text-[#101828]">Calendar</h1>
+              <p className="text-gray-500 mt-1 text-xs md:text-sm">Manage your schedule and upcoming events</p>
+            </div>
+            <button 
+              className="lg:hidden p-2 rounded-md bg-white border border-gray-200 text-gray-600 shadow-sm"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+            >
+              {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
             {/* Main left content */}
             <div className="lg:col-span-2 flex flex-col gap-6">
-              {/* Calendar Grid */}
-              <Card className="shadow-card">
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>{monthNames[currentMonth]} {currentYearState}</span>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm" onClick={handlePreviousMonth}>
-                        Previous
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={handleNextMonth}>
-                        Next
-                      </Button>
-                    </div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-7 gap-1 mb-4">
-                    {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(day => (
-                      <div key={day} className="p-2 text-center font-medium text-muted-foreground">
-                        {day}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="grid grid-cols-7 gap-1">
-                    {days.map((day, index) => (
-                      <div
-                        key={index}
-                        className={`
-                          min-h-[80px] p-2 border rounded-lg cursor-pointer transition-all duration-200
-                          ${day === null ? 'invisible' : ''}
-                          ${day === currentDate.getDate() && currentMonth === initialMonth ? 'bg-primary text-primary-foreground' : 'hover:bg-accent'}
-                          ${day === selectedDate ? 'ring-2 ring-primary' : ''}
-                        `}
-                        onClick={() => day && setSelectedDate(day)}
-                      >
-                        {day && (
-                          <>
-                            <div className="font-medium">{day}</div>
-                            <div className="space-y-1 mt-1">
-                              {getEventsForDate(day).slice(0, 2).map((event) => (
-                                <div
-                                  key={event.id}
-                                  className={`text-xs p-1 rounded text-white truncate ${getEventTypeColor(event.type)}`}
-                                  title={`${event.time} ${event.title}`}
-                                >
-                                  {`${event.time} ${event.title.substring(0, 20)}${event.title.length > 20 ? '...' : ''}`}
-                                </div>
-                              ))}
-                              {getEventsForDate(day).length > 2 && (
-                                <div className="text-xs text-muted-foreground">
-                                  +{getEventsForDate(day).length - 2} more
-                                </div>
-                              )}
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Selected Date Events */}
-              <Card className="shadow-card">
-                <CardHeader>
-                  <CardTitle>
-                    Events for {monthNames[currentMonth]} {selectedDate}, {currentYearState}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {getEventsForDate(selectedDate).length === 0 ? (
-                      <p className="text-muted-foreground text-center py-8">
-                        No events for this date
-                      </p>
-                    ) : (
-                      getEventsForDate(selectedDate).map((event) => (
-                        <div key={event.id} className="p-4 border rounded-lg space-y-2">
-                          <div className="flex items-center justify-between">
-                            <Badge variant={getStatusBadge(event.status)}>
-                              {event.status}
-                            </Badge>
-                            <span className="text-sm text-muted-foreground">{event.time}</span>
-                          </div>
-                          <h4 className="font-medium">{event.title}</h4>
-                          <div className="flex items-center gap-2">
-                            <div className={`w-3 h-3 rounded-full ${getEventTypeColor(event.type)}`}></div>
-                            <span className="text-sm">{getTypeLabel(event.type)}</span>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+              <CalendarGrid
+                currentMonth={currentMonth}
+                currentYearState={currentYearState}
+                monthNames={monthNames}
+                days={days}
+                currentDate={currentDate}
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+                getEventsForDate={getEventsForDate}
+                handlePreviousMonth={handlePreviousMonth}
+                handleNextMonth={handleNextMonth}
+                getEventTypeColor={getEventTypeColor}
+              />
             </div>
-            {/* Right sidebar */}
-            <div className="flex flex-col gap-6">
-              {/* Calendar Stats - 3 cards */}
-              <div className="grid gap-6 md:grid-cols-3">
-                <Card className="shadow-card">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Today's Events</CardTitle>
-                    <CalendarIcon className="h-5 w-5 text-primary" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{todaysEvents}</div>
-                  </CardContent>
-                </Card>
-                
-                <Card className="shadow-card">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Live Classes</CardTitle>
-                    <Clock className="h-5 w-5 text-success" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-success">{totalLiveClasses}</div>
-                  </CardContent>
-                </Card>
 
-                <Card className="shadow-card">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Special Classes</CardTitle>
-                    <Zap className="h-5 w-5 text-purple-500" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-purple-600">{totalSpecialClasses}</div>
-                  </CardContent>
-                </Card>
-              </div>
-              {/* Notifications */}
-              <div className="bg-white rounded-lg shadow p-4 border border-gray-100">
-                <div className="font-semibold mb-2 text-sm">Notifications</div>
-                <ul className="space-y-2">
-                  <li className="text-xs">
-                    <span className="font-medium text-blue-700">
-                      • New Live Class Reminder
-                    </span>
-                    <div className="text-gray-500">Data Structures class starts in 1 hour</div>
-                    <div className="text-gray-400 text-xs">1 hour ago</div>
-                  </li>
-                  <li className="text-xs">
-                    <span className="font-medium text-blue-700">
-                      • Workshop Update
-                    </span>
-                    <div className="text-gray-500">Midterm Review materials uploaded</div>
-                    <div className="text-gray-400 text-xs">3 hours ago</div>
-                  </li>
-                  <li className="text-xs">
-                    <span className="font-medium text-blue-700">
-                      • Guest Lecture
-                    </span>
-                    <div className="text-gray-500">AI in Education session recording available</div>
-                    <div className="text-gray-400 text-xs">5 hours ago</div>
-                  </li>
-                </ul>
-                <button className="mt-2 w-full text-blue-600 text-xs font-medium hover:underline">
-                  View all notifications
-                </button>
-              </div>
-              {/* Upcoming Assignments */}
-              <div className="bg-white rounded-lg shadow p-4 border border-gray-100">
-                <div className="font-semibold mb-2 text-sm">
-                  Upcoming Quizzes
-                </div>
-                <ul className="space-y-2">
-                  <li className="flex justify-between items-center text-xs">
-                    <span>Calculus Quiz</span>
-                    <span className="bg-orange-100 text-orange-700 px-2 py-0.5 rounded text-xs">
-                      Due tomorrow
-                    </span>
-                  </li>
-                  <li className="flex justify-between items-center text-xs">
-                    <span>Data Structures Assignment</span>
-                    <span className="bg-orange-100 text-orange-700 px-2 py-0.5 rounded text-xs">
-                      Due in 2 days
-                    </span>
-                  </li>
-                  <li className="flex justify-between items-center text-xs">
-                    <span>Chemistry Lab Report</span>
-                    <span className="bg-orange-100 text-orange-700 px-2 py-0.5 rounded text-xs">
-                      Due in 1 week
-                    </span>
-                  </li>
-                </ul>
-                <button className="mt-2 w-full text-blue-600 text-xs font-medium hover:underline">
-                  View all quizzes
-                </button>
-              </div>
+            {/* Right sidebar */}
+            <div className="flex flex-col gap-4 md:gap-6 lg:overflow-auto lg:max-h-[calc(100vh-140px)]">
+              <UpcomingEvents
+                calendarEvents={calendarEvents}
+                getUpcomingEventBadgeColor={getUpcomingEventBadgeColor}
+              />
+
+              {/* Quick Actions */}
+              <QuickActions handleScheduleEvent={handleScheduleEvent} />
             </div>
           </div>
         </main>

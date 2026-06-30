@@ -1,0 +1,9 @@
+{
+  "projects": {
+    "default": "laura-10e54",
+    "prod": "laura-10e54",
+    "laura": "laura-dbc7e"
+  },
+  "targets": {},
+  "etags": {}
+}

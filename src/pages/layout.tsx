@@ -6,14 +6,14 @@ import CourseDetail from "../pages/CourseDetail";
 import NotFound from "../pages/NotFound";
 import Jobs from "../components/ui/jobs";
 import Dashboard from "../components/ui/Dashboard";
-import Analytics from "../components/ui/Analytics";
+// import Analytics from "../components/ui/Analytics";
 import Settings from "../components/ui/settings";
 
 import Compiler from "../components/ui/compiler";
 import Attendance from "../components/ui/attendance";
 import MyCourses from "../components/mycourses";
 import Assessments from "@/components/assessments&grades";
-import Calendar from "../components/calendar"
+// import Calendar from "../components/calendar"
 import Sidebar from "../components/sidebar";
 
 const Layout = () => (
@@ -29,8 +29,8 @@ const Layout = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/course/:id" element={<CourseDetail />} />
           <Route path="/dashboard/courses" element={<MyCourses />} />
-          <Route path="/dashboard/analytics" element={<Analytics />} />
-          <Route path="/dashboard/calendar" element={<Calendar />} />
+          {/* <Route path="/dashboard/analytics" element={<Analytics />} /> */}
+          {/* <Route path="/dashboard/calendar" element={<Calendar />} /> */}
           <Route path="/dashboard/settings" element={<Settings />} />
           <Route path="/dashboard/mycourses" element={<MyCourses />} />
           <Route path="/dashboard/attendance" element={<Attendance />} />

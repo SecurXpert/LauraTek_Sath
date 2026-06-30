@@ -1,73 +1,106 @@
-import { useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { BookOpen, BarChart3, Award, Clock, Play, Users, Star, Bell, FileText, AlertCircle, ArrowRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import api from "@/api/instance";
+
+import {
+  BookOpen,
+  Award,
+  Clock,
+  TrendingUp,
+} from "lucide-react";
+
 import Sidebar from "../sidebar";
 import Profileheader from "@/components/ui/Profileheader";
-import Header from "../Header";
+import CurriculumView from "./CurriculumView";
 
-const summaryCards = [
-  { label: "Total Courses", value: 4, icon: BookOpen },
-  { label: "Total Progress", value: "78%", icon: BarChart3 },
-  { label: "Certificates Earned", value: "03", icon: Award },
-  { label: "Hours Learned", value: 46, icon: Clock },
-];
+import DashboardHeader from "./dashboard-page/DashboardHeader";
+import SummaryCards from "./dashboard-page/SummaryCards";
+import FilterButtons from "./dashboard-page/FilterButtons";
+import DashboardCourseCard from "./dashboard-page/DashboardCourseCard";
+import RecordedClassesWidget from "./dashboard-page/RecordedClassesWidget";
+import { decodeJWT } from "@/lib/jwtUtils";
 
-const continueLearning = [
+/* ================= STATIC DATA ================= */
+
+const allCourses = [
   {
-    title: "Java Basics",
-    desc: "Master Java from basics to advanced concepts",
-    author: "by Ashwin K",
-    img: "/assets/UIUX Developer.jpg",
-    progress: 79,
-    weeks: 8,
-    students: 1200,
-    rating: 4.8,
-  },
-  {
-    title: "Data Structures & Algorithms",
-    desc: "Master Java from basics to advanced concepts",
-    author: "by Ashwin K",
+    title: "Advanced React & TypeScript",
+    desc: "Master modern React patterns with TypeScript and build scalable applications",
+    author: "Sarah Johnson",
+    authorImg: "",
     img: "/assets/data-science-course.jpg",
-    progress: 79,
+    progress: 65,
+    modules: "6/10 modules",
     weeks: 8,
-    students: 1200,
+    students: "12.4k",
     rating: 4.8,
+    status: "In Progress",
+    difficulty: "Advanced",
+    streak: "5 day streak",
+    upNext: "Hooks in React",
+    upNextTime: "5 min",
+    lastAccessed: "Last accessed 2 days ago",
   },
   {
-    title: "Database Management Systems",
-    desc: "Master Java from basics to advanced concepts",
-    author: "by Ashwin K",
+    title: "Python for Data Science",
+    desc: "Learn Python programming and data analysis with real-world projects",
+    author: "Michael Chen",
+    authorImg: "",
     img: "/assets/sql.jpg",
-    progress: 79,
-    weeks: 8,
-    students: 1200,
-    rating: 4.8,
+    progress: 35,
+    modules: "3/8 modules",
+    weeks: 10,
+    students: "18.9k",
+    rating: 4.9,
+    status: "In Progress",
+    difficulty: "Intermediate",
+    streak: "3 day streak",
+    upNext: "Pandas DataFrame Operations",
+    upNextTime: "12 min",
+    lastAccessed: "Last accessed 1 day ago",
+  },
+  {
+    title: "UI/UX Design Mastery",
+    desc: "Complete guide to user interface and experience design principles",
+    author: "Emma Williams",
+    authorImg: "",
+    img: "/assets/UIUX Developer.jpg",
+    progress: 100,
+    modules: "12/12 modules",
+    weeks: 6,
+    students: "25.3k",
+    rating: 4.9,
+    status: "Completed",
+    difficulty: "Beginner",
+    streak: null,
+    upNext: null,
+    upNextTime: null,
+    lastAccessed: "Last accessed 1 week ago",
   },
 ];
+
+const continueLearning = [allCourses[0]];
 
 const notifications = [
   {
     title: "New Assignment Posted",
     desc: "Java Module 3 assignment is now available",
     time: "1 hour ago",
-    type: "new",
   },
   {
     title: "Quiz Results Available",
     desc: "Your last quiz scored 85%",
     time: "3 hours ago",
-    type: "quiz",
   },
   {
     title: "New Course Material",
     desc: "HTML Module 2 slides uploaded",
     time: "5 hours ago",
-    type: "material",
   },
 ];
+
+
 
 const upcomingAssignments = [
   { title: "React Components Quiz", due: "Due today" },
@@ -76,324 +109,377 @@ const upcomingAssignments = [
   { title: "Algorithms Midterm Prep", due: "Due in 4 days" },
   { title: "SQL Queries Homework", due: "Due in 1 week" },
   { title: "Web Development Essay", due: "Due in 10 days" },
-  { title: "Algorithms Midterm Prep", due: "Due in 4 days" },
-  { title: "SQL Queries Homework", due: "Due in 1 week" },
-  { title: "Web Development Essay", due: "Due in 10 days" },
 ];
 
-const scheduledClasses = [
+/* fallback if API empty */
+const scheduledClassesStatic = [
   { title: "HTML Fundamentals", session: "5th Session", time: "Today 3PM" },
-  { title: "HTML Fundamentals", session: "5th Session", time: "Today 3PM" },
-  { title: "HTML Fundamentals", session: "5th Session", time: "Today 3PM" },
+  { title: "CSS Basics", session: "3rd Session", time: "Today 5PM" },
+  { title: "Java Basics", session: "7th Session", time: "Tomorrow 10AM" },
 ];
+
+
+/* fallback if API empty */
+const formatTime = (dateStr: string) => {
+  const date = new Date(dateStr);
+  const now = new Date();
+
+  const isToday = date.toDateString() === now.toDateString();
+
+  const tomorrow = new Date();
+  tomorrow.setDate(now.getDate() + 1);
+  const isTomorrow = date.toDateString() === tomorrow.toDateString();
+
+  const time = date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  if (isToday) return `Today ${time}`;
+  if (isTomorrow) return `Tomorrow ${time}`;
+
+  return `${date.toLocaleDateString()} ${time}`;
+};
+
+
+/* ================= ANIMATIONS ================= */
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: "easeOut" }
+    transition: { duration: 0.6, ease: "easeOut" },
   },
-  hover: { 
+  hover: {
     scale: 1.02,
-    boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-    transition: { duration: 0.2 }
-  }
+    boxShadow:
+      "0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)",
+    transition: { duration: 0.2 },
+  },
 };
 
 const buttonVariants = {
   hover: { scale: 1.05, transition: { duration: 0.2 } },
-  tap: { scale: 0.95 }
+  tap: { scale: 0.95 },
 };
 
+/* ================= COMPONENT ================= */
+
 const Dashboard = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [active, setActive] = useState("Dashboard");
+  const [showAllCourses, setShowAllCourses] = useState(false);
+  const [userName, setUserName] = useState(localStorage.getItem("user_name") || "User");
+
+  /* ===== API STATE ===== */
+  const [classes, setClasses] = useState<any[]>([]);
+  const [courses, setCourses] = useState<any[]>([]);
+  const [instructors, setInstructors] = useState<any[]>([]);
+  const [coursesLoading, setCoursesLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [recordedVideos, setRecordedVideos] = useState<any[]>([]);
+  const [videosLoading, setVideosLoading] = useState(false);
+  const [filter, setFilter] = useState("all");
+  const [selectedCurriculumCourse, setSelectedCurriculumCourse] = useState<any>(null);
+  const [certificates, setCertificates] = useState<any[]>([]);
+  const [streakData, setStreakData] = useState<any>(null);
+
+  /* ===== MODAL STATE ===== */
+  const [expandedModules, setExpandedModules] = useState<number[]>([]);
+  const [progressData, setProgressData] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem("access_token") || localStorage.getItem("token");
+        if (!token) return;
+        let res = await fetch(`${import.meta.env.VITE_API_URL}/student/me`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        let isGuest = false;
+        if (!res.ok) {
+           res = await fetch(`${import.meta.env.VITE_API_URL}/guest/my-profile`, {
+             headers: { Authorization: `Bearer ${token}` }
+           });
+           isGuest = true;
+        }
+        
+        if (res.ok) {
+           const data = await res.json();
+           const newName = isGuest ? `${data.first_name || ""} ${data.last_name || ""}`.trim() : data.name;
+           if (newName) {
+             setUserName(newName);
+             localStorage.setItem("user_name", newName);
+           }
+        }
+      } catch (err) {
+        console.error("Failed to fetch user name:", err);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
+    if (location.state && location.state.scrollTo) {
+      setTimeout(() => {
+        const el = document.getElementById(location.state.scrollTo);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 300);
+    }
+  }, [location.state, courses.length, recordedVideos.length]);
+
+  const toggleModule = (moduleId: number) => {
+    setExpandedModules(prev => 
+      prev.includes(moduleId) 
+        ? prev.filter(id => id !== moduleId)
+        : [...prev, moduleId]
+    );
+  };
+
+  /* ===== DYNAMIC SUMMARY DATA ===== */
+  const totalCourses = courses.length;
+  const avgProgress = courses.length > 0
+    ? Math.round(courses.reduce((sum: number, c: any) => sum + (c.progress || 0), 0) / courses.length)
+    : 0;
+  const totalCertificates = certificates.length;
+  const totalHours = courses.reduce((sum: number, c: any) => sum + (c.duration || 0), 0);
+
+  const summaryCards = [
+    { label: "Total Courses", value: totalCourses.toString(), icon: BookOpen,  trendUp: true, trendText: "+12.5%", iconBg: "bg-gradient-to-br from-[#7C3AED] to-[#6D28D9]", iconColor: "text-white" },
+    { label: "Total Progress", value: `${avgProgress}%`, icon: TrendingUp,  trendUp: true, trendText: "+8.2%", iconBg: "bg-gradient-to-br from-teal-500 to-teal-700", iconColor: "text-white" },
+    { label: "Certificates Earned", value: totalCertificates.toString(), icon: Award, trendUp: true, trendText: "+23.1%", iconBg: "bg-gradient-to-br from-orange-400 to-orange-600", iconColor: "text-white" },
+    { label: "Hours Earned", value: `${totalHours} Hrs`, icon: Clock,  trendUp: false, trendText: "-2.4%", iconBg: "bg-gradient-to-br from-green-500 to-green-700", iconColor: "text-white" },
+  ];
+
+  /* ===== FETCH MY COURSES & INSTRUCTORS ===== */
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setCoursesLoading(true);
+        const [coursesRes, instructorsRes] = await Promise.all([
+          api.get("/dashboard/my-courses").catch(() => ({ data: [] })),
+          api.get("/dashboard/my-instructors").catch(() => ({ data: [] }))
+        ]);
+        const fetchedCourses = coursesRes.data || [];
+        
+        // Fetch progress for each course
+        const token = localStorage.getItem("access_token");
+        const decoded = token ? decodeJWT(token) : null;
+        const studentId = decoded?.student_id || Number(decoded?.sub) || 12;
+        const coursesWithProgress = await Promise.all(
+          fetchedCourses.map(async (course: any) => {
+            if (!token) return course;
+            try {
+              const progRes = await fetch(
+                `${import.meta.env.VITE_API_URL}/courses/students/${studentId}/courses/${course.course_id}/progress`,
+                {
+                  headers: { Authorization: `Bearer ${token}` }
+                }
+              );
+              if (progRes.ok) {
+                const progData = await progRes.json();
+                return {
+                  ...course,
+                  completed_modules: progData.completed_modules,
+                  total_modules: progData.total_modules,
+                  progress: Math.round((progData.completion_ratio || 0) * 100),
+                };
+              }
+            } catch (e) {
+              console.error(`Failed to fetch progress for course ${course.id}:`, e);
+            }
+            return course;
+          })
+        );
+
+        setCourses(coursesWithProgress);
+        setInstructors(instructorsRes.data || []);
+      } catch (err) {
+        console.error("Failed to fetch courses or instructors:", err);
+        setCourses([]);
+        setInstructors([]);
+      } finally {
+        setCoursesLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  /* ===== FETCH RECORDED VIDEOS ===== */
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        setVideosLoading(true);
+        const res = await api.get("/dashboard/recorded-classes");
+        setRecordedVideos(res.data);
+      } catch (err) {
+        console.error("Failed to fetch videos:", err);
+        setRecordedVideos([]);
+      } finally {
+        setVideosLoading(false);
+      }
+    };
+
+    fetchVideos();
+  }, []);
+
+  // Map backend courses to display format
+  const mappedCourses = courses.map((course: any) => {
+    const isCompleted = course.completed || (course.total_modules > 0 && course.completed_modules === course.total_modules);
+    const status = isCompleted ? "completed" : (course.progress > 0 ? "inProgress" : "notStarted");
+    const inst = instructors.find((i: any) => i.course_titles?.includes(course.course_title));
+
+    return {
+      id: course.course_id,
+      title: course.course_title,
+      description: course.description || "high level",
+      author: inst?.name || course.instructor_name || "Instructor",
+      authorImg: (() => {
+        const rawImg = inst ? (inst.profile_picture || "") : (course.instructor_image || "");
+        if (rawImg && (rawImg.includes("unsplash.com") || rawImg.includes("dummy") || rawImg.includes("placeholder"))) {
+          return "";
+        }
+        return rawImg;
+      })(),
+      image: course.course_image || "/assets/placeholder.jpg",
+      progress: course.progress || 0,
+      modules: `${course.progress || 0}%`,
+      completed_modules: course.completed_modules,
+      total_modules: course.total_modules,
+      weeks: Math.round((course.duration || 0) / 24) || 1,
+      duration: course.duration || 0,
+      students: "1.2k",
+      rating: inst?.rating ?? course.rating ?? 0,
+      status: status,
+      difficulty: status === "completed" ? "Beginner" : (course.course_id % 2 === 0 ? "Advanced" : "Intermediate"),
+      streak: status === "inProgress" ? `${(course.course_id % 5) + 2} day streak` : null,
+      upNext: course.progress > 0 && !course.completed ? "Continue Learning" : null,
+      upNextTime: null,
+      lastAccessed: course.progress > 0 ? "Recently accessed" : "Not started",
+    };
+  });
+
+  const filteredCourses = mappedCourses.filter((c: any) =>
+    filter === "all" ? true : c.status === filter
+  ).reverse();
+
+  const displayedCourses = showAllCourses ? filteredCourses : filteredCourses.slice(0, 3);
+
+
+  /* ===== GET UPCOMING LIVE CLASSES ===== */
+  useEffect(() => {
+    const fetchClasses = async () => {
+      try {
+        setLoading(true);
+        const res = await api.get("/dashboard/upcoming-live-classes");
+        setClasses(res.data);
+      } catch (err) {
+        console.error(err);
+        setClasses([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchClasses();
+  }, []);
+
+  /* ===== FETCH CERTIFICATES ===== */
+  useEffect(() => {
+    const fetchCertificates = async () => {
+      try {
+        const res = await api.get("/student/student/my-certificates");
+        setCertificates(res.data?.certificates || []);
+      } catch (err) {
+        console.error("Failed to fetch certificates:", err);
+        setCertificates([]);
+      }
+    };
+    fetchCertificates();
+  }, []);
+
+  /* ===== FETCH STREAK ===== */
+  useEffect(() => {
+    const fetchStreak = async () => {
+      try {
+        const res = await api.get("/student-streaks/my-streak");
+        setStreakData(res.data);
+      } catch (err) {
+        console.error("Failed to fetch streak:", err);
+      }
+    };
+    fetchStreak();
+  }, []);
+
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-[#f7fafd] to-blue-50">
-      
-      <Sidebar sidebarOpen={sidebarOpen} setActive={setActive} active={active} />
+    <div className="fixed inset-0 w-full h-full flex bg-gradient-to-br from-[#f7fafd] to-blue-50 overflow-hidden">
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} setActive={setActive} active={active} />
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* === PROFILE HEADER (NAVBAR) === */}
-        <Header />
-        {/* <Profileheader /> */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        {/* <Header /> */}
+        <Profileheader onMenuClick={() => setSidebarOpen(true)} />
 
-        {/* Content Area */}
-        <main className="p-6 flex-1 overflow-auto">
+
+        {/* ================= CONTENT ================= */}
+        <main className="flex-1 overflow-auto p-0 relative">
+          {selectedCurriculumCourse ? (
+            <CurriculumView
+              course={selectedCurriculumCourse}
+              onBack={() => setSelectedCurriculumCourse(null)}
+            />
+          ) : (
           <motion.div
-            className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+            className="w-full p-8"
             initial="hidden"
             animate="visible"
-            variants={{
-              visible: {
-                transition: {
-                  staggerChildren: 0.1,
-                  delayChildren: 0.2
-                }
-              }
-            }}
           >
-            {/* Main left content */}
-            <motion.div className="lg:col-span-2 flex flex-col gap-6" variants={cardVariants}>
-              {/* Welcome Banner */}
-              <motion.div 
-                className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 border border-white/20"
-                variants={cardVariants}
-                whileHover="hover"
-              >
-                <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}>
-                  <span className="text-xl font-semibold">
-                    Welcome back,{" "}
-                    <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">shailu!</span>
-                  </span>
-                  <div className="text-sm text-gray-500 mt-2">
-                    Here's what's happening with your learning today.
-                  </div>
-                </motion.div>
-                <motion.div 
-                  className="flex items-center gap-3"
-                  initial={{ opacity: 0, x: 20 }} 
-                  animate={{ opacity: 1, x: 0 }} 
-                  transition={{ delay: 0.4 }}
-                >
-                  <div className="text-blue-700 font-semibold text-sm bg-blue-50 px-4 py-2 rounded-lg shadow-md">
-                    Points: <span className="font-bold">75</span> | Badge: <Award className="inline h-4 w-4" />
-                  </div>
-                </motion.div>
-              </motion.div>
+            <motion.div className="flex flex-col gap-8">
+              {/* Welcome */}
+              <DashboardHeader userName={userName} streakData={streakData} />
 
-              {/* Summary Cards */}
-              <motion.div className="grid grid-cols-2 md:grid-cols-4 gap-4" variants={cardVariants}>
-                {summaryCards.map((card, i) => (
-                  <motion.div
-                    key={i}
-                    className="bg-white/70 backdrop-blur-sm rounded-xl shadow-md p-4 flex flex-col items-center border border-white/20 hover:bg-white transition-all duration-300"
-                    variants={cardVariants}
-                    whileHover="hover"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.5 + i * 0.1 }}
-                  >
-                    <motion.div 
-                      className="text-3xl mb-2 p-2 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg"
-                      whileHover={{ rotate: 5, scale: 1.1 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <card.icon className="h-6 w-6 text-blue-600" />
-                    </motion.div>
-                    <div className="text-xs text-gray-500 mb-1 text-center">
-                      {card.label}
-                    </div>
-                    <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                      {card.value}
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
+              {/* Summary */}
+              <SummaryCards cards={summaryCards} />
 
               {/* Continue Learning */}
-              <motion.div variants={cardVariants}>
-                <div className="flex justify-between items-center mb-4">
-                  <motion.h2 
-                    className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent"
-                    initial={{ y: -10 }}
-                    animate={{ y: 0 }}
-                  >
-                    Continue Learning
-                  </motion.h2>
-                  <motion.button 
-                    className="text-indigo-600 text-sm font-medium hover:underline flex items-center gap-1"
-                    whileHover={{ scale: 1.05 }}
-                  >
-                    View all <ArrowRight className="h-3 w-3" />
-                  </motion.button>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {continueLearning.map((course, i) => (
-                    <motion.div
-                      key={i}
-                      className="bg-white/70 backdrop-blur-sm rounded-xl shadow-lg p-6 flex flex-col border border-white/20 overflow-hidden group hover:shadow-2xl transition-all duration-500"
-                      variants={cardVariants}
-                      whileHover="hover"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.6 + i * 0.1 }}
-                    >
-                      <motion.div 
-                        className="relative overflow-hidden rounded-lg mb-4"
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        <img
-                          src={course.img}
-                          alt={course.title}
-                          className="w-full h-32 object-cover transition-transform duration-300 group-hover:scale-110"
-                        />
-                        <div className="absolute top-2 right-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
-                          {course.progress}%
-                        </div>
-                      </motion.div>
-                      <h3 className="font-bold text-base mb-2">{course.title}</h3>
-                      <p className="text-sm text-gray-600 mb-2">{course.author}</p>
-                      <p className="text-sm text-gray-500 mb-3 line-clamp-2">{course.desc}</p>
-                      <div className="flex items-center gap-2 mb-3">
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <motion.div
-                            className="bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full"
-                            initial={{ width: 0 }}
-                            animate={{ width: `${course.progress}%` }}
-                            transition={{ duration: 1.5, delay: 0.7 + i * 0.1 }}
-                          />
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
-                        <span><Clock className="inline h-3 w-3 mr-1" /> {course.weeks} weeks</span>
-                        <span><Users className="inline h-3 w-3 mr-1" /> {course.students}</span>
-                        <span><Star className="inline h-3 w-3 mr-1 text-yellow-500" /> {course.rating}</span>
-                      </div>
-                      <motion.button 
-                        className="mt-auto px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg font-medium hover:shadow-lg transition-all duration-300"
-                        variants={buttonVariants}
-                        whileHover="hover"
-                        whileTap="tap"
-                      >
-                        Continue Learning
-                      </motion.button>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
+              <div id="courses-section">
+                <FilterButtons
+                  filteredCoursesLength={filteredCourses.length}
+                  showAllCourses={showAllCourses}
+                  setShowAllCourses={setShowAllCourses}
+                  filter={filter}
+                  setFilter={setFilter}
+                />
 
-              {/* Classes Scheduled, Recorded, Utilisation */}
-              <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={cardVariants}>
-                <motion.div className="bg-white/70 backdrop-blur-sm rounded-xl shadow-md p-6 border border-white/20">
-                  <motion.div className="font-bold mb-4 text-lg flex items-center gap-2">
-                    <Play className="h-5 w-5 text-blue-600" />
-                    Classes Scheduled for today
-                  </motion.div>
-                  <ul className="space-y-3">
-                    {scheduledClasses.map((cls, i) => (
-                      <motion.li
-                        key={i}
-                        className="flex justify-between items-center text-sm p-3 bg-gray-50 rounded-lg hover:bg-gray-100"
-                        initial={{ x: -10, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        transition={{ delay: 0.8 + i * 0.1 }}
-                      >
-                        <span className="font-medium">{cls.title} - {cls.session}</span>
-                        <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">
-                          {cls.time}
-                        </span>
-                      </motion.li>
+                {coursesLoading ? (
+                  <p className="text-center text-gray-500 py-10">Loading courses...</p>
+                ) : displayedCourses.length === 0 ? (
+                  <p className="text-center text-gray-500 py-10">No courses found.</p>
+                ) : (
+                  <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                    {displayedCourses.map((course: any) => (
+                      <DashboardCourseCard 
+                        key={course.id} 
+                        course={course} 
+                        setSelectedCurriculumCourse={setSelectedCurriculumCourse} 
+                      />
                     ))}
-                  </ul>
-                </motion.div>
-
-                <motion.div className="bg-white/70 backdrop-blur-sm rounded-xl shadow-md p-6 border border-white/20 flex flex-col items-center justify-center">
-                  <motion.div className="font-bold mb-4 text-lg flex items-center gap-2">
-                    <Play className="h-5 w-5 text-green-600" />
-                    Recorded Classes
-                  </motion.div>
-                  <div className="mb-4 text-sm text-gray-500 text-center">
-                    Access recorded sessions anytime
-                    <br /><span className="font-bold text-green-600">72 Available</span>
                   </div>
-                  <motion.button 
-                    className="px-6 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-medium"
-                    variants={buttonVariants}
-                    whileHover="hover"
-                    whileTap="tap"
-                  >
-                    Watch Now
-                  </motion.button>
-                </motion.div>
+                )}
+              </div>
 
-                <motion.div className="bg-white/70 backdrop-blur-sm rounded-xl shadow-md p-6 border border-white/20 flex flex-col items-center justify-center">
-                  <motion.div className="font-bold mb-4 text-lg flex items-center gap-2">
-                    <BarChart3 className="h-5 w-5 text-purple-600" />
-                    Utilisation of Portal
-                  </motion.div>
-                  <div className="w-32 h-32 flex items-center justify-center mb-4">
-                    <motion.div 
-                      className="w-full h-full bg-gradient-to-br from-purple-100 to-indigo-100 rounded-full flex items-center justify-center relative"
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                    >
-                      <div className="absolute inset-0 bg-white rounded-full flex items-center justify-center text-sm font-bold text-purple-600">
-                        80%
-                      </div>
-                    </motion.div>
-                  </div>
-                  <div className="text-xs text-gray-500 grid grid-cols-2 gap-2 w-full text-center">
-                    <div>Exams <span className="font-bold text-purple-600">40%</span></div>
-                    <div>Compiler <span className="font-bold text-purple-600">25%</span></div>
-                    <div>Mock Interviews <span className="font-bold text-purple-600">20%</span></div>
-                    <div>Analytics <span className="font-bold text-purple-600">15%</span></div>
-                  </div>
-                </motion.div>
-              </motion.div>
-            </motion.div>
-
-            {/* Right sidebar */}
-            <motion.div className="flex flex-col gap-6" variants={cardVariants}>
-              <motion.div className="bg-white/70 backdrop-blur-sm rounded-xl shadow-md p-6 border border-white/20">
-                <motion.div className="font-bold mb-4 text-lg flex items-center gap-2">
-                  <Bell className="h-5 w-5 text-orange-600" />
-                  Notifications
-                </motion.div>
-                <ul className="space-y-3">
-                  {notifications.map((n, i) => (
-                    <motion.li 
-                      key={i} 
-                      className="text-sm p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer"
-                      initial={{ x: 10, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      transition={{ delay: 1 + i * 0.1 }}
-                      whileHover={{ x: 5 }}
-                    >
-                      <span className="font-semibold text-blue-700 flex items-center gap-2">
-                        <FileText className="h-4 w-4" /> {n.title}
-                      </span>
-                      <div className="text-gray-500 text-sm">{n.desc}</div>
-                      <div className="text-gray-400 text-xs mt-1">{n.time}</div>
-                    </motion.li>
-                  ))}
-                </ul>
-                <motion.button className="mt-4 w-full text-indigo-600 text-sm font-medium hover:underline flex items-center gap-1 justify-center">
-                  View all notifications <Bell className="h-3 w-3" />
-                </motion.button>
-              </motion.div>
-
-              <motion.div className="bg-white/70 backdrop-blur-sm rounded-xl shadow-md p-6 border border-white/20">
-                <motion.div className="font-bold mb-4 text-lg flex items-center gap-2">
-                  <AlertCircle className="h-5 w-5 text-orange-600" />
-                  Upcoming Assignments
-                </motion.div>
-                <ul className="space-y-3">
-                  {upcomingAssignments.map((a, i) => (
-                    <motion.li 
-                      key={i} 
-                      className="flex justify-between items-center text-sm p-3 bg-orange-50 rounded-lg hover:bg-orange-100"
-                      initial={{ x: -10, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      transition={{ delay: 1.2 + i * 0.1 }}
-                    >
-                      <span className="font-medium">{a.title}</span>
-                      <span className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                        {a.due}
-                      </span>
-                    </motion.li>
-                  ))}
-                </ul>
-                <motion.button className="mt-4 w-full text-orange-600 text-sm font-medium hover:underline flex items-center gap-1 justify-center">
-                  View all assignments <FileText className="h-3 w-3" />
-                </motion.button>
-              </motion.div>
+              {/* Recorded Classes */}
+              <RecordedClassesWidget recordedVideos={recordedVideos} videosLoading={videosLoading} />
             </motion.div>
           </motion.div>
+          )}
         </main>
       </div>
     </div>
