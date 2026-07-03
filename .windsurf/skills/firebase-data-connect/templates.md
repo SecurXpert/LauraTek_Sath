@@ -239,6 +239,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getDataConnect, connectDataConnectEmulator } from 'firebase/data-connect';
 import { connectorConfig } from '@myapp/dataconnect';
+import { VITE_API_URL } from '@/services/api/api';
 
 const firebaseConfig = {
   apiKey: "...",
@@ -252,7 +253,8 @@ export const dataConnect = getDataConnect(app, connectorConfig);
 
 // Connect to emulator in development
 if (import.meta.env.DEV) {
-  connectDataConnectEmulator(dataConnect, 'localhost', 9399);
+  const apiUrl = new URL(VITE_API_URL);
+  connectDataConnectEmulator(dataConnect, apiUrl.hostname, Number(apiUrl.port) || 9399);
 }
 ```
 

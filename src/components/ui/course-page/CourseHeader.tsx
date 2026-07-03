@@ -1,4 +1,5 @@
 import React from "react";
+import { VITE_API_URL } from '../../../services/api/api';
 import { ArrowLeft, Star, Clock, Play, Clock3, Users, BookOpen, Award } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import bg1 from "@/assets/bg1.png";
@@ -26,7 +27,7 @@ const CourseHeader: React.FC<CourseHeaderProps> = ({
     try {
       const token = localStorage.getItem("access_token");
       if (!token) return;
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/dashboard/recorded-classes`, {
+      const res = await fetch(`${VITE_API_URL}/dashboard/recorded-classes`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -37,7 +38,7 @@ const CourseHeader: React.FC<CourseHeaderProps> = ({
         if (courseVideo && (courseVideo.url || courseVideo.urll)) {
           const videoUrl = (courseVideo.url || courseVideo.urll || '').startsWith("http")
             ? (courseVideo.url || courseVideo.urll)
-            : `${import.meta.env.VITE_API_URL}/${courseVideo.url || courseVideo.urll}`;
+            : `${VITE_API_URL}/${courseVideo.url || courseVideo.urll}`;
           window.open(videoUrl, '_blank');
         } else {
           alert("No recorded videos have been assigned to this course.");

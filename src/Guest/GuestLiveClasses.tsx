@@ -1,9 +1,11 @@
 import React from 'react';
 import { Radio, Lock, Calendar, Clock, Users, Video, ExternalLink, ArrowRight, Sparkles } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const GuestLiveClasses = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const fromDashboard = location.state?.fromDashboard;
 
   const classes = [
     {
@@ -84,18 +86,28 @@ const GuestLiveClasses = () => {
   return (
     <div className="px-4 lg:px-8 py-8 w-full max-w-[1400px] mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
-        <div>
-          <h1 className="text-[24px] font-bold text-slate-800 mb-1">Live Classes</h1>
-          <p className="text-[14px] text-gray-500">Interactive sessions with expert instructors</p>
-        </div>
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full text-[13px] font-bold text-slate-800 border border-gray-200 shadow-sm">
-          <Sparkles className="w-4 h-4 text-[#5B4FFF]" /> 6 Sessions
+      <div className="mb-6">
+        {fromDashboard && (
+          <button 
+            onClick={() => navigate('/guest')}
+            className="flex items-center gap-2 text-[#64748B] hover:text-[#5B4FFF] mb-4 transition-colors text-[14px] font-medium"
+          >
+            <ArrowRight className="w-4 h-4 rotate-180" /> Back to Dashboard
+          </button>
+        )}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-[24px] font-bold text-slate-800 mb-1">Live Classes</h1>
+            <p className="text-[14px] text-gray-500">Interactive sessions with expert instructors</p>
+          </div>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full text-[13px] font-bold text-slate-800 border border-gray-200 shadow-guest">
+            <Sparkles className="w-4 h-4 text-[#5B4FFF]" /> 6 Sessions
+          </div>
         </div>
       </div>
 
       {/* Hero Banner */}
-      <div className="bg-gradient-to-r from-[#D83A76] to-[#E11D48] rounded-[24px] p-6 lg:p-8 text-white mb-6 shadow-lg shadow-rose-200/50 flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
+      <div className="bg-gradient-to-r from-[#D83A76] to-[#E11D48] rounded-[24px] p-6 lg:p-8 text-white mb-6 shadow-guest shadow-rose-200/50 flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
         {/* Abstract background shapes */}
         <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/3 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-48 h-48 bg-black/10 rounded-full blur-2xl pointer-events-none"></div>
@@ -120,7 +132,7 @@ const GuestLiveClasses = () => {
         <div className="flex flex-col items-start md:items-end gap-3 relative z-10">
           <button 
             onClick={() => navigate('/guest/enrollments')}
-            className="flex items-center gap-2 bg-white text-[#D83A76] hover:bg-gray-50 px-6 py-2.5 rounded-full font-bold text-[14px] transition-colors shadow-sm"
+            className="flex items-center gap-2 bg-white text-[#D83A76] hover:bg-gray-50 px-6 py-2.5 rounded-full font-bold text-[14px] transition-colors shadow-guest"
           >
             <Lock className="w-4 h-4" /> Enroll to Join
           </button>
@@ -140,7 +152,7 @@ const GuestLiveClasses = () => {
         </div>
         <button 
           onClick={() => navigate('/guest/enrollments')}
-          className="flex-shrink-0 bg-[#5B4FFF] hover:bg-[#4a3fdb] text-white px-6 py-2.5 rounded-full font-bold text-[13px] transition-colors shadow-sm shadow-purple-200"
+          className="flex-shrink-0 bg-[#5B4FFF] hover:bg-[#4a3fdb] text-white px-6 py-2.5 rounded-full font-bold text-[13px] transition-colors shadow-guest shadow-purple-200"
         >
           Enroll Now
         </button>
@@ -149,7 +161,7 @@ const GuestLiveClasses = () => {
       {/* Classes Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {classes.map((cls, idx) => (
-          <div key={idx} className="bg-white rounded-[24px] border border-gray-100 shadow-[0px_4px_20px_rgba(149,157,165,0.04)] overflow-hidden flex flex-col">
+          <div key={idx} className="bg-white rounded-[24px] border border-gray-100 shadow-guest overflow-hidden flex flex-col">
             {/* Card Image Header */}
             <div className={`h-40 bg-gradient-to-br ${cls.bgColor} relative p-4 flex flex-col justify-between`}>
               <div className="absolute inset-0 bg-black/10"></div>
@@ -205,7 +217,7 @@ const GuestLiveClasses = () => {
                 ) : (
                   <button 
                     onClick={() => navigate('/guest/enrollments')}
-                    className="flex-1 flex items-center justify-center gap-2 bg-[#5B4FFF] hover:bg-[#4a3fdb] text-white py-2.5 rounded-[12px] text-[13px] font-bold transition-colors shadow-sm shadow-purple-200"
+                    className="flex-1 flex items-center justify-center gap-2 bg-[#5B4FFF] hover:bg-[#4a3fdb] text-white py-2.5 rounded-[12px] text-[13px] font-bold transition-colors shadow-guest shadow-purple-200"
                   >
                     <Lock className="w-3.5 h-3.5" /> Enroll <ArrowRight className="w-4 h-4" />
                   </button>

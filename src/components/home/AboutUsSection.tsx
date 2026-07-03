@@ -15,6 +15,8 @@ import resume from "@/assets/resume.png";
 import guest14Img from "@/assets/guest14.png";
 import guest12Img from "@/assets/guest12.png";
 import techLogo from "@/assets/techlogo.png";
+import guest30 from "@/assets/guest30.png";
+import guest36 from "@/assets/guest36.png";
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import line1 from "@/assets/line1.png";
 
@@ -39,13 +41,8 @@ const AboutUsSection = () => {
             </svg>
           </div>
           {/* Top right globe/cap */}
-          <div className="absolute top-[12%] right-[5%] text-[#A800B8] opacity-80">
-             <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
-               <path d="M22 12A10 10 0 1 1 12 2a10 10 0 0 1 10 10z" />
-               <path d="M2 12h20" />
-               <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-               <path d="M4 6h16l-8-4-8 4zm8-4v4" />
-             </svg>
+          <div className="absolute top-[12%] right-[5%] w-[60px] h-[60px] opacity-80">
+            <img src={guest30} alt="Globe icon" className="w-full h-full object-contain" />
           </div>
 
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1550px] relative z-10 flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
@@ -102,17 +99,16 @@ const AboutUsSection = () => {
               <div className="inline-block bg-[#A800B8] text-white px-5 py-1.5 rounded-full text-[13px] font-semibold mb-5 shadow-sm relative">
                 About Us
                 {/* Confetti decoration */}
-                <div className="absolute -top-7 -right-12 text-[#A800B8] opacity-80">
-                  <svg width="45" height="45" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                    <path d="M12 3v3m4-1l-2 2M7 5l2 2m-5 5h3m10 0h3" />
-                  </svg>
+                {/* Confetti decoration */}
+                <div className="absolute -top-7 -right-12 opacity-80">
+                  <img src={guest36} alt="Confetti" className="w-[45px] h-[45px] object-contain" />
                 </div>
               </div>
               
               <h2 className="font-dm-sans text-[32px] md:text-[40px] lg:text-[46px] font-extrabold text-[#050816] leading-[1.2] mb-5">
                 Built to Help You Learn <span className="relative inline-block" style={{ background: 'linear-gradient(180deg, #1F3799 0%, #9F18AC 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                   Skills
-                  <img src={line1} alt="underline" className="absolute -bottom-2 left-0 w-full" />
+                  <img src={line1} alt="underline" className="absolute -bottom-4 left-0 w-full" />
                 </span> That Actually<br/>Move Your Career
               </h2>
               

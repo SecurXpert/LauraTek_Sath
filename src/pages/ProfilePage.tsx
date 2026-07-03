@@ -10,7 +10,7 @@ import PersonalInfoCard from "./profile-components/PersonalInfoCard";
 import SocialProfilesCard from "./profile-components/SocialProfilesCard";
 import QuickStatsCard from "./profile-components/QuickStatsCard";
 import PasswordSecuritySettings from "./profile-components/PasswordSecuritySettings";
-import { useProfileData } from "@/hooks/useProfileData";
+import { useProfileData } from "./useProfileData";
 
 type Tab = "My Account" | "Password & Security";
 

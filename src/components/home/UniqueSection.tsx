@@ -27,7 +27,7 @@ const UniqueSection = () => {
           {/* WHAT MAKES LAURATEK UNIQUE? – SINGLE CARD CAROUSEL */}
 {false && (
 <>
-<section className="py-20 bg-white">
+<section className="py-12 md:py-16 lg:py-20 bg-white">
   <div className="container mx-auto px-6 lg:px-8 max-w-[1650px]">
     {/* Heading */}
     <div className="text-center mb-16">

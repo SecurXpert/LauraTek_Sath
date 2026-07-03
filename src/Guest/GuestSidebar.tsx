@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
@@ -15,11 +15,19 @@ import { MdKeyboardDoubleArrowRight, MdKeyboardDoubleArrowLeft } from "react-ico
 import logo from "@/assets/techlogo.png";
 import { Button } from "@/components/ui/button";
 
+const CustomQuizIcon = ({ className, fill }: { className?: string, fill?: string }) => (
+  <svg viewBox="0 0 24 24" width="24" height="24" className={className} xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="7" width="14" height="14" rx="2" fill="none" stroke="currentColor" strokeWidth="2" />
+    <rect x="7" y="3" width="14" height="14" rx="2" fill="currentColor" stroke="currentColor" strokeWidth="2" />
+    <text x="14" y="13.5" fill="white" fontSize="11" fontWeight="bold" textAnchor="middle" fontFamily="sans-serif">?</text>
+  </svg>
+);
+
 const guestMenuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/guest" },
   { icon: BookOpen, label: "Courses", path: "/guest/courses" },
   { icon: ClipboardCheck, label: "Attendance", path: "/guest/attendance" },
-  { icon: HelpCircle, label: "Quizzes", path: "/guest/quizzes" },
+  { icon: CustomQuizIcon, label: "Quizzes", path: "/guest/quizzes" },
   { icon: Code, label: "Compiler", path: "/guest/compiler" },
   { icon: Award, label: "Certificates", path: "/guest/certificates" },
   { icon: User, label: "Profile", path: "/guest/profile" },
@@ -37,10 +45,31 @@ const GuestSidebar = ({ sidebarOpen, setSidebarOpen, isCollapsed, setIsCollapsed
   const location = useLocation();
   const navigate = useNavigate();
 
+  const [userName, setUserName] = useState(localStorage.getItem("user_name") || "Guest User");
+
+  useEffect(() => {
+    const checkName = () => {
+      const storedName = localStorage.getItem("user_name");
+      if (storedName && storedName !== userName) {
+        setUserName(storedName);
+      }
+    };
+    
+    // Check initially
+    checkName();
+    
+    // Set up an interval to check for changes since localStorage events 
+    // only fire across different tabs, not in the same tab.
+    const interval = setInterval(checkName, 1000);
+    
+    return () => clearInterval(interval);
+  }, [userName]);
+
   const handleSignOut = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("token");
     localStorage.removeItem("user_role");
+    localStorage.removeItem("user_name");
     navigate("/", { replace: true });
   };
 
@@ -94,7 +123,7 @@ const GuestSidebar = ({ sidebarOpen, setSidebarOpen, isCollapsed, setIsCollapsed
 
       <aside
         className={cn(
-          "fixed z-50 bg-white shadow-lg transition-all duration-300 ease-in-out flex flex-col select-none border border-gray-100/50",
+          "fixed z-50 bg-white shadow-guest transition-all duration-300 ease-in-out flex flex-col select-none border border-gray-100/50",
           "top-4 bottom-4 rounded-[24px]",
           sidebarOpen ? "translate-x-0 w-64 left-4" : (
              isCollapsed 
@@ -145,6 +174,29 @@ const GuestSidebar = ({ sidebarOpen, setSidebarOpen, isCollapsed, setIsCollapsed
         </div>
 
         <div className="flex-1 overflow-y-auto scrollbar-hide mt-1">
+          {/* User Profile Badge */}
+          <div 
+            className={cn(
+              "mx-3 mb-2 mt-2 p-2 rounded-2xl flex items-center gap-3 transition-all duration-300",
+              collapsedState ? "justify-center px-0" : ""
+            )}
+            style={!collapsedState ? { background: 'linear-gradient(135deg, #F0ECFF 0%, #E0E7FF 100%)' } : {}}
+          >
+            <div className="w-10 h-10 rounded-full bg-[#5D3EFC] text-white flex items-center justify-center flex-shrink-0 shadow-guest">
+              <User className="w-5 h-5" />
+            </div>
+            {!collapsedState && (
+              <div className="flex flex-col min-w-0 overflow-hidden pr-2">
+                <span className="text-[14px] font-bold text-slate-800 truncate leading-tight capitalize">
+                  {userName}
+                </span>
+                <span className="text-[12px] text-[#5D3EFC] font-medium truncate">
+                  Guest Access
+                </span>
+              </div>
+            )}
+          </div>
+
           <nav className="flex flex-col space-y-0.5 py-1">
             {guestMenuItems.map((item) => {
               const Icon = item.icon;
@@ -180,10 +232,11 @@ const GuestSidebar = ({ sidebarOpen, setSidebarOpen, isCollapsed, setIsCollapsed
                   className={cn(
                     "flex items-center gap-3.5 px-4 py-2.5 mx-3 my-0.5 text-[16px] transition-all duration-200 relative rounded-xl",
                     active
-                      ? "bg-[#F3E8FF] text-[#5D3EFC] font-semibold"
+                      ? "text-[#5D3EFC] font-semibold"
                       : "text-[#64748B] hover:bg-gray-50/80 hover:text-gray-900 font-medium",
                     collapsedState && "lg:justify-center lg:mx-1.5 lg:px-0"
                   )}
+                  style={active ? { background: 'linear-gradient(90deg, #F0F6FF 0%, #FAF5FF 100%)' } : {}}
                 >
                   {active && !collapsedState && (
                     <div className="absolute left-1.5 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-[#5D3EFC] rounded-full" />
@@ -194,6 +247,7 @@ const GuestSidebar = ({ sidebarOpen, setSidebarOpen, isCollapsed, setIsCollapsed
                       "w-[18px] h-[18px] flex-shrink-0 stroke-[1.75]",
                       active ? "text-[#5D3EFC]" : "text-gray-400"
                     )}
+                    fill={active ? "currentColor" : "none"}
                   />
 
                   {!collapsedState && <span>{item.label}</span>}

@@ -24,7 +24,7 @@ const NewsletterFooterSection = () => {
   return (
     <>
       {/* ================== NEWSLETTER & FOOTER SECTION ================== */}
-        <div className="relative bg-[#F5F4F9] pt-40 pb-10 mt-40">
+        <div className="relative bg-[#F5F4F9] pt-24 md:pt-32 lg:pt-40 pb-10 mt-24 md:mt-32 lg:mt-40">
           
           {/* Overlapping Newsletter Banner */}
           <div 

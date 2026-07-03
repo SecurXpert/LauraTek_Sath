@@ -6,6 +6,7 @@ import Profileheader from "@/components/ui/Profileheader";
 import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import liveClassImg from "@/assets/live class.png";
+import { VITE_API_URL } from "@/services/api/api";
  
 // ────────────────────────────────────────────────
 // Types
@@ -26,7 +27,7 @@ interface RecordedVideo {
 // Constants & Helpers
 // ────────────────────────────────────────────────
  
-const API_URL = `${import.meta.env.VITE_API_URL}/dashboard/recorded-classes`;
+const API_URL = `${VITE_API_URL}/dashboard/recorded-classes`;
  
 const formatDate = (isoString: string): string => {
   if (!isoString) return "Date not available";
@@ -211,7 +212,7 @@ const Recording = () => {
  
                 const videoUrl = (video.url || video.urll || '').startsWith("http")
                   ? (video.url || video.urll)
-                  : `${import.meta.env.VITE_API_URL}/${video.url || video.urll}`;
+                  : `${VITE_API_URL}/${video.url || video.urll}`;
  
                 return (
                   <div

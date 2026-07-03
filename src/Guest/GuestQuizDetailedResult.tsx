@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight, Trophy, Target, CheckCircle2, Clock, XCircle, Zap, Star, TrendingUp } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { VITE_API_URL } from '../services/api/api';
 
 const GuestQuizDetailedResult = () => {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ const GuestQuizDetailedResult = () => {
     const fetchQuestions = async () => {
       try {
         const token = localStorage.getItem('access_token') || '';
-        const response = await fetch(`https://lauratek.in:8000/guest/quiz/${quizId}`, {
+        const response = await fetch(`${VITE_API_URL}/guest/quiz/${quizId}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await response.json();
@@ -75,7 +76,7 @@ const GuestQuizDetailedResult = () => {
       </div>
 
       {/* Hero Stats Card */}
-      <div className="bg-[#1a1446] rounded-[24px] p-8 lg:p-10 mb-8 relative overflow-hidden shadow-xl shadow-indigo-900/10">
+      <div className="bg-[#1a1446] rounded-[24px] p-8 lg:p-10 mb-8 relative overflow-hidden shadow-guest shadow-indigo-900/10">
         {/* Decorative background blur */}
         <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-96 h-96 bg-[#5B4FFF]/30 rounded-full blur-[80px] pointer-events-none"></div>
 
@@ -125,7 +126,7 @@ const GuestQuizDetailedResult = () => {
         {/* Left Column (Topics & Questions) */}
         <div className="lg:col-span-2 flex flex-col gap-6">
           {/* Topic Performance 
-          <div className="bg-white rounded-[24px] border border-gray-100 shadow-[0px_4px_20px_rgba(149,157,165,0.04)] p-6 md:p-8">
+          <div className="bg-white rounded-[24px] border border-gray-100 shadow-guest p-6 md:p-8">
             <h3 className="text-[16px] font-bold text-slate-800 mb-6">Topic Performance</h3>
             <div className="space-y-5">
               {topics.map((t, idx) => (
@@ -146,7 +147,7 @@ const GuestQuizDetailedResult = () => {
           */}
 
           {/* Question Breakdown */}
-          <div className="bg-white rounded-[24px] border border-gray-100 shadow-[0px_4px_20px_rgba(149,157,165,0.04)] p-6 md:p-8">
+          <div className="bg-white rounded-[24px] border border-gray-100 shadow-guest p-6 md:p-8">
             <div className="mb-6">
               <h3 className="text-[16px] font-bold text-slate-800 mb-1">Question Breakdown</h3>
             </div>
@@ -197,7 +198,7 @@ const GuestQuizDetailedResult = () => {
         {/* Right Column (History & Insights) */}
         <div className="flex flex-col gap-6">
           {/* Attempt History 
-          <div className="bg-white rounded-[24px] border border-gray-100 shadow-[0px_4px_20px_rgba(149,157,165,0.04)] p-6">
+          <div className="bg-white rounded-[24px] border border-gray-100 shadow-guest p-6">
             <h3 className="text-[15px] font-bold text-slate-800 mb-6">Attempt History</h3>
             
             <div className="flex items-end justify-center gap-4 h-24 mb-6 px-4">
@@ -249,7 +250,7 @@ const GuestQuizDetailedResult = () => {
           */}
 
           {/* Smart Insights */}
-          <div className="bg-white rounded-[24px] border border-gray-100 shadow-[0px_4px_20px_rgba(149,157,165,0.04)] p-6">
+          <div className="bg-white rounded-[24px] border border-gray-100 shadow-guest p-6">
             <h3 className="text-[15px] font-bold text-slate-800 mb-4">Smart Insights</h3>
             
             <div className="space-y-3">

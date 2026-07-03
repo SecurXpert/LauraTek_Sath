@@ -10,6 +10,7 @@ import { Menu, X, ChevronDown } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import LiveClassCard from "@/components/ui/live-classes/LiveClassCard";
 import LiveClassSkeleton from "@/components/ui/live-classes/LiveClassSkeleton";
+import { VITE_API_URL } from "@/services/api/api";
 const LiveClasses = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [active, setActive] = useState("Live Classes");
@@ -61,7 +62,7 @@ const LiveClasses = () => {
         const token = localStorage.getItem("access_token");
 
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/dashboard/upcoming-live-classes`,
+          `${VITE_API_URL}/dashboard/upcoming-live-classes`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

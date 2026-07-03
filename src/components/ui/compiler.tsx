@@ -13,6 +13,7 @@ import {
   User,
   ArrowLeft,
 } from "lucide-react";
+import { VITE_API_URL } from "@/services/api/api";
 import Devlogo from "../assests/Devlogo.png";
 import { Skeleton } from "@/components/ui/skeleton";
 import CompilerSkeleton from "./compiler-page/CompilerSkeleton";
@@ -347,7 +348,7 @@ export default function OnlineCompiler() {
       console.log(`-> Fetching questions from /exam/get/details for examId: ${targetExamId}`);
       
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/exam/get/details`,
+        `${VITE_API_URL}/exam/get/details`,
         { 
           params: { exam_id: targetExamId },
           headers: { Authorization: `Bearer ${token}` },
@@ -482,7 +483,7 @@ export default function OnlineCompiler() {
       const currentUser = userId || "S0001";
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/interpreter/execute-programe?language=${language}&current_user=${currentUser}`,
+        `${VITE_API_URL}/interpreter/execute-programe?language=${language}&current_user=${currentUser}`,
         {
           method: "POST",
           headers: {
@@ -588,14 +589,14 @@ export default function OnlineCompiler() {
     console.log("Payload:", payload);
     console.log(
       "API URL:",
-      `${import.meta.env.VITE_API_URL}/interpreter/test_cases?language=${language}&current_user=${currentUser}&exam_id=${currentExamId}`,
+      `${VITE_API_URL}/interpreter/test_cases?language=${language}&current_user=${currentUser}&exam_id=${currentExamId}`,
     );
  
     setOutput("Running test cases...");
  
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/interpreter/test_cases?language=${language}&current_user=${currentUser}&exam_id=${currentExamId}`,
+        `${VITE_API_URL}/interpreter/test_cases?language=${language}&current_user=${currentUser}&exam_id=${currentExamId}`,
         {
           method: "POST",
           headers: {
@@ -687,12 +688,12 @@ export default function OnlineCompiler() {
                 console.log("Payload:", payload);
                 console.log(
                   "API URL:",
-                  `${import.meta.env.VITE_API_URL}/interpreter/submit?language=${language}&exam_id=${submitExamId}&current_user=${submitUser}`,
+                  `${VITE_API_URL}/interpreter/submit?language=${language}&exam_id=${submitExamId}&current_user=${submitUser}`,
                 );
  
                 try {
                   const response = await fetch(
-                    `${import.meta.env.VITE_API_URL}/interpreter/submit?language=${language}&exam_id=${submitExamId}&current_user=${submitUser}`,
+                    `${VITE_API_URL}/interpreter/submit?language=${language}&exam_id=${submitExamId}&current_user=${submitUser}`,
                     {
                       method: "POST",
                       headers: {

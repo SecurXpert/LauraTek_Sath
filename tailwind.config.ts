@@ -98,6 +98,10 @@ export default {
 					900: '#0f172a' // Dark navy blue for the footer gradient (adjust hex if needed for exact shade)
 				}
 			},
+			boxShadow: {
+				guest: '0px 1.24px 2.48px -1.24px #0000001A, 0px 1.24px 3.72px 0px #0000001A',
+				'guest-lg': '0px 10.05px 12.56px -7.54px #0000001A, 0px 25.12px 31.4px -6.28px #0000001A'
+			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',

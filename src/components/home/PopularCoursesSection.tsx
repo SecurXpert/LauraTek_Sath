@@ -15,6 +15,7 @@ import resume from "@/assets/resume.png";
 import guest14Img from "@/assets/guest14.png";
 import guest12Img from "@/assets/guest12.png";
 import techLogo from "@/assets/techlogo.png";
+import guest36 from "@/assets/guest36.png";
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import line1 from "@/assets/line1.png";
 
@@ -33,10 +34,8 @@ const PopularCoursesSection = ({ activeCourseTab, setActiveCourseTab }: any) => 
                 <div className="inline-flex items-center gap-2 bg-[#A800B8] text-white px-5 py-1.5 rounded-full text-[13px] font-semibold mb-6 shadow-sm relative">
                   Popular Courses
                   {/* Confetti decoration */}
-                  <div className="absolute -top-10 -right-8 text-[#A800B8] opacity-80">
-                    <svg width="45" height="45" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                      <path d="M12 3v3m4-1l-2 2M7 5l2 2m-5 5h3m10 0h3" />
-                    </svg>
+                  <div className="absolute -top-10 -right-8 opacity-80">
+                    <img src={guest36} alt="Confetti" className="w-[45px] h-[45px] object-contain" />
                   </div>
                 </div>
                 <h2 className="font-dm-sans text-[34px] md:text-[42px] lg:text-[48px] font-extrabold text-[#050816] leading-[1.2]">

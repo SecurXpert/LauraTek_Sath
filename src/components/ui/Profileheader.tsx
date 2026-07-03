@@ -11,10 +11,13 @@ import { Search, User, LogOut, Settings, Menu } from "lucide-react"; // Added Me
 import { useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import api from "@/api/instance";
+import { VITE_API_URL } from "@/services/api/api";
 
 interface ProfileheaderProps {
   onMenuClick?: () => void;
 }
+
+let cachedUserToken: string | null = null;
 
 const globalSearchOptions = [
   { title: "Dashboard Overview", path: "/dashboard" },
@@ -47,8 +50,12 @@ const Profileheader = ({ onMenuClick }: ProfileheaderProps) => { // Added onMenu
       try {
         const token = localStorage.getItem("access_token") || localStorage.getItem("token");
         if (!token) return;
+        
+        if (cachedUserToken === token) {
+          return;
+        }
 
-        const BASE_URL = import.meta.env.VITE_API_URL;
+        const BASE_URL = VITE_API_URL;
         let res = await fetch(`${BASE_URL}/student/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -62,6 +69,7 @@ const Profileheader = ({ onMenuClick }: ProfileheaderProps) => { // Added onMenu
         }
 
         if (res.ok) {
+          cachedUserToken = token;
           const data = await res.json();
           const newName = data.name || "";
           const newRole = data.role ? data.role.charAt(0).toUpperCase() + data.role.slice(1) : (isGuest ? "Guest" : "Student");
@@ -76,6 +84,8 @@ const Profileheader = ({ onMenuClick }: ProfileheaderProps) => { // Added onMenu
           if (newName) localStorage.setItem("user_name", newName);
           if (newRole) localStorage.setItem("user_role", newRole);
           if (newPic) localStorage.setItem("user_profile_pic", newPic);
+          
+          window.dispatchEvent(new Event("user-name-updated"));
         } else if (res.status === 401) {
           localStorage.removeItem("access_token");
           localStorage.removeItem("token");

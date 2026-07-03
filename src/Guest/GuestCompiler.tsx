@@ -5,6 +5,8 @@ import ProblemDescription from './components/Compiler/ProblemDescription';
 import CodeEditor from './components/Compiler/CodeEditor';
 import ConsoleOutput from './components/Compiler/ConsoleOutput';
 import PremiumBanner from './components/Compiler/PremiumBanner';
+import { VITE_API_URL } from '../services/api/api';
+import Contactus from '../components/ui/contactus';
 
 const GuestCompiler = () => {
   const [selectedProblem, setSelectedProblem] = useState(1);
@@ -32,7 +34,7 @@ const GuestCompiler = () => {
     try {
       setLoadingExams(true);
       const token = localStorage.getItem('access_token') || '';
-      const res = await fetch('https://lauratek.in:8000/guest/exam/get', {
+      const res = await fetch(`${VITE_API_URL}/guest/exam/get`, {
         headers: { 
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json'
@@ -73,7 +75,7 @@ const GuestCompiler = () => {
 
   const fetchExamQuestions = async (examId: number) => {
     try {
-      const res = await fetch(`https://lauratek.in:8000/guest/exam/get/details?exam_id=${examId}`, {
+      const res = await fetch(`${VITE_API_URL}/guest/exam/get/details?exam_id=${examId}`, {
         headers: { 'accept': 'application/json' }
       });
       const data = await res.json();
@@ -142,7 +144,7 @@ const GuestCompiler = () => {
     setOutput("Running code...");
     setTestResults(null);
     try {
-      const res = await fetch(`https://lauratek.in:8000/guest/interpreter/execute-programe?language=${language}`, {
+      const res = await fetch(`${VITE_API_URL}/guest/interpreter/execute-programe?language=${language}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user_input: customInput, code: code })
@@ -165,13 +167,25 @@ const GuestCompiler = () => {
     setOutput("Running test cases...");
     try {
       const examId = selectedExamId || 1;
-      const guestId = localStorage.getItem("guest_id") || localStorage.getItem("user_name") || "";
+      const token = localStorage.getItem('access_token');
+      let trueGuestId = "";
+      if (token) {
+        try {
+           const payload = JSON.parse(atob(token.split('.')[1]));
+           trueGuestId = payload.guest_id || payload.student_id || payload.sub || "";
+        } catch(e) {}
+      }
+      if (!trueGuestId) {
+         trueGuestId = localStorage.getItem("guest_id") || "";
+      }
+      
+      const guestId = trueGuestId;
       const problem = dynamicProblems.find((p: any) => p.id === selectedProblem);
       const eqId = problem?.original?.exam_question_id || selectedProblem;
       const qbId = problem?.original?.question_bank_id || selectedProblem;
       const qId = problem?.original?.question_id || qbId;
       
-      const res = await fetch(`https://lauratek.in:8000/guest/interpreter/test_cases?language=${language}&guest_id=${guestId}&exam_id=${examId}`, {
+      const res = await fetch(`${VITE_API_URL}/guest/interpreter/test_cases?language=${language}&guest_id=${guestId}&exam_id=${examId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify([{ 
@@ -201,13 +215,25 @@ const GuestCompiler = () => {
     setOutput("Submitting code...");
     try {
       const examId = selectedExamId || 1;
-      const guestId = localStorage.getItem("guest_id") || localStorage.getItem("user_name") || "";
+      const token = localStorage.getItem('access_token');
+      let trueGuestId = "";
+      if (token) {
+        try {
+           const payload = JSON.parse(atob(token.split('.')[1]));
+           trueGuestId = payload.guest_id || payload.student_id || payload.sub || "";
+        } catch(e) {}
+      }
+      if (!trueGuestId) {
+         trueGuestId = localStorage.getItem("guest_id") || "";
+      }
+      
+      const guestId = trueGuestId;
       const problem = dynamicProblems.find((p: any) => p.id === selectedProblem);
       const eqId = problem?.original?.exam_question_id || selectedProblem;
       const qbId = problem?.original?.question_bank_id || selectedProblem;
       const qId = problem?.original?.question_id || qbId;
 
-      const res = await fetch(`https://lauratek.in:8000/guest/interpreter/submit?language=${language}&guest_id=${guestId}&exam_id=${examId}`, {
+      const res = await fetch(`${VITE_API_URL}/guest/interpreter/submit?language=${language}&guest_id=${guestId}&exam_id=${examId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify([{ 
@@ -219,7 +245,12 @@ const GuestCompiler = () => {
       });
       const data = await res.json();
       setTestResults(data);
-      setOutput("Submission completed. Check Results.");
+      setOutput("Submission completed successfully. Returning to exams portal...");
+      
+      // Redirect back to exams portal after 2 seconds
+      setTimeout(() => {
+        setShowCompiler(false);
+      }, 2000);
     } catch (e) {
       console.error(e);
       setOutput("Error submitting code.");
@@ -293,7 +324,8 @@ const GuestCompiler = () => {
         </div>
       </div>
 
-      <PremiumBanner />
+      <PremiumBanner setContactOpen={setContactOpen} />
+      <Contactus open={contactOpen} setOpen={setContactOpen} />
     </div>
   );
 };

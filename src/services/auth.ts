@@ -1,11 +1,12 @@
 // src/services/auth.ts
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import { VITE_API_URL } from './api/api';
 
 // ---------------------------------------------------------------------------
 // 1. Axios instance (base URL from .env – adjust if needed)
 // ---------------------------------------------------------------------------
 const api: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://192.168.0.100:8000',
+  baseURL: VITE_API_URL,
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',

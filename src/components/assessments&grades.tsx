@@ -5,12 +5,9 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "./sidebar";
 import Profileheader from "@/components/ui/Profileheader";
 import { Skeleton } from "@/components/ui/skeleton";
+import { VITE_API_URL } from "@/services/api/api";
 
-import AssessmentStats from "./ui/assessments/AssessmentStats";
-import AssessmentFilters from "./ui/assessments/AssessmentFilters";
-import QuizCard from "./ui/assessments/QuizCard";
-import QuizSkeleton from "./ui/assessments/QuizSkeleton";
-import { Quiz, StudentAnalytics } from "./ui/assessments/types";
+import { AssessmentStats, AssessmentFilters, QuizCard, QuizSkeleton, Quiz, StudentAnalytics } from "./ui/assessments/types.tsx";
 const Assessments = () => {
   const navigate = useNavigate();
 
@@ -32,7 +29,7 @@ const Assessments = () => {
       const token = localStorage.getItem("access_token");
 
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/dashboard/available-quizzes`,
+        `${VITE_API_URL}/dashboard/available-quizzes`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -81,7 +78,7 @@ const Assessments = () => {
   //       const studentId = localStorage.getItem("student_id") || "12";
 
   //       const res = await fetch(
-  //         `${import.meta.env.VITE_API_URL}/quiz/admin/results/student/${studentId}`,
+  //         `${VITE_API_URL}/quiz/admin/results/student/${studentId}`,
   //         {
   //           headers: {
   //             Authorization: `Bearer ${token}`,

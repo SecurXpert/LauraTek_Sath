@@ -20,6 +20,7 @@ import FilterButtons from "./dashboard-page/FilterButtons";
 import DashboardCourseCard from "./dashboard-page/DashboardCourseCard";
 import RecordedClassesWidget from "./dashboard-page/RecordedClassesWidget";
 import { decodeJWT } from "@/lib/jwtUtils";
+import { VITE_API_URL } from "@/services/api/api";
 
 /* ================= STATIC DATA ================= */
 
@@ -192,35 +193,12 @@ const Dashboard = () => {
   const [progressData, setProgressData] = useState<any>(null);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const token = localStorage.getItem("access_token") || localStorage.getItem("token");
-        if (!token) return;
-        let res = await fetch(`${import.meta.env.VITE_API_URL}/student/me`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        
-        let isGuest = false;
-        if (!res.ok) {
-           res = await fetch(`${import.meta.env.VITE_API_URL}/guest/my-profile`, {
-             headers: { Authorization: `Bearer ${token}` }
-           });
-           isGuest = true;
-        }
-        
-        if (res.ok) {
-           const data = await res.json();
-           const newName = isGuest ? `${data.first_name || ""} ${data.last_name || ""}`.trim() : data.name;
-           if (newName) {
-             setUserName(newName);
-             localStorage.setItem("user_name", newName);
-           }
-        }
-      } catch (err) {
-        console.error("Failed to fetch user name:", err);
-      }
+    const handleStorageChange = () => {
+      const name = localStorage.getItem("user_name");
+      if (name) setUserName(name);
     };
-    fetchUser();
+    window.addEventListener("user-name-updated", handleStorageChange);
+    return () => window.removeEventListener("user-name-updated", handleStorageChange);
   }, []);
 
   useEffect(() => {
@@ -277,7 +255,7 @@ const Dashboard = () => {
             if (!token) return course;
             try {
               const progRes = await fetch(
-                `${import.meta.env.VITE_API_URL}/courses/students/${studentId}/courses/${course.course_id}/progress`,
+                `${VITE_API_URL}/courses/students/${studentId}/courses/${course.course_id}/progress`,
                 {
                   headers: { Authorization: `Bearer ${token}` }
                 }

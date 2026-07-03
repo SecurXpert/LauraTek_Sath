@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { VITE_API_URL } from '../../services/api/api';
 
 const ContactFormSection: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -108,7 +109,7 @@ const ContactFormSection: React.FC = () => {
     setSubmitMessage(null);
 
     try {
-      const BASE_URL = import.meta.env.VITE_API_URL;
+      const BASE_URL = VITE_API_URL;
       const response = await fetch(`${BASE_URL}/contact/submit`, {
         method: 'POST',
         headers: {

@@ -1,9 +1,6 @@
-const BASE_URL =
-  (typeof import.meta !== 'undefined' &&
-    import.meta.env &&
-    import.meta.env.VITE_API_URL) ||
-  '${import.meta.env.VITE_API_URL}';
+import { VITE_API_URL } from './api/api';
 
+const BASE_URL = VITE_API_URL;
 const getHeaders = (includeToken = false) => {
   const headers = { 'Content-Type': 'application/json' };
   if (includeToken) {

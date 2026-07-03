@@ -84,7 +84,7 @@ const GuestEnrollments = () => {
     <div className="px-4 lg:px-8 py-8 w-full max-w-[1000px] mx-auto">
       
       {/* Top CTA Banner */}
-      <div className="bg-gradient-to-br from-[#6b58ff] to-[#45b7ff] rounded-[24px] p-8 lg:p-12 text-center text-white mb-12 shadow-lg shadow-purple-200/50">
+      <div className="bg-gradient-to-br from-[#6b58ff] to-[#45b7ff] rounded-[24px] p-8 lg:p-12 text-center text-white mb-12 shadow-guest shadow-purple-200/50">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 rounded-full text-[13px] font-medium border border-white/20 mb-6 backdrop-blur-sm">
           <Sparkles className="w-4 h-4" /> Limited Time — Full Access Offer
         </div>
@@ -103,7 +103,7 @@ const GuestEnrollments = () => {
           <span className="text-white/60 line-through text-[15px]">₹14,999</span>
         </div>
 
-        <button className="flex items-center justify-center gap-2 bg-white text-[#5B4FFF] hover:bg-gray-50 px-8 py-4 rounded-full font-bold text-[15px] mx-auto mb-4 transition-colors shadow-sm">
+        <button className="flex items-center justify-center gap-2 bg-white text-[#5B4FFF] hover:bg-gray-50 px-8 py-4 rounded-full font-bold text-[15px] mx-auto mb-4 transition-colors shadow-guest">
           Enroll Now — Get Instant Access <ArrowRight className="w-5 h-5" />
         </button>
         <p className="text-[12px] text-white/70">30-day money-back guarantee · No hidden charges · EMI available</p>
@@ -114,7 +114,7 @@ const GuestEnrollments = () => {
         <h2 className="text-[20px] font-bold text-slate-800 text-center mb-8">Everything You Get When You Enroll</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {features.map((feat, idx) => (
-            <div key={idx} className="bg-white p-6 rounded-[20px] border border-gray-100 shadow-[0px_4px_20px_rgba(149,157,165,0.04)]">
+            <div key={idx} className="bg-white p-6 rounded-[20px] border border-gray-100 shadow-guest">
               <div className={`w-12 h-12 rounded-xl ${feat.iconBg} flex items-center justify-center mb-4`}>
                 {feat.icon}
               </div>
@@ -126,7 +126,7 @@ const GuestEnrollments = () => {
       </div>
 
       {/* Comparison Table */}
-      <div className="bg-white rounded-[24px] border border-gray-100 shadow-[0px_4px_20px_rgba(149,157,165,0.04)] overflow-hidden mb-12">
+      <div className="bg-white rounded-[24px] border border-gray-100 shadow-guest overflow-hidden mb-12">
         <div className="p-6 border-b border-gray-100">
           <h2 className="text-[18px] font-bold text-slate-800">Guest vs Enrolled — What's the Difference?</h2>
         </div>
@@ -170,19 +170,19 @@ const GuestEnrollments = () => {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-        <div className="bg-white py-6 rounded-[20px] border border-gray-100 shadow-[0px_4px_20px_rgba(149,157,165,0.04)] text-center">
+        <div className="bg-white py-6 rounded-[20px] border border-gray-100 shadow-guest text-center">
           <p className="text-2xl font-bold text-slate-800 mb-1">50K+</p>
           <p className="text-[12px] text-gray-500 font-medium">Active Learners</p>
         </div>
-        <div className="bg-white py-6 rounded-[20px] border border-gray-100 shadow-[0px_4px_20px_rgba(149,157,165,0.04)] text-center">
+        <div className="bg-white py-6 rounded-[20px] border border-gray-100 shadow-guest text-center">
           <p className="text-2xl font-bold text-slate-800 mb-1">94%</p>
           <p className="text-[12px] text-gray-500 font-medium">Placement Rate</p>
         </div>
-        <div className="bg-white py-6 rounded-[20px] border border-gray-100 shadow-[0px_4px_20px_rgba(149,157,165,0.04)] text-center">
+        <div className="bg-white py-6 rounded-[20px] border border-gray-100 shadow-guest text-center">
           <p className="text-2xl font-bold text-slate-800 mb-1">4.8★</p>
           <p className="text-[12px] text-gray-500 font-medium">Average Rating</p>
         </div>
-        <div className="bg-white py-6 rounded-[20px] border border-gray-100 shadow-[0px_4px_20px_rgba(149,157,165,0.04)] text-center">
+        <div className="bg-white py-6 rounded-[20px] border border-gray-100 shadow-guest text-center">
           <p className="text-2xl font-bold text-slate-800 mb-1">30</p>
           <p className="text-[12px] text-gray-500 font-medium">Day Guarantee</p>
         </div>
@@ -193,7 +193,7 @@ const GuestEnrollments = () => {
         <h2 className="text-[18px] font-bold text-slate-800 text-center mb-8">What Our Learners Say</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {testimonials.map((test, idx) => (
-            <div key={idx} className="bg-white p-6 rounded-[20px] border border-gray-100 shadow-[0px_4px_20px_rgba(149,157,165,0.04)] flex flex-col">
+            <div key={idx} className="bg-white p-6 rounded-[20px] border border-gray-100 shadow-guest flex flex-col">
               <p className="text-[14px] text-gray-600 italic mb-6 flex-1">"{test.quote}"</p>
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-full ${test.color} text-white flex items-center justify-center font-bold text-[14px]`}>
@@ -215,7 +215,7 @@ const GuestEnrollments = () => {
         <p className="text-[14px] text-gray-600 mb-8 max-w-lg mx-auto">
           One enrollment. Unlimited learning. Verified credentials. Career support.
         </p>
-        <button className="flex items-center justify-center gap-2 bg-[#5B4FFF] hover:bg-[#4a3fdb] text-white px-8 py-3.5 rounded-full font-bold text-[15px] mx-auto mb-4 transition-colors shadow-sm shadow-purple-200">
+        <button className="flex items-center justify-center gap-2 bg-[#5B4FFF] hover:bg-[#4a3fdb] text-white px-8 py-3.5 rounded-full font-bold text-[15px] mx-auto mb-4 transition-colors shadow-guest shadow-purple-200">
           Enroll Now — ₹4,999 <ArrowRight className="w-5 h-5" />
         </button>
         <p className="text-[12px] text-gray-500">EMI starting at ₹999/month · 30-day money-back guarantee</p>

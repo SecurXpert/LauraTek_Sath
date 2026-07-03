@@ -3,7 +3,6 @@ import { useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import Contactus from "@/components/ui/contactus";
 
-import HeroSection from "@/components/home/HeroSection";
 import HeroSectionNew from "@/components/home/HeroSectionNew";
 import BrowseCategoriesSection from "@/components/home/BrowseCategoriesSection";
 import TopCategorySection from "@/components/home/TopCategorySection";
@@ -57,7 +56,6 @@ const Home = () => {
 
       {/* Main content */}
       <main className="flex-1 ">
-        <HeroSection />
         <HeroSectionNew />
         <BrowseCategoriesSection />
         <TopCategorySection />

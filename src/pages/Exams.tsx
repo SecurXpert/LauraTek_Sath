@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Calendar, Clock, BookOpen, Loader2, Tag, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { VITE_API_URL } from '@/services/api/api';
 import api from '@/api/instance';
 import Sidebar from '@/components/sidebar';
 import Profileheader from '@/components/ui/Profileheader';
@@ -58,7 +59,7 @@ export default function Exams() {
     const toastId = toast.loading("Checking exam status...");
     try {
       const token = localStorage.getItem("userToken") || localStorage.getItem("access_token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/exam/get/details?exam_id=${exam.id}`, {
+      const res = await fetch(`${VITE_API_URL}/exam/get/details?exam_id=${exam.id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       

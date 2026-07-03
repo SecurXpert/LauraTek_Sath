@@ -28,7 +28,7 @@ const ExperienceTrackingCard: React.FC<ExperienceTrackingCardProps> = ({ handleC
         <div className="flex flex-wrap gap-4 mb-6">
           <button 
             onClick={handleCheckIn}
-            className="flex items-center justify-center gap-2 bg-[#4A3AFF] text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-700 transition-colors shadow-md">
+            className="flex items-center justify-center gap-2 bg-[#4A3AFF] text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-700 transition-colors shadow-guest">
             <ArrowRightToLine className="w-5 h-5" /> Check In
           </button>
           <button 
@@ -38,7 +38,7 @@ const ExperienceTrackingCard: React.FC<ExperienceTrackingCardProps> = ({ handleC
           </button>
         </div>
 
-        <div className="bg-white rounded-xl p-4 flex items-center justify-between w-full max-w-[320px] shadow-sm">
+        <div className="bg-white rounded-xl p-4 flex items-center justify-between w-full max-w-[320px] shadow-guest">
           <div>
             <p className="text-gray-800 text-[13px] font-semibold mb-1">Today status</p>
             <p className="text-gray-600 font-medium text-[14px]">Learning Sessions : {todaySession}</p>
@@ -50,7 +50,7 @@ const ExperienceTrackingCard: React.FC<ExperienceTrackingCardProps> = ({ handleC
       </div>
       
       <div className="hidden md:flex justify-end relative w-[160px] h-[154px] z-10" style={{ transform: 'translateY(-10px)' }}>
-        <img src={guest11} alt="Calendar" className="w-full h-full object-contain drop-shadow-xl" />
+        <img src={guest11} alt="Calendar" className="w-full h-full object-contain drop-shadow-sm" />
       </div>
     </div>
   );

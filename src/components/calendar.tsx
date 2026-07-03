@@ -17,6 +17,7 @@ import Profileheader from "@/components/ui/Profileheader";
 import CalendarGrid from "./ui/calendar-page/CalendarGrid";
 import UpcomingEvents from "./ui/calendar-page/UpcomingEvents";
 import QuickActions from "./ui/calendar-page/QuickActions";
+import { VITE_API_URL } from "../services/api/api";
 
 // Calendar data - only API fetched live classes will be displayed
 
@@ -82,7 +83,7 @@ const Calendar = () => {
       try {
         const token = localStorage.getItem("access_token");
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/dashboard/upcoming-live-classes`,
+          `${VITE_API_URL}/dashboard/upcoming-live-classes`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -118,7 +119,7 @@ const Calendar = () => {
         const token = localStorage.getItem("access_token");
         const startTime = performance.now();
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/dashboard/available-quizzes`,
+          `${VITE_API_URL}/dashboard/available-quizzes`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -272,7 +273,7 @@ const Calendar = () => {
     try {
       const token = localStorage.getItem("access_token");
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/dashboard/upcoming-live-classes`,
+        `${VITE_API_URL}/dashboard/upcoming-live-classes`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, ChevronLeft, ChevronRight, Loader2, ArrowLeft } from 'lucide-react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { VITE_API_URL } from '../services/api/api';
 
 const GuestQuizTake = () => {
   const navigate = useNavigate();
@@ -52,7 +53,7 @@ const GuestQuizTake = () => {
         time_taken: timeTaken
       };
 
-      const response = await fetch('https://lauratek.in:8000/guest/submit', {
+      const response = await fetch(`${VITE_API_URL}/guest/submit`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -81,7 +82,7 @@ const GuestQuizTake = () => {
         setLoading(true);
         const token = localStorage.getItem('access_token') || '';
         const idToFetch = activeQuizId || 1; // Fallback
-        const response = await fetch(`https://lauratek.in:8000/guest/quiz/${idToFetch}`, {
+        const response = await fetch(`${VITE_API_URL}/guest/quiz/${idToFetch}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await response.json();
@@ -129,11 +130,11 @@ const GuestQuizTake = () => {
   return (
     <div className="px-4 lg:px-8 py-8 w-full max-w-[1400px] mx-auto">
       {/* Top Banner */}
-      <div className="bg-white rounded-[16px] p-4 lg:px-6 flex flex-col sm:flex-row sm:items-center justify-between shadow-[0px_4px_20px_rgba(149,157,165,0.04)] border border-gray-100 mb-6">
+      <div className="bg-white rounded-[16px] p-4 lg:px-6 flex flex-col sm:flex-row sm:items-center justify-between shadow-guest border border-gray-100 mb-6">
         <div className="flex items-center gap-4">
           <button 
             onClick={() => navigate('/guest/quizzes')}
-            className="p-2 bg-gray-50 hover:bg-gray-100 rounded-full text-gray-500 hover:text-[#5B4FFF] transition-colors border border-gray-100 shadow-sm flex-shrink-0"
+            className="p-2 bg-gray-50 hover:bg-gray-100 rounded-full text-gray-500 hover:text-[#5B4FFF] transition-colors border border-gray-100 shadow-guest flex-shrink-0"
             title="Go back to quizzes"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -150,7 +151,7 @@ const GuestQuizTake = () => {
           <button 
             onClick={handleSubmit}
             disabled={submitting}
-            className={`px-6 py-2 bg-[#5B4FFF] hover:bg-[#4a3fdb] text-white text-[13px] font-semibold rounded-full shadow-sm transition-colors flex items-center gap-2 ${submitting ? 'opacity-70 cursor-wait' : ''}`}
+            className={`px-6 py-2 bg-[#5B4FFF] hover:bg-[#4a3fdb] text-white text-[13px] font-semibold rounded-full shadow-guest transition-colors flex items-center gap-2 ${submitting ? 'opacity-70 cursor-wait' : ''}`}
           >
             {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
             {submitting ? 'Submitting...' : 'Submit Quiz'}
@@ -162,7 +163,7 @@ const GuestQuizTake = () => {
         {/* Left Column (Main Content) */}
         <div className="flex-1 flex flex-col gap-6">
           {/* Progress Bar */}
-          <div className="bg-white rounded-[16px] p-5 shadow-[0px_4px_20px_rgba(149,157,165,0.04)] border border-gray-100">
+          <div className="bg-white rounded-[16px] p-5 shadow-guest border border-gray-100">
             <div className="flex justify-between text-[13px] font-medium text-gray-500 mb-3">
               <span>{answeredCount}/{questions.length} answered</span>
               <span className="text-[#5B4FFF] font-bold">{progressPercent}%</span>
@@ -173,7 +174,7 @@ const GuestQuizTake = () => {
           </div>
 
           {/* Question Block */}
-          <div className="bg-white rounded-[24px] p-6 lg:p-8 shadow-[0px_4px_20px_rgba(149,157,165,0.04)] border border-gray-100">
+          <div className="bg-white rounded-[24px] p-6 lg:p-8 shadow-guest border border-gray-100">
             <div className="flex justify-between items-center mb-6">
               <div className="w-10 h-10 rounded-full bg-[#5B4FFF] text-white flex items-center justify-center font-bold text-[15px]">
                 {currentQuestion}
@@ -223,7 +224,7 @@ const GuestQuizTake = () => {
               <button 
                 onClick={() => setCurrentQuestion(prev => Math.min(questions.length, prev + 1))}
                 disabled={currentQuestion === questions.length}
-                className={`flex items-center gap-2 px-6 py-2.5 rounded-full font-medium text-[14px] shadow-sm transition-colors ${
+                className={`flex items-center gap-2 px-6 py-2.5 rounded-full font-medium text-[14px] shadow-guest transition-colors ${
                   currentQuestion === questions.length ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-[#5B4FFF] hover:bg-[#4a3fdb] text-white'
                 }`}
               >
@@ -235,7 +236,7 @@ const GuestQuizTake = () => {
 
         {/* Right Column (Navigator) */}
         <div className="w-full lg:w-[320px]">
-          <div className="bg-white rounded-[24px] p-6 shadow-[0px_4px_20px_rgba(149,157,165,0.04)] border border-gray-100">
+          <div className="bg-white rounded-[24px] p-6 shadow-guest border border-gray-100">
             <h3 className="text-[15px] font-bold text-slate-800 mb-6">Question Navigator</h3>
             
             <div className="flex flex-wrap gap-3 mb-8">
@@ -247,7 +248,7 @@ const GuestQuizTake = () => {
                     onClick={() => setCurrentQuestion(num)}
                     className={`w-10 h-10 rounded-full flex items-center justify-center text-[14px] font-medium transition-colors ${
                       currentQuestion === num
-                        ? 'bg-[#5B4FFF] text-white shadow-md shadow-purple-200'
+                        ? 'bg-[#5B4FFF] text-white shadow-guest shadow-purple-200'
                         : answers[num]
                           ? 'bg-[#00A962] text-white'
                           : 'bg-gray-50 text-gray-500 hover:bg-gray-100'

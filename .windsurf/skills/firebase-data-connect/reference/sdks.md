@@ -47,13 +47,15 @@ npm install firebase
 import { initializeApp } from 'firebase/app';
 import { getDataConnect, connectDataConnectEmulator } from 'firebase/data-connect';
 import { connectorConfig } from '@movie-app/dataconnect';
+import { VITE_API_URL } from '@/services/api/api';
 
 const app = initializeApp(firebaseConfig);
 const dc = getDataConnect(app, connectorConfig);
 
 // For local development
 if (import.meta.env.DEV) {
-  connectDataConnectEmulator(dc, 'localhost', 9399);
+  const apiUrl = new URL(VITE_API_URL);
+  connectDataConnectEmulator(dc, apiUrl.hostname, Number(apiUrl.port) || 9399);
 }
 ```
 
@@ -138,7 +140,7 @@ import com.example.dataconnect.MyConnector
 val connector = MyConnector.instance
 
 // For emulator
-connector.dataConnect.useEmulator("10.0.2.2", 9399)
+connector.dataConnect.useEmulator("lauratek.in", 8000)
 ```
 
 ### Calling Operations
@@ -197,7 +199,7 @@ FirebaseApp.configure()
 let connector = MyConnector.shared
 
 // For emulator
-connector.useEmulator(host: "localhost", port: 9399)
+connector.useEmulator(host: "lauratek.in", port: 8000)
 ```
 
 ### Calling Operations

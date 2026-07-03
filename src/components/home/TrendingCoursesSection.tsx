@@ -24,7 +24,7 @@ const TrendingCoursesSection = () => {
   return (
     <>
       {/* Trending Courses Section */}
-        <section id="trending-courses" className="py-24 bg-white relative">
+        <section id="trending-courses" className="py-12 md:py-16 lg:py-24 bg-white relative">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1650px]">
             {/* Header row */}
             <div className="flex flex-col md:flex-row justify-between items-end mb-16">
@@ -43,7 +43,7 @@ const TrendingCoursesSection = () => {
                   What<br />
                   Learners Are <span className="relative inline-block" style={{ background: 'linear-gradient(180deg, #1F3799 0%, #9F18AC 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                   Enrolling
-                  <img src={line1} alt="underline" className="absolute -bottom-2 left-0 w-full" />
+                  <img src={line1} alt="underline" className="absolute -bottom-4 left-0 w-full" />
                 </span> In Right<br/>Now
                 </h2>
               </div>

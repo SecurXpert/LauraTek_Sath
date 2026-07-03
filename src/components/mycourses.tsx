@@ -41,9 +41,8 @@ import Sidebar from "../components/sidebar";
 import Profileheader from "./ui/Profileheader";
 import CurriculumView from "./ui/CurriculumView";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Course, Instructor } from "./ui/mycourses-page/types";
-import CourseCard from "./ui/mycourses-page/CourseCard";
-import InstructorCard from "./ui/mycourses-page/InstructorCard";
+import { VITE_API_URL } from "@/services/api/api";
+import { Course, Instructor, CourseCard, InstructorCard } from "./ui/mycourses-page/types.tsx";
 import { decodeJWT } from "@/lib/jwtUtils";
 
 // InstructorCard and CourseCard have been extracted
@@ -102,7 +101,7 @@ const MyCourses: React.FC = () => {
 
         const coursesRes = await fetch(
 
-          `${import.meta.env.VITE_API_URL}/dashboard/my-courses`,
+          `${VITE_API_URL}/dashboard/my-courses`,
 
           {
 
@@ -120,7 +119,7 @@ const MyCourses: React.FC = () => {
 
         const instructorsRes = await fetch(
 
-          `${import.meta.env.VITE_API_URL}/dashboard/my-instructors`,
+          `${VITE_API_URL}/dashboard/my-instructors`,
 
           {
 
@@ -142,20 +141,7 @@ const MyCourses: React.FC = () => {
 
         }
 
-        /*
-        try {
-          const streakRes = await fetch(`${import.meta.env.VITE_API_URL}/student-streaks/my-streak`, {
-            method: "GET",
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          if (streakRes.ok) {
-            const streakData = await streakRes.json();
-            setCurrentStreak(streakData.current_streak || 0);
-          }
-        } catch (error) {
-          console.error("Error fetching streak data:", error);
-        }
-        */
+       
 
         let formattedCourses: Course[] = [];
 
@@ -219,7 +205,7 @@ const MyCourses: React.FC = () => {
               if (!token) return course;
               try {
                 const progRes = await fetch(
-                  `${import.meta.env.VITE_API_URL}/courses/students/${studentId}/courses/${course.id}/progress`,
+                  `${VITE_API_URL}/courses/students/${studentId}/courses/${course.id}/progress`,
                   {
                     method: "GET",
                     headers: { Authorization: `Bearer ${token}` }

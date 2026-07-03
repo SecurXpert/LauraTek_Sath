@@ -9,11 +9,11 @@ interface CourseHeroBannerProps {
 const CourseHeroBanner: React.FC<CourseHeroBannerProps> = ({ course, courseContent }) => {
   return (
       <div 
-        className="rounded-[24px] p-8 lg:p-12 mb-8 text-white relative overflow-hidden"
+        className="rounded-[24px] p-6 lg:p-8 mb-6 text-white relative overflow-hidden"
         style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #4338ca 50%, #6366f1 100%)' }}
       >
         <div className="relative z-10 max-w-3xl">
-          <div className="flex flex-wrap items-center gap-3 mb-6">
+          <div className="flex flex-wrap items-center gap-3 mb-4">
             <span className="px-4 py-1.5 rounded-full border border-white/20 text-[13px] font-medium backdrop-blur-sm">
               {course.category || 'Development'}
             </span>
@@ -25,8 +25,8 @@ const CourseHeroBanner: React.FC<CourseHeroBannerProps> = ({ course, courseConte
             </span>
           </div>
 
-          <h1 className="text-[32px] lg:text-[42px] font-bold leading-tight mb-4">{course.title}</h1>
-          <p className="text-[16px] lg:text-[18px] text-white/80 leading-relaxed mb-8 max-w-2xl">
+          <h1 className="text-[32px] lg:text-[42px] font-bold leading-tight mb-3">{course.title}</h1>
+          <p className="text-[16px] lg:text-[18px] text-white/80 leading-relaxed mb-5 max-w-2xl">
             {course.description}
           </p>
 
@@ -47,7 +47,7 @@ const CourseHeroBanner: React.FC<CourseHeroBannerProps> = ({ course, courseConte
             </div>
           </div>
 
-          <div className="mt-6 text-[14px] text-white/80">
+          <div className="mt-4 text-[14px] text-white/80">
             Instructor: <span className="font-bold text-white">{courseContent.instructor.name}</span> • Last updated {course.updatedDate}
           </div>
         </div>

@@ -45,7 +45,7 @@ const WorkshopTestimonialSection = () => {
   return (
     <>
       {/* ================== COMBINED WORKSHOP & TESTIMONIAL SECTION ================== */}
-        <section id="success-stories" className="pt-24 pb-24 relative overflow-hidden bg-gradient-to-b from-[#F4F4FD] via-[#FDFDFD] to-[#FCF4F7]">
+        <section id="success-stories" className="py-12 md:py-16 lg:py-24 relative overflow-hidden bg-gradient-to-b from-[#F4F4FD] via-[#FDFDFD] to-[#FCF4F7]">
           
           {/* Background Decorations for Top Part */}
           <div className="absolute top-[8%] left-[4%] text-[#D1D5F5] opacity-80 z-0">
@@ -172,7 +172,7 @@ const WorkshopTestimonialSection = () => {
                   What<br />
                   Users Are <span className="relative inline-block" style={{ background: 'linear-gradient(180deg, #1F3799 0%, #9F18AC 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                     Saying
-                    <img src={line1} alt="underline" className="absolute -bottom-2 left-0 w-full" />
+                    <img src={line1} alt="underline" className="absolute -bottom-4 left-0 w-full" />
                   </span> About<br/>Lauratek
                 </h2>
               </div>

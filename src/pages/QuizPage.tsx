@@ -5,12 +5,8 @@ import Sidebar from "@/components/sidebar";
 import Profileheader from "@/components/ui/Profileheader";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import QuizHeader from "@/components/ui/quiz-page/QuizHeader";
-import QuestionArea from "@/components/ui/quiz-page/QuestionArea";
-import QuestionNavigator from "@/components/ui/quiz-page/QuestionNavigator";
-import QuizBottomNavigation from "@/components/ui/quiz-page/QuizBottomNavigation";
-import QuizResults from "@/components/ui/quiz-page/QuizResults";
-import { useQuizData } from "@/hooks/useQuizData";
+import { QuizHeader, QuestionArea, QuestionNavigator, QuizBottomNavigation, QuizResults } from "@/components/ui/quiz-page/types.tsx";
+import { useQuizData } from "./useQuizData";
 
 const QuizPage = () => {
   const { id } = useParams();

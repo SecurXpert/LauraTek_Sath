@@ -1,73 +1,124 @@
-# Welcome to your Lovable project
+# LauraTek User Portal - End-to-End Project Flow
 
-## Project info
+Welcome to the **LauraTek User Portal** repository! This document provides a comprehensive overview of the project's architecture, key features, and end-to-end user flow.
 
-**URL**: https://lovable.dev/projects/1ff2b83a-261e-4456-8bb4-dfca4e292edc
+## 🚀 Project Overview
 
-## How can I edit this code?
+The LauraTek User Portal is a modern, high-performance Learning Management System (LMS) built for students, professionals, and guest users. It offers a rich, interactive educational experience featuring online courses, live classes, an integrated code compiler, assessments, and comprehensive profile management.
 
-There are several ways of editing your application.
+The application is split into three main experiences:
+1. **Public / Marketing Pages**: Accessible to everyone (Home, Courses, About, Contact).
+2. **Student Portal (Authenticated)**: A feature-rich dashboard for enrolled students.
+3. **Guest Portal**: A specialized, sandboxed environment for trial users to explore courses and tools.
 
-**Use Lovable**
+## 🛠️ Technology Stack
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/1ff2b83a-261e-4456-8bb4-dfca4e292edc) and start prompting.
+- **Framework**: React 18 with Vite
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS & Framer Motion (for animations)
+- **UI Components**: Shadcn UI (built on Radix UI)
+- **Routing**: React Router DOM (v6)
+- **State Management & Data Fetching**: TanStack React Query (`@tanstack/react-query`)
+- **Backend / BaaS**: Firebase & Custom Backend APIs (Axios)
+- **Key Integrations**: 
+  - `react-ace` (In-browser Code Editor)
+  - `chart.js` / `recharts` (Analytics & Dashboards)
+  - `react-hook-form` + `zod` (Form handling & validation)
 
-Changes made via Lovable will be committed automatically to this repo.
+---
 
-**Use your preferred IDE**
+## 🔄 End-to-End Project Flow
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+The application follows a structured routing architecture managed in `src/App.tsx`. Here is the end-to-end flow for different user types:
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### 1. Public & Marketing Flow
+When a user visits the platform, they are greeted by the public-facing pages.
+* **Landing Page (`/`)**: Hero section, featured courses, testimonials, and platform overview.
+* **Discovery**: Users can explore available programs via `/courses`, `/bootcamp`, and read about the company via `/about`.
+* **Support**: Users can reach out via `/contact-us` or view the `/support`, `/terms`, and `/privacy` pages.
+* **Authentication (`/login`)**: Users authenticate to enter the Student Portal.
 
-Follow these steps:
+### 2. Authenticated Student Flow (`/dashboard/*`)
+Once logged in, students gain access to their personalized dashboard, which serves as the central hub for their learning journey.
+* **Dashboard Home (`/dashboard`)**: Overview of progress, upcoming classes, and recent activity.
+* **Learning & Courses**:
+  - `/dashboard/courses` or `/mycourses`: View enrolled courses.
+  - `/course/:id`: Detailed view of a specific course syllabus and curriculum.
+  - `/dashboard/materials/:id`: Access course materials, PDFs, and resources.
+  - `/dashboard/liveclasses`: Join scheduled live sessions.
+* **Practice & Assessment**:
+  - `/dashboard/compiler`: An integrated IDE (Ace Editor) to write and run code directly in the browser.
+  - `/dashboard/assessments` & `/dashboard/exams`: Take scheduled tests and submit assignments.
+  - `/quiz/:id`: Interactive quiz-taking interface.
+  - `/dashboard/results`: View exam and quiz results.
+* **Career & Profile**:
+  - `/dashboard/resume`: Resume builder tool.
+  - `/jobs`: Job board and placement opportunities.
+  - `/dashboard/certificates`: View and download earned certificates.
+  - `/dashboard/profile` & `/settings`: Manage user details, passwords, and preferences.
+* **Tracking**:
+  - `/dashboard/attendance`: Track attendance for live classes.
+  - `/dashboard/calendar`: View upcoming schedules and deadlines.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### 3. Guest Portal Flow (`/guest/*`)
+To allow prospective students to experience the platform without full commitment, a dedicated Guest Portal is available.
+* **Guest Layout (`/guest`)**: A specialized layout and sidebar for trial users.
+* **Guest Dashboard**: A restricted version of the main dashboard.
+* **Exploration**: 
+  - `/guest/courses`: Browse available courses.
+  - `/guest/course/:id`: View course details as a guest.
+* **Trial Features**:
+  - `/guest/compiler`: Sandbox coding environment.
+  - `/guest/quizzes` & `/guest/quiz-results`: Take sample quizzes and view detailed results.
+  - `/guest/attendance`, `/guest/enrollments`, `/guest/certificates`: Read-only or trial views of student features.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+---
 
-# Step 3: Install the necessary dependencies.
-npm i
+## 📂 Project Structure
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+Laura_Userside/
+├── public/                 # Static assets (images, icons)
+├── src/
+│   ├── assets/             # Internal assets
+│   ├── components/         # Reusable UI components (Shadcn UI, Cards, Forms)
+│   │   ├── ui/             # Granular UI elements
+│   │   └── ...             # Feature-specific components (calendar, compiler, etc.)
+│   ├── Guest/              # Dedicated module for the Guest Portal
+│   ├── hooks/              # Custom React hooks
+│   ├── lib/                # Utility functions (e.g., tailwind merge)
+│   ├── pages/              # Top-level route components (Home, Login, CourseDetail)
+│   ├── services/
+│   │   └── api/            # API configurations (Axios instances, standardized endpoints)
+│   ├── App.tsx             # Main routing configuration
+│   ├── main.tsx            # Application entry point
+│   └── index.css           # Global styles and Tailwind directives
+├── package.json            # Dependencies and scripts
+├── tailwind.config.ts      # Tailwind CSS configuration
+└── vite.config.ts          # Vite build configuration
 ```
 
-**Edit a file directly in GitHub**
+## 🔌 API & State Management
+* **Centralized API**: All backend communication routes through a centralized configuration located at `src/services/api/api.ts`. It exports a standardized `VITE_API_URL` to ensure consistent backend connectivity across all environments.
+* **Data Fetching**: The app heavily utilizes **React Query** to fetch, cache, and synchronize server state efficiently, minimizing redundant network requests and improving UI responsiveness.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🚀 How to Run the Project Locally
 
-**Use GitHub Codespaces**
+1. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (blue button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+2. **Environment Variables**:
+   Ensure you have the required `.env` file containing variables like `VITE_API_URL` and Firebase configuration keys (if applicable).
 
-## What technologies are used for this project?
+3. **Start Development Server**:
+   ```bash
+   npm run dev
+   ```
+   The app will typically be available at `http://localhost:5173`.
 
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/1ff2b83a-261e-4456-8bb4-dfca4e292edc) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+4. **Build for Production**:
+   ```bash
+   npm run build
+   ```

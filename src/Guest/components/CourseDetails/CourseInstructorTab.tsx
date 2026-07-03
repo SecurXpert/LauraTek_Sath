@@ -8,7 +8,11 @@ interface CourseInstructorTabProps {
 
 const CourseInstructorTab: React.FC<CourseInstructorTabProps> = ({ courseContent }) => {
   return (
-            <div className="bg-white rounded-[24px] p-8 shadow-[0px_4px_20px_rgba(149,157,165,0.05)] border border-gray-100">
+
+            <div 
+              className="bg-white rounded-[24px] p-8 border border-gray-100"
+              style={{ boxShadow: '0px 10.05px 12.56px -7.54px #0000001A, 0px 25.12px 31.4px -6.28px #0000001A' }}
+            >
               <div className="flex flex-col sm:flex-row items-start gap-6 mb-8">
                 <div className="w-24 h-24 rounded-[20px] overflow-hidden shrink-0 ring-4 ring-[#F4F1FF]">
                   <img src={learningImg} alt="Instructor" className="w-full h-full object-cover" />

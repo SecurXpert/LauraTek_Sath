@@ -13,7 +13,7 @@ const UnlockFeaturesCard: React.FC<UnlockFeaturesCardProps> = ({ setContactOpen 
       <h2 className="text-[26px] font-extrabold text-[#4A3AFF] mb-3 leading-tight tracking-tight">Attendance Tracking</h2>
       
       <p className="text-[#6B7280] text-[14px] font-medium mb-6 max-w-[240px] leading-relaxed">
-        Enroll in a cource to access complete attendance features
+        Enroll in a course to access complete attendance features
       </p>
       
       <ul className="space-y-4 z-10 flex-grow">
@@ -34,7 +34,7 @@ const UnlockFeaturesCard: React.FC<UnlockFeaturesCardProps> = ({ setContactOpen 
       </ul>
 
       <div className="w-[160px] h-[160px] self-center my-6 pointer-events-none">
-        <img src={guest10} alt="Unlock Features" className="w-full h-full object-contain drop-shadow-md" />
+        <img src={guest10} alt="Unlock Features" className="w-full h-full object-contain drop-shadow-sm" />
       </div>
 
       <div className="mt-auto flex flex-col gap-4 z-10">

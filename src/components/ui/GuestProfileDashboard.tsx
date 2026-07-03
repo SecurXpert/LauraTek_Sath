@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { Briefcase, Pencil, Shield, Bell, LockKeyhole } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import Header from "../Header";
+import { VITE_API_URL } from "@/services/api/api";
 
 type Tab = "My Account" | "Password & Security" | "Notifications";
  
@@ -66,7 +67,7 @@ const GuestProfileDashboard = () => {
   const [passwordMessage, setPasswordMessage] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
  
-  const BASE_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL;
+  const BASE_URL = VITE_API_URL;
  
   // ────────────────────────────────────────────────
   //   Fetch student profile (My Account tab)

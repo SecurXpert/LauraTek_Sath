@@ -24,7 +24,7 @@ const BrowseCategoriesSection = () => {
   return (
     <>
       {/* Browse Categories Section */}
-        <section className="relative w-full py-10 overflow-hidden bg-gradient-to-r from-[#FDFDFD] via-[#F6F5FB] to-[#FAE8F1]">
+        <section className="relative w-full py-10 md:py-12 lg:py-16 overflow-hidden bg-gradient-to-r from-[#FDFDFD] via-[#F6F5FB] to-[#FAE8F1]">
           {/* Left Decorative Arrows */}
           <div className="absolute left-[-2%] top-[10%] flex opacity-[0.08] text-[#8B5CF6]">
             <svg width="100" height="150" viewBox="0 0 24 24" fill="currentColor" className="-mr-12">
@@ -38,10 +38,10 @@ const BrowseCategoriesSection = () => {
             </svg>
           </div>
 
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1650px] relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
+          <div className="container mx-auto px-4 sm:px-6 lg:pl-[120px] lg:pr-0 xl:pr-[120px] max-w-[1650px] relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
             
             {/* Left Text */}
-            <div className="md:w-1/3 flex justify-center md:justify-start pl-0 md:pl-20">
+            <div className="md:w-1/3 flex justify-center md:justify-start pl-0">
               <h2 className="text-center md:text-left" style={{ fontFamily: '"League Spartan", sans-serif', fontWeight: 800, fontSize: '35px', lineHeight: '33.6px', letterSpacing: '0px', verticalAlign: 'middle', color: '#2A359B' }}>
                 Explore In-Demand <br />
                 Learning Categories
@@ -129,7 +129,7 @@ const BrowseCategoriesSection = () => {
 
 
         {/* === ALUMNI RECOGNITION - HEIGHT REDUCED BY 2.5px (py-11) + CONTINUOUS LOGOS === 
-        <section className="py-11 bg-[#11224E] text-white">
+        <section className="py-8 md:py-11 bg-[#11224E] text-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-6">
               Learn from the Alumni of

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Search, Tag, BookOpen, Calendar, Clock, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Contactus from '../../../components/ui/contactus';
 
 interface ExamListProps {
@@ -22,11 +23,23 @@ const ExamList: React.FC<ExamListProps> = ({
 }) => {
   const filteredExams = exams.filter(e => (e.title || '').toLowerCase().includes(examSearch.toLowerCase()));
   const totalPages = Math.ceil(filteredExams.length / itemsPerPage);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const fromQuizzes = location.state?.fromQuizzes;
 
   return (
     <>
-      <div className="px-4 lg:px-8 py-8 w-full max-w-[1400px] mx-auto min-h-screen">
-        <div className="mb-10">
+      <div className="px-4 lg:px-8 pt-0 pb-8 w-full max-w-[1400px] mx-auto min-h-screen">
+        {fromQuizzes && (
+          <button 
+            onClick={() => navigate('/guest/quizzes')}
+            className="flex items-center gap-2 text-[13px] font-bold text-gray-500 hover:text-[#5B4FFF] transition-colors mb-6"
+          >
+            <ChevronLeft className="w-4 h-4" /> Back to Quizzes
+          </button>
+        )}
+
+        <div className="mb-6">
           <h1 className="text-[28px] font-bold text-slate-800 mb-1">Exam Portal</h1>
           <p className="text-[14px] text-gray-500">View and start your available exams</p>
         </div>
@@ -54,14 +67,22 @@ const ExamList: React.FC<ExamListProps> = ({
           <div className="flex justify-center py-20">
             <RefreshCw className="w-8 h-8 animate-spin text-[#7C3AED]" />
           </div>
+        ) : filteredExams.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-guest mb-4">
+              <span className="text-2xl">🔍</span>
+            </div>
+            <h3 className="text-[18px] font-bold text-slate-700 mb-2">Exam not found</h3>
+            <p className="text-[14px] text-gray-500 max-w-md">We couldn't find any exams matching your search. Try checking your spelling or using different keywords.</p>
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {exams.map((exam, originalIndex) => ({ ...exam, originalIndex }))
-              .filter(e => (e.title || '').toLowerCase().includes(examSearch.toLowerCase()))
+            {filteredExams
+              .map((exam, i) => ({ ...exam, originalIndex: i }))
               .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
               .map((exam, i) => (
-              <div key={exam.id || i} className="bg-white rounded-[16px] p-6 border border-gray-100 shadow-[0px_4px_20px_rgba(0,0,0,0.03)] flex flex-col h-full hover:shadow-[0px_8px_24px_rgba(0,0,0,0.06)] transition-shadow">
-                 <div className="flex justify-between items-start mb-6">
+              <div key={exam.id || i} className="bg-white rounded-[16px] p-5 border border-gray-100 shadow-guest flex flex-col h-full hover:shadow-guest transition-shadow-guest">
+                 <div className="flex justify-between items-start mb-4">
                     <div>
                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Exam Title</p>
                        <h3 className="text-[18px] font-bold text-slate-800 leading-tight">{exam.title}</h3>
@@ -74,14 +95,14 @@ const ExamList: React.FC<ExamListProps> = ({
                     </div>
                  </div>
                  
-                 <div className="mb-6">
+                 <div className="mb-4">
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Description</p>
-                    <div className="bg-[#F8F9FA] rounded-[12px] p-4 min-h-[72px]">
+                    <div className="bg-[#F8F9FA] rounded-[12px] p-3 min-h-[60px]">
                        <p className="text-[13px] text-gray-600 line-clamp-2">{exam.description || "This description will be visible to students when they view the exam"}</p>
                     </div>
                  </div>
 
-                 <div className="bg-[#FCFCFF] border border-[#F5F3FF] rounded-[12px] p-4 flex flex-col gap-3 mt-auto mb-5">
+                 <div className="bg-[#FCFCFF] border border-[#F5F3FF] rounded-[12px] p-3 flex flex-col gap-2 mt-auto mb-4">
                     <div className="flex items-center gap-3 text-[13px]">
                        <BookOpen className="w-4 h-4 text-[#A855F7]" />
                        <span className="font-bold text-slate-700 w-16">Course:</span>
@@ -104,7 +125,7 @@ const ExamList: React.FC<ExamListProps> = ({
                      setSelectedExamId(exam.id || exam.exam_id);
                      setShowCompiler(true);
                    }} 
-                   className="w-full py-3.5 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white text-[14px] font-bold rounded-[12px] transition-colors shadow-sm"
+                   className="w-full py-2.5 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white text-[13.5px] font-bold rounded-[10px] transition-colors shadow-guest"
                  >
                    Start Exam Now
                  </button>
@@ -118,19 +139,19 @@ const ExamList: React.FC<ExamListProps> = ({
             <button 
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
-              className="px-4 h-10 rounded-full flex items-center gap-1 border border-gray-200 text-gray-600 font-medium text-[14px] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors bg-white shadow-sm"
+              className="px-4 h-10 rounded-full flex items-center gap-1 border border-gray-200 text-gray-600 font-medium text-[14px] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors bg-white shadow-guest"
             >
               <ChevronLeft className="w-4 h-4" /> Previous
             </button>
             
-            <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-[14px] bg-[#8B5CF6] text-white shadow-sm">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-[14px] bg-[#8B5CF6] text-white shadow-guest">
               {currentPage}
             </div>
 
             <button 
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
-              className="px-4 h-10 rounded-full flex items-center gap-1 border border-gray-200 text-gray-600 font-medium text-[14px] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors bg-white shadow-sm"
+              className="px-4 h-10 rounded-full flex items-center gap-1 border border-gray-200 text-gray-600 font-medium text-[14px] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors bg-white shadow-guest"
             >
               Next <ChevronRight className="w-4 h-4" />
             </button>

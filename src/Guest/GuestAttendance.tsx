@@ -6,6 +6,7 @@ import ExperienceTrackingCard from './components/Attendance/ExperienceTrackingCa
 import AttendanceHistoryCard from './components/Attendance/AttendanceHistoryCard';
 import UnlockFeaturesCard from './components/Attendance/UnlockFeaturesCard';
 import SuccessModal from './components/Attendance/SuccessModal';
+import { VITE_API_URL } from '../services/api/api';
 
 const GuestAttendance = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const GuestAttendance = () => {
   const fetchTodaySession = async () => {
     try {
       const token = localStorage.getItem('access_token') || '';
-      const response = await fetch('https://lauratek.in:8000/guest/attendance/today', {
+      const response = await fetch(`${VITE_API_URL}/guest/attendance/today`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -52,7 +53,7 @@ const GuestAttendance = () => {
       const toDateStr = toDate.toISOString().split('T')[0];
       const fromDateStr = fromDate.toISOString().split('T')[0];
 
-      const response = await fetch(`https://lauratek.in:8000/guest/attendance/my-attendance?from_date=${fromDateStr}&to_date=${toDateStr}`, {
+      const response = await fetch(`${VITE_API_URL}/guest/attendance/my-attendance?from_date=${fromDateStr}&to_date=${toDateStr}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -108,7 +109,7 @@ const GuestAttendance = () => {
   const handleCheckIn = async () => {
     try {
       const token = localStorage.getItem('access_token') || '';
-      const response = await fetch('https://lauratek.in:8000/guest/attendance/check-in', {
+      const response = await fetch(`${VITE_API_URL}/guest/attendance/check-in`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -129,7 +130,7 @@ const GuestAttendance = () => {
   const handleCheckOut = async () => {
     try {
       const token = localStorage.getItem('access_token') || '';
-      const response = await fetch('https://lauratek.in:8000/guest/attendance/check-out', {
+      const response = await fetch(`${VITE_API_URL}/guest/attendance/check-out`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -148,7 +149,7 @@ const GuestAttendance = () => {
   };
 
   return (
-    <div className="px-4 lg:px-8 py-8 w-full max-w-[1600px] mx-auto">
+    <div className="px-4 lg:px-8 pt-0 pb-8 w-full max-w-[1600px] mx-auto">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
         <div>

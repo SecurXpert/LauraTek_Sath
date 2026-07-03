@@ -3,7 +3,7 @@ import Sidebar from "@/components/sidebar";
 import Profileheader from "@/components/ui/Profileheader";
 import { Star, Send, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useReviewData } from "@/hooks/useReviewData";
+import { useReviewData } from "./useReviewData";
 
 const Review = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);

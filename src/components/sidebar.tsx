@@ -118,7 +118,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, setActive, active }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
     const handleToggle = () => setMobileOpen(prev => !prev);

@@ -13,26 +13,29 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = ({
   selectedProblem, questionDetails, currentProbMeta, isDescOpen, setIsDescOpen
 }) => {
   return (
-    <div className="bg-[#F5F3FF] rounded-[24px] p-6 lg:p-8">
-      <div className="flex justify-between items-start mb-4">
+    <div 
+      className="rounded-[24px] p-5 lg:p-6"
+      style={{ background: 'linear-gradient(180deg, #E7E8F9 0%, #EDE3F6 100%)' }}
+    >
+      <div className="flex justify-between items-start mb-2">
         <div className="flex items-center gap-3">
           <span className="text-[13px] font-medium text-gray-500">Problem #{selectedProblem}</span>
         </div>
         <div className="flex items-center gap-3">
-          <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors">
+          {/* <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors">
             <Bookmark className="w-4 h-4" />
           </button>
           <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors">
             <Share2 className="w-4 h-4" />
-          </button>
+          </button> */}
         </div>
       </div>
 
-      <h1 className="text-[28px] font-bold text-slate-800 mb-6">{questionDetails ? questionDetails.title : currentProbMeta.title}</h1>
+      <h1 className="text-[24px] font-bold text-slate-800 mb-4">{questionDetails ? questionDetails.title : currentProbMeta.title}</h1>
       
-      <div className="bg-[#EAE5FF] rounded-[24px] overflow-hidden mb-6 transition-all duration-300">
+      <div className="bg-[#EAE5FF] rounded-[24px] overflow-hidden transition-all duration-300">
         <div 
-          className="border-b border-[#5B4FFF]/10 px-6 py-4 flex items-center justify-between text-[#5B4FFF] text-[13px] font-bold cursor-pointer hover:bg-[#DED7FF] transition-colors"
+          className="border-b border-[#5B4FFF]/10 px-5 py-3 flex items-center justify-between text-[#5B4FFF] text-[13px] font-bold cursor-pointer hover:bg-[#DED7FF] transition-colors"
           onClick={() => setIsDescOpen(!isDescOpen)}
         >
           <div className="flex items-center gap-2">

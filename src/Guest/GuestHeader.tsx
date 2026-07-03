@@ -111,10 +111,10 @@ const GuestHeader = ({ setSidebarOpen, isCollapsed }: GuestHeaderProps) => {
               onKeyDown={handleKeyDown}
               onFocus={() => setIsSearchFocused(true)}
               onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
-              className="w-full pl-9 md:pl-10 pr-3 md:pr-4 py-2 sm:py-2.5 bg-white border-none rounded-full shadow-[0px_2px_12px_rgba(149,157,165,0.06)] text-[13px] md:text-[14px] text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#5B4FFF]/20 transition-all"
+              className="w-full pl-9 md:pl-10 pr-3 md:pr-4 py-2 sm:py-2.5 bg-white border-none rounded-full shadow-guest text-[13px] md:text-[14px] text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#5B4FFF]/20 transition-all"
             />
             {isSearchFocused && searchQuery && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden z-50">
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-guest ring-1 ring-black ring-opacity-5 overflow-hidden z-50">
                 {filteredItems.length > 0 ? (
                   <ul className="py-1">
                     {filteredItems.map((item) => (
@@ -157,14 +157,14 @@ const GuestHeader = ({ setSidebarOpen, isCollapsed }: GuestHeaderProps) => {
               <span className="text-[12px] font-medium text-gray-500">Guest Access</span>
             </div>
             <div 
-              className="h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-[#5B4FFF] flex items-center justify-center cursor-pointer hover:bg-[#4a3fdb] transition-colors text-white font-bold text-[13px] sm:text-sm shadow-sm"
+              className="h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-[#5B4FFF] flex items-center justify-center cursor-pointer hover:bg-[#4a3fdb] transition-colors text-white font-bold text-[13px] sm:text-sm shadow-guest"
               onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
             >
               {initials}
             </div>
             
             {isProfileDropdownOpen && (
-              <div className="absolute right-0 top-12 mt-2 w-48 bg-white rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 z-50 overflow-hidden">
+              <div className="absolute right-0 top-12 mt-2 w-48 bg-white rounded-xl shadow-guest ring-1 ring-black ring-opacity-5 z-50 overflow-hidden">
                 <div className="py-1">
                   <button onClick={() => { setIsProfileDropdownOpen(false); navigate("/guest/profile"); }} className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                     <User className="h-4 w-4 mr-3" /> Profile

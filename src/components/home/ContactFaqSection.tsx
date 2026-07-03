@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { VITE_API_URL } from '../../services/api/api';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import guest12Img from "@/assets/guest12.png";
 import line1 from "@/assets/line1.png";
@@ -132,7 +133,7 @@ const ContactFaqSection = () => {
     setSubmitMessage(null);
 
     try {
-      const BASE_URL = import.meta.env.VITE_API_URL;
+      const BASE_URL = VITE_API_URL;
       const response = await fetch(`${BASE_URL}/contact/submit`, {
         method: 'POST',
         headers: {
@@ -160,7 +161,7 @@ const ContactFaqSection = () => {
   return (
     <>
       {/* ================== CONTACT & FAQ SECTION ================== */}
-        <section className="py-24 bg-white">
+        <section className="py-12 md:py-16 lg:py-24 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1650px]">
             
             {/* Top Row: Map & Contact Form */}
@@ -252,7 +253,7 @@ const ContactFaqSection = () => {
                 <h2 className="font-dm-sans text-[34px] md:text-[42px] font-extrabold text-[#050816] leading-[1.2] mb-10">
                   Frequently <span className="text-[#1F3799] relative inline-block">
                     Asked
-                    <img src={line1} alt="underline" className="absolute -bottom-2 left-0 w-full" />
+                    <img src={line1} alt="underline" className="absolute -bottom-4 left-0 w-full" />
                   </span> Questions.
                 </h2>
 

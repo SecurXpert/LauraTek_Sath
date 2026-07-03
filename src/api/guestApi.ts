@@ -34,7 +34,7 @@ const guestApi = {
     api.post("/guest/verify_otp", null, { params }),
 
   login: (credentials: { email: string; password: string }) =>
-    api.post("/student/login", credentials),
+    api.post("/guest/login", credentials),
 
   register: (payload: RegisterPayload) =>
     api.post("/guest/register", payload),

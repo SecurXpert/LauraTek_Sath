@@ -10,7 +10,10 @@ const CourseCurriculumTab: React.FC<CourseCurriculumTabProps> = ({ course, cours
   const [expandedSection, setExpandedSection] = useState<number | null>(1);
 
   return (
-            <div className="bg-white rounded-[24px] p-8 shadow-[0px_4px_20px_rgba(149,157,165,0.05)] border border-gray-100">
+            <div 
+              className="bg-white rounded-[24px] p-8 border border-gray-100"
+              style={{ boxShadow: '0px 10.05px 12.56px -7.54px #0000001A, 0px 25.12px 31.4px -6.28px #0000001A' }}
+            >
               <div className="mb-8">
                 <h3 className="text-[20px] font-bold text-slate-900 mb-1">Course Curriculum</h3>
                 <p className="text-[14px] text-slate-500 font-medium">{courseContent.curriculum.length} sections • {courseContent.curriculum.reduce((acc: any, curr: any) => acc + curr.lessonsCount, 0)} lessons • {course.duration} total</p>

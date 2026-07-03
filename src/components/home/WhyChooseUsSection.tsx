@@ -15,6 +15,11 @@ import resume from "@/assets/resume.png";
 import guest14Img from "@/assets/guest14.png";
 import guest12Img from "@/assets/guest12.png";
 import techLogo from "@/assets/techlogo.png";
+import guest30 from "@/assets/guest30.png";
+import guest32 from "@/assets/guest32.png";
+import guest34 from "@/assets/guest34.png";
+import guest36 from "@/assets/guest36.png";
+import guest37 from "@/assets/guest37.png";
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import line1 from "@/assets/line1.png";
 
@@ -27,19 +32,12 @@ const WhyChooseUsSection = () => {
         <section className="py-24 relative overflow-hidden bg-gradient-to-r from-[#F4F4FD] via-[#FDFDFD] to-[#FCF4F7]">
           {/* Background decorations */}
           {/* Top left globe */}
-          <div className="absolute top-[10%] left-[5%] text-[#A800B8] opacity-80">
-             <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-               <circle cx="12" cy="12" r="8" />
-               <path d="M12 4v16M8 6a10 10 0 000 12M16 6a10 10 0 010 12" />
-               <path d="M4 8l8-4 8 4-8 4-8-4z" />
-               <path d="M4 8v4c0 2 3 4 8 4s8-2 8-4V8" />
-             </svg>
+          <div className="absolute -top-4 left-4 md:-top-2 md:left-8 lg:top-0 lg:left-16 w-[70px] h-[70px] opacity-80 z-0">
+             <img src={guest30} alt="Globe icon" className="w-full h-full object-contain" />
           </div>
           {/* Top right asterisk */}
-          <div className="absolute top-[15%] right-[10%] text-[#D8B4FE] opacity-60">
-            <svg width="80" height="80" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 0v24M0 12h24M3 3l18 18M3 21L21 3" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-            </svg>
+          <div className="absolute top-[10%] lg:top-[15%] right-[5%] lg:right-[10%] w-[80px] md:w-[100px] lg:w-[120px] opacity-80 z-0">
+             <img src={guest32} alt="Asterisk" className="w-full h-auto object-contain" />
           </div>
           
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1650px] relative z-10 flex flex-col xl:flex-row items-center gap-16 xl:gap-8">
@@ -49,10 +47,8 @@ const WhyChooseUsSection = () => {
               <div className="inline-flex items-center gap-2 bg-[#A800B8] text-white px-5 py-1.5 rounded-full text-[13px] font-semibold mb-6 shadow-sm relative">
                 Why Choose Us
                 {/* Confetti decoration */}
-                <div className="absolute -top-10 -right-8 text-[#A800B8] opacity-80">
-                  <svg width="45" height="45" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                    <path d="M12 3v3m4-1l-2 2M7 5l2 2m-5 5h3m10 0h3" />
-                  </svg>
+                <div className="absolute -top-10 -right-8 opacity-80">
+                  <img src={guest36} alt="Confetti" className="w-[45px] h-[45px] object-contain" />
                 </div>
               </div>
 
@@ -60,7 +56,7 @@ const WhyChooseUsSection = () => {
                 Learn From <br/>
                 People Who've <span className="relative inline-block" style={{ background: 'linear-gradient(180deg, #1F3799 0%, #9F18AC 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                   Actually
-                  <img src={line1} alt="underline" className="absolute -bottom-2 left-0 w-full" />
+                  <img src={line1} alt="underline" className="absolute -bottom-4 left-0 w-full" />
                 </span> Done the<br/>Job
               </h2>
 
@@ -105,10 +101,7 @@ const WhyChooseUsSection = () => {
 
             {/* Center Curvy Arrow */}
             <div className="hidden xl:block w-[15%] relative z-0 flex justify-center -mt-20">
-              <svg width="180" height="120" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#6D28D9]">
-                <path d="M10 60 C 50 10, 100 110, 180 60" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
-                <path d="M165 45 L182 58 L160 70" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-              </svg>
+              <img src={guest34} alt="Arrow" className="w-[180px] object-contain" />
             </div>
 
             {/* Right Side Images */}
@@ -160,6 +153,10 @@ const WhyChooseUsSection = () => {
 
             </div>
 
+          </div>
+          {/* Bottom Right Mascot */}
+          <div className="absolute bottom-0 right-4 lg:right-12 w-[100px] md:w-[130px] z-20">
+            <img src={guest37} alt="Mascot" className="w-full h-auto object-contain" />
           </div>
         </section>
 

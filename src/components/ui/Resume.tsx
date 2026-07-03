@@ -30,6 +30,7 @@ import ResumeDashboard from "./resume-builder/ResumeDashboard";
 import ResumeSelection from "./resume-builder/ResumeSelection";
 import ResumeForm from "./resume-builder/ResumeForm";
 import ResumePreview from "./resume-builder/ResumePreview";
+import { VITE_API_URL } from "@/services/api/api";
 
 export default function ResumeBuilder() {
   const { toast } = useToast();
@@ -69,7 +70,7 @@ export default function ResumeBuilder() {
     try {
       const token = localStorage.getItem("access_token") || localStorage.getItem("token");
       if (token) {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/resumes/my-resume`, {
+        const response = await fetch(`${VITE_API_URL}/resumes/my-resume`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -109,7 +110,7 @@ export default function ResumeBuilder() {
 
   const fetchAndMapSingleResume = async (id: number, token: string) => {
     try {
-      const getUrl = `${import.meta.env.VITE_API_URL}/resumes/my-resume`;
+      const getUrl = `${VITE_API_URL}/resumes/my-resume`;
       const getResponse = await fetch(getUrl, {
         method: "GET",
         headers: {
@@ -427,7 +428,7 @@ export default function ResumeBuilder() {
       const token = localStorage.getItem("access_token") || localStorage.getItem("token");
       if (!token) throw new Error("Please login first");
 
-      const url = `${import.meta.env.VITE_API_URL}/resumes/${id}`;
+      const url = `${VITE_API_URL}/resumes/${id}`;
       const response = await fetch(url, {
         method: "DELETE",
         headers: {
@@ -930,8 +931,8 @@ export default function ResumeBuilder() {
       };
 
       const url = resumeId
-        ? `${import.meta.env.VITE_API_URL}/resumes/my-resume`
-        : `${import.meta.env.VITE_API_URL}/resumes/`;
+        ? `${VITE_API_URL}/resumes/my-resume`
+        : `${VITE_API_URL}/resumes/`;
 
       const baseInit: RequestInit = {
         headers: {
@@ -987,7 +988,7 @@ export default function ResumeBuilder() {
       const token = localStorage.getItem("access_token") || localStorage.getItem("token");
       if (!token) throw new Error("Please login first");
 
-      const url = `${import.meta.env.VITE_API_URL}/resumes/${targetId}`;
+      const url = `${VITE_API_URL}/resumes/${targetId}`;
       const response = await fetch(url, {
         method: "DELETE",
         headers: {
@@ -1071,7 +1072,7 @@ export default function ResumeBuilder() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const url = `${import.meta.env.VITE_API_URL}/resumes/${resumeId}/upload-photo`;
+      const url = `${VITE_API_URL}/resumes/${resumeId}/upload-photo`;
       const response = await fetch(url, {
         method: "PUT",
         headers: {
@@ -1088,7 +1089,7 @@ export default function ResumeBuilder() {
       alert("Photo uploaded successfully!");
 
       try {
-        const photoUrl = `${import.meta.env.VITE_API_URL}/resumes/${resumeId}/photo`;
+        const photoUrl = `${VITE_API_URL}/resumes/${resumeId}/photo`;
         const photoResponse = await fetch(photoUrl, {
           method: "GET",
           headers: {
@@ -1219,7 +1220,7 @@ export default function ResumeBuilder() {
         // Step 3: Background upload to server (fire and forget)
         const formData = new FormData();
         formData.append("file", pdfBlob, filename);
-        const uploadUrl = `${import.meta.env.VITE_API_URL}/resumes/${targetId}/upload-generated-pdf`;
+        const uploadUrl = `${VITE_API_URL}/resumes/${targetId}/upload-generated-pdf`;
         fetch(uploadUrl, {
           method: "POST",
           headers: {

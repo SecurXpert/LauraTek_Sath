@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/instance";
-import TopSection from "./components/Dashboard/TopSection";
-import MiddleCards from "./components/Dashboard/MiddleCards";
-import LearningJourney from "./components/Dashboard/LearningJourney";
-import SuccessStories from "./components/Dashboard/SuccessStories";
-import EnrollModal from "./components/Dashboard/EnrollModal";
-import { dailyQuotes, successStoriesData } from "./components/Dashboard/dashboardData";
+import { 
+  TopSection, 
+  MiddleCards, 
+  LearningJourney, 
+  SuccessStories, 
+  EnrollModal, 
+  dailyQuotes, 
+  successStoriesData 
+} from "./components/Dashboard/dashboardData.tsx";
 
 const GuestDashboard = () => {
   const navigate = useNavigate();
@@ -35,18 +38,6 @@ const GuestDashboard = () => {
   };
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await api.get('/guest/my-profile');
-        if (response.data && response.data.name) {
-          setUserName(response.data.name);
-          localStorage.setItem("user_name", response.data.name);
-        }
-      } catch (err) {
-        console.error("Error fetching profile:", err);
-      }
-    };
-
     const fetchFeaturedCourse = async () => {
       try {
         const response = await api.get('/admin/courses');
@@ -77,14 +68,13 @@ const GuestDashboard = () => {
       }
     };
 
-    fetchProfile();
     fetchFeaturedCourse();
     fetchLatestQuiz();
   }, []);
 
   return (
-    <div className="px-3 sm:px-4 lg:px-8 pb-8 w-full max-w-[1600px] mx-auto mt-2 sm:mt-4 overflow-hidden">
-      <h1 className="flex items-end gap-2 sm:gap-3 text-slate-800 mb-4 lg:mb-6 mt-2 relative z-30">
+    <div className="px-3 sm:px-4 lg:px-8 pb-8 w-full max-w-[1600px] mx-auto mt-2 overflow-hidden">
+      <h1 className="flex items-end gap-2 sm:gap-3 text-slate-800 mb-4 lg:mb-6">
         <span className="text-[22px] sm:text-[28px] font-medium leading-none">Good Morning</span> 
         <span className="text-[#5B4FFF] text-[28px] sm:text-[36px] font-extrabold capitalize leading-none">{userName}</span>
       </h1>

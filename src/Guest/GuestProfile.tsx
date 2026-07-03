@@ -88,9 +88,9 @@ const GuestProfile = () => {
   return (
     <div className="px-4 lg:px-8 py-8 w-full max-w-[1600px] mx-auto">
       {/* Top Profile Banner Section */}
-      <div className="bg-white rounded-[24px] overflow-hidden mb-8 p-6 lg:p-10 flex flex-col md:flex-row items-start md:items-center gap-6 shadow-[0px_4px_20px_rgba(149,157,165,0.04)] border border-gray-100">
+      <div className="bg-white rounded-[24px] overflow-hidden mb-8 p-6 lg:p-10 flex flex-col md:flex-row items-start md:items-center gap-6 shadow-guest border border-gray-100">
         <div className="relative shrink-0">
-          <div className="w-[100px] h-[100px] rounded-[20px] bg-[#5B4FFF] shadow-md border-4 border-white flex items-center justify-center text-white text-[42px] font-normal">
+          <div className="w-[100px] h-[100px] rounded-[20px] bg-[#5B4FFF] shadow-guest border-4 border-white flex items-center justify-center text-white text-[42px] font-normal">
             {profile?.name ? profile.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase() : 'AS'}
           </div>
         </div>
@@ -124,7 +124,7 @@ const GuestProfile = () => {
       <div className="flex flex-col xl:flex-row gap-6">
         {/* Left Column */}
         <div className="w-full xl:w-[340px] flex flex-col gap-6">
-          <div className="bg-white rounded-[24px] p-6 lg:p-8 shadow-[0px_4px_20px_rgba(149,157,165,0.04)] border border-gray-100">
+          <div className="bg-white rounded-[24px] p-6 lg:p-8 shadow-guest border border-gray-100">
             <h2 className="text-[18px] font-bold text-slate-800 mb-6">Personal Information</h2>
             
             <div className="flex flex-col gap-6">
@@ -199,7 +199,7 @@ const GuestProfile = () => {
               </p>
               <button 
                 onClick={() => navigate('/guest/contact')}
-                className="w-full py-2.5 bg-[#5B4FFF] hover:bg-[#4a3fdb] text-white text-[13px] font-semibold rounded-full shadow-sm transition-colors"
+                className="w-full py-2.5 bg-[#5B4FFF] hover:bg-[#4a3fdb] text-white text-[13px] font-semibold rounded-full shadow-guest transition-colors"
               >
                 Enroll Now
               </button>
@@ -210,7 +210,7 @@ const GuestProfile = () => {
         {/* Right Column */}
         <div className="flex-1 flex flex-col gap-6">
           {/* Learning Stats */}
-          <div className="bg-white rounded-[24px] p-6 lg:p-8 shadow-[0px_4px_20px_rgba(149,157,165,0.04)] border border-gray-100">
+          <div className="bg-white rounded-[24px] p-6 lg:p-8 shadow-guest border border-gray-100">
             <h2 className="text-[18px] font-bold text-slate-800 mb-6">Learning Stats</h2>
             
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
@@ -241,7 +241,7 @@ const GuestProfile = () => {
           </div>
 
           {/* Recent Activity */}
-          <div className="bg-white rounded-[24px] p-6 lg:p-8 shadow-[0px_4px_20px_rgba(149,157,165,0.04)] border border-gray-100 flex-1">
+          <div className="bg-white rounded-[24px] p-6 lg:p-8 shadow-guest border border-gray-100 flex-1">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-[18px] font-bold text-slate-800">Recent Activity</h2>
               {/* <span className="text-[13px] text-gray-500 font-medium">Last 7 days</span> */}

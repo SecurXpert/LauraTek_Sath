@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ChevronDown, ChevronUp, Check } from "lucide-react";
 import { decodeJWT } from "@/lib/jwtUtils";
+import { VITE_API_URL } from "@/services/api/api";
 
 interface CurriculumItem {
   id: number;
@@ -49,7 +50,7 @@ const CurriculumView: React.FC<CurriculumViewProps> = ({ course, onBack }) => {
         
         const [currRes, progRes] = await Promise.all([
           fetch(
-            `${import.meta.env.VITE_API_URL}/courses/${course.id || course.course_id}/curriculum`,
+            `${VITE_API_URL}/courses/${course.id || course.course_id}/curriculum`,
             {
               method: "GET",
               headers: {
@@ -59,7 +60,7 @@ const CurriculumView: React.FC<CurriculumViewProps> = ({ course, onBack }) => {
             }
           ),
           fetch(
-            `${import.meta.env.VITE_API_URL}/courses/students/${studentId}/courses/${course.id || course.course_id}/progress`,
+            `${VITE_API_URL}/courses/students/${studentId}/courses/${course.id || course.course_id}/progress`,
             {
               method: "GET",
               headers: {

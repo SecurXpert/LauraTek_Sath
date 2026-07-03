@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { VITE_API_URL } from '../../services/api/api';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
@@ -66,7 +67,7 @@ const UserProfileDashboard = () => {
   const [passwordMessage, setPasswordMessage] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
  
-  const BASE_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL;
+  const BASE_URL = VITE_API_URL;
  
   // ────────────────────────────────────────────────
   //   Fetch student profile (My Account tab)

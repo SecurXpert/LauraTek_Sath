@@ -24,8 +24,8 @@ const TopCategorySection = () => {
   return (
     <>
       {/* Top Category Section */}
-        <section className="py-16 md:py-20 bg-[#FDFDFD]">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1650px]">
+        <section className="py-10 md:py-16 lg:py-20 bg-[#FDFDFD]">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-[120px] max-w-[1650px]">
             {/* Header row */}
             <div className="flex flex-col md:flex-row justify-between items-end mb-12">
               {/* Left side */}
@@ -47,11 +47,11 @@ const TopCategorySection = () => {
               </div>
 
               {/* Right side */}
-              <div className="w-full md:w-1/2 flex flex-col md:items-end mt-6 md:mt-0">
-                <p className="text-gray-500 text-sm md:text-[15px] max-w-sm md:text-right leading-relaxed mb-4">
+              <div className="w-full md:w-1/2 flex flex-col md:items-start md:justify-center mt-6 md:mt-0 md:pl-20 xl:pl-40">
+                <p className="text-gray-500 text-sm md:text-[15px] max-w-sm text-left leading-relaxed mb-4">
                   Whether you're starting out or leveling up, pick a category that matches the skill you want to build next.
                 </p>
-                {/* <button 
+                <button 
                   className="text-white pl-5 pr-1.5 py-1.5 rounded-full font-medium transition-all flex items-center gap-3 text-[14px]"
                   style={{ background: 'linear-gradient(180deg, #1F3799 0%, #9F18AC 100%)' }}
                 >
@@ -61,7 +61,7 @@ const TopCategorySection = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>
                   </span>
-                </button> */}
+                </button>
               </div>
             </div>
 

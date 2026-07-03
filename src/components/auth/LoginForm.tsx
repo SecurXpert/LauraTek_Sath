@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import authApi from "@/api/authApi";
 import guestApi from "@/api/guestApi";
+import { VITE_API_URL } from "@/services/api/api";
 
 interface LoginFormProps {
   onMfaRequired: (token: string) => void;
@@ -45,7 +46,7 @@ export default function LoginForm({ onMfaRequired, onNavigateSignup, onNavigateF
         
         let actualRole = "student";
         try {
-          const checkRes = await fetch(`${import.meta.env.VITE_API_URL}/student/me`, {
+          const checkRes = await fetch(`${VITE_API_URL}/student/me`, {
             headers: { Authorization: `Bearer ${data.access_token}` }
           });
           if (!checkRes.ok) {

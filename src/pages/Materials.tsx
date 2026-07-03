@@ -8,7 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import Sidebar from "@/components/sidebar";
 import Profileheader from "@/components/ui/Profileheader";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { useMaterialsData } from "@/hooks/useMaterialsData";
+import { useMaterialsData } from "./useMaterialsData";
 
 export default function Materials() {
   const navigate = useNavigate();

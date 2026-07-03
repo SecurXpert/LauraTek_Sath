@@ -11,7 +11,7 @@ interface QuizCardProps {
 
 const QuizCard: React.FC<QuizCardProps> = ({ quiz, isUnlocked, onEnrollClick, navigate }) => {
   return (
-              <div className="bg-white rounded-[20px] p-5 pt-6 border border-gray-100 shadow-sm relative overflow-hidden group flex flex-col h-full">
+              <div className="bg-white rounded-[20px] p-5 pt-6 border border-gray-100 shadow-guest relative overflow-hidden group flex flex-col h-full">
                 <div className={`absolute top-0 left-0 right-0 h-1.5 ${quiz.topBorderColor}`}></div>
                 <div className="flex items-center justify-between mb-4">
                    <div className="flex items-center gap-2">
@@ -30,14 +30,14 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz, isUnlocked, onEnrollClick, na
 
                 {quiz.status === 'locked' && !isUnlocked && (
                   <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center">
-                     <div className="w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center mb-3">
+                     <div className="w-12 h-12 bg-white rounded-full shadow-guest flex items-center justify-center mb-3">
                         <Lock className="w-5 h-5 text-[#5B4FFF]" />
                      </div>
                      <h4 className="font-bold text-slate-800 text-[15px] mb-1">Premium Quiz</h4>
                      <p className="text-[12px] text-gray-600 mb-4">Enroll to unlock this quiz</p>
                      <button 
                         onClick={onEnrollClick}
-                        className="px-6 py-2.5 bg-[#5B4FFF] text-white text-[13px] font-bold rounded-full shadow-sm hover:bg-[#4a3fdb] transition-colors w-[80%] mx-auto"
+                        className="px-6 py-2.5 bg-[#5B4FFF] text-white text-[13px] font-bold rounded-full shadow-guest hover:bg-[#4a3fdb] transition-colors w-[80%] mx-auto"
                      >
                         Unlock with Course Enrollment
                      </button>
@@ -54,7 +54,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz, isUnlocked, onEnrollClick, na
                   onClick={() => (quiz.status === 'unlocked' || isUnlocked) && navigate(`/guest/quizzes/${quiz.id}`, { state: { quizId: quiz.id, quizTitle: quiz.title } })}
                   className={`w-full py-2.5 rounded-full flex items-center justify-center gap-2 text-[13px] font-bold transition-colors mt-auto ${
                     (quiz.status === 'unlocked' || isUnlocked) 
-                      ? 'bg-[#5B4FFF] hover:bg-[#4a3fdb] text-white shadow-sm' 
+                      ? 'bg-[#5B4FFF] hover:bg-[#4a3fdb] text-white shadow-guest' 
                       : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                   }`}
                 >

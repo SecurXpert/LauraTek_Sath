@@ -12,9 +12,9 @@ const QuizSidebar: React.FC<QuizSidebarProps> = ({ navigate, onEnrollClick }) =>
         <div className="xl:col-span-1 flex flex-col gap-6">
            
            {/* Why Practice */}
-           <div className="bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm">
+           <div className="bg-white rounded-[24px] p-6 border border-gray-100 shadow-guest">
              <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 rounded-full bg-[#5B4FFF] flex items-center justify-center shadow-sm">
+                <div className="w-8 h-8 rounded-full bg-[#5B4FFF] flex items-center justify-center shadow-guest">
                    <Star className="w-4 h-4 text-white fill-white" />
                 </div>
                 <h3 className="text-[16px] font-bold text-slate-800">Why Practice?</h3>
@@ -26,7 +26,11 @@ const QuizSidebar: React.FC<QuizSidebarProps> = ({ navigate, onEnrollClick }) =>
                   { icon: <Target className="w-4 h-4 text-white" />, title: "Prepare for Interviews", color: "bg-[#F43F5E]", route: "/guest/quizzes" },
                   { icon: <Trophy className="w-4 h-4 text-white" />, title: "Earn Certificates", color: "bg-[#F59E0B]", route: "/guest/certificates" }
                 ].map((item, idx) => (
-                  <div key={idx} onClick={() => navigate(item.route)} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
+                  <div 
+                    key={idx} 
+                    onClick={() => item.title === "Prepare for Interviews" ? onEnrollClick() : navigate(item.route, { state: { fromQuizzes: true } })} 
+                    className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
+                  >
                      <div className="flex items-center gap-3">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center ${item.color}`}>
                            {item.icon}
@@ -40,7 +44,7 @@ const QuizSidebar: React.FC<QuizSidebarProps> = ({ navigate, onEnrollClick }) =>
            </div>
 
            {/* Achievements */}
-           <div className="bg-white rounded-[24px] p-6 border border-gray-100 shadow-sm">
+           <div className="bg-white rounded-[24px] p-6 border border-gray-100 shadow-guest">
              <div className="flex items-center justify-between mb-6">
                 <h3 className="text-[16px] font-bold text-slate-800">Achievements</h3>
                 <Lock className="w-4 h-4 text-gray-300" />

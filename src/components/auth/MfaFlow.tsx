@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import authApi from "@/api/authApi";
 import { useNavigate } from "react-router-dom";
+import { VITE_API_URL } from "@/services/api/api";
 
 interface MfaFlowProps {
   step: "mfa" | "enroll" | "reenroll" | "backupCodes" | "finalMfa";
@@ -45,7 +46,7 @@ export default function MfaFlow({ step, setStep, tempToken }: MfaFlowProps) {
       
       let actualRole = "student";
       try {
-        const checkRes = await fetch(`${import.meta.env.VITE_API_URL}/student/me`, {
+        const checkRes = await fetch(`${VITE_API_URL}/student/me`, {
           headers: { Authorization: `Bearer ${res.data.access_token}` }
         });
         if (!checkRes.ok) {
@@ -146,7 +147,7 @@ export default function MfaFlow({ step, setStep, tempToken }: MfaFlowProps) {
       
       let actualRole = "student";
       try {
-        const checkRes = await fetch(`${import.meta.env.VITE_API_URL}/student/me`, {
+        const checkRes = await fetch(`${VITE_API_URL}/student/me`, {
           headers: { Authorization: `Bearer ${res.data.access_token}` }
         });
         if (!checkRes.ok) {

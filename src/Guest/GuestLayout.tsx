@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 const GuestLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   
   return (
     <div className="flex min-h-screen bg-slate-50 overflow-x-hidden">

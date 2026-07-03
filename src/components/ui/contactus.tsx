@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import guest20Img from "@/assets/guest20.png";
 import guest22Img from "@/assets/guest22.png";
 import techlogo from "@/assets/techlogo.png";
+import { VITE_API_URL } from "@/services/api/api";
 
 interface ContactUsDialogProps {
   open: boolean;
@@ -123,7 +124,7 @@ const Contactus = ({ open, setOpen, onSuccess }: ContactUsDialogProps) => {
       };
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/enrollments/submit`,
+        `${VITE_API_URL}/enrollments/submit`,
         {
           method: "POST",
           headers: {

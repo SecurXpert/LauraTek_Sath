@@ -49,11 +49,11 @@ const GuestCourseDetails = () => {
   const courseContent = getCourseContent(course.title, course.category || '');
 
   return (
-    <div className="w-full max-w-[1300px] mx-auto p-4 lg:p-8 bg-[#F8F9FE] min-h-screen">
+    <div className="w-full max-w-[1300px] mx-auto px-4 pt-2 pb-8 lg:px-8 lg:pt-3 lg:pb-8 bg-[#F8F9FE] min-h-screen">
       {/* Back Button */}
       <button 
         onClick={() => navigate('/guest/courses')}
-        className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors mb-6 font-medium text-[14px]"
+        className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors mb-4 font-medium text-[14px]"
       >
         <ArrowLeft className="w-4 h-4" /> Back to Courses
       </button>
@@ -76,7 +76,7 @@ const GuestCourseDetails = () => {
         </div>
 
         {/* Right Sticky Sidebar */}
-        <CourseSidebar course={course} />
+        <CourseSidebar course={course} courseContent={courseContent} />
       </div>
     </div>
   );

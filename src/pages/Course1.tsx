@@ -10,7 +10,7 @@ import ResourcesMaterials from "@/components/ui/course-page/ResourcesMaterials";
 import AssessmentsChallenges from "@/components/ui/course-page/AssessmentsChallenges";
 import CourseInstructor from "@/components/ui/course-page/CourseInstructor";
 import CourseProgressSidebar from "@/components/ui/course-page/CourseProgressSidebar";
-import { useCourseData } from "@/hooks/useCourseData";
+import { useCourseData } from "./useCourseData";
 
 const Course1 = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);

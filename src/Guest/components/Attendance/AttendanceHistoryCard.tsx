@@ -21,7 +21,6 @@ const AttendanceHistoryCard: React.FC<AttendanceHistoryCardProps> = ({ history, 
       style={{
         width: '100%',
         height: 'auto',
-        minHeight: '441px',
         borderRadius: '19.84px',
         borderWidth: '1.24px',
         padding: '1.24px',
@@ -38,21 +37,21 @@ const AttendanceHistoryCard: React.FC<AttendanceHistoryCardProps> = ({ history, 
         <table className="w-full text-left border-collapse">
           <thead className="bg-white">
             <tr>
-              <th className="py-4 px-6 text-[14px] font-semibold text-gray-500 whitespace-nowrap">Date</th>
-              <th className="py-4 px-6 text-[14px] font-semibold text-gray-500 whitespace-nowrap">Check In</th>
-              <th className="py-4 px-6 text-[14px] font-semibold text-gray-500 whitespace-nowrap">Check Out</th>
-              <th className="py-4 px-6 text-[14px] font-semibold text-gray-500 whitespace-nowrap">Hours</th>
-              <th className="py-4 px-6 text-[14px] font-semibold text-gray-500 whitespace-nowrap">Status</th>
+              <th className="py-3 px-4 text-[14px] font-semibold text-gray-500 whitespace-nowrap">Date</th>
+              <th className="py-3 px-4 text-[14px] font-semibold text-gray-500 whitespace-nowrap">Check In</th>
+              <th className="py-3 px-4 text-[14px] font-semibold text-gray-500 whitespace-nowrap">Check Out</th>
+              <th className="py-3 px-4 text-[14px] font-semibold text-gray-500 whitespace-nowrap">Hours</th>
+              <th className="py-3 px-4 text-[14px] font-semibold text-gray-500 whitespace-nowrap">Status</th>
             </tr>
           </thead>
           <tbody>
             {history.map((row, idx) => (
               <tr key={idx} className="border-b border-gray-200/30">
-                <td className="py-4 px-6 text-[14px] font-medium text-gray-700 whitespace-nowrap">{row.date}</td>
-                <td className="py-4 px-6 text-[14px] text-gray-500 whitespace-nowrap">{row.checkIn}</td>
-                <td className="py-4 px-6 text-[14px] text-gray-500 whitespace-nowrap">{row.checkOut}</td>
-                <td className="py-4 px-6 text-[14px] font-semibold text-gray-800 whitespace-nowrap">{row.hours}</td>
-                <td className="py-4 px-6 whitespace-nowrap">
+                <td className="py-3 px-4 text-[14px] font-medium text-gray-700 whitespace-nowrap">{row.date}</td>
+                <td className="py-3 px-4 text-[14px] text-gray-500 whitespace-nowrap">{row.checkIn}</td>
+                <td className="py-3 px-4 text-[14px] text-gray-500 whitespace-nowrap">{row.checkOut}</td>
+                <td className="py-3 px-4 text-[14px] font-semibold text-gray-800 whitespace-nowrap">{row.hours}</td>
+                <td className="py-3 px-4 whitespace-nowrap">
                   <span className={`inline-flex px-3 py-1 rounded-full text-[12px] font-bold ${row.status.toLowerCase() === 'absent' ? 'bg-[#FFF0F0] text-[#E03137]' : 'bg-[#E6F9F0] text-[#00A962]'}`}>
                     {row.status}
                   </span>
@@ -68,11 +67,11 @@ const AttendanceHistoryCard: React.FC<AttendanceHistoryCardProps> = ({ history, 
             )}
             {!isUnlocked && (
               <tr className="relative opacity-60">
-                <td className="py-4 px-6 text-[14px] font-medium text-gray-400 whitespace-nowrap">Mar 23, 2026</td>
-                <td className="py-4 px-6 text-[14px] text-gray-400 whitespace-nowrap">09:00 AM</td>
-                <td className="py-4 px-6 text-[14px] text-gray-400 whitespace-nowrap">06:00 PM</td>
-                <td className="py-4 px-6 text-[14px] font-semibold text-gray-400 whitespace-nowrap">9h</td>
-                <td className="py-4 px-6 whitespace-nowrap">
+                <td className="py-3 px-4 text-[14px] font-medium text-gray-400 whitespace-nowrap">Mar 23, 2026</td>
+                <td className="py-3 px-4 text-[14px] text-gray-400 whitespace-nowrap">09:00 AM</td>
+                <td className="py-3 px-4 text-[14px] text-gray-400 whitespace-nowrap">06:00 PM</td>
+                <td className="py-3 px-4 text-[14px] font-semibold text-gray-400 whitespace-nowrap">9h</td>
+                <td className="py-3 px-4 whitespace-nowrap">
                   <span className="inline-flex px-3 py-1 rounded-full text-[12px] font-bold bg-[#FFF0F0] text-[#E03137]/60">
                     Absent
                   </span>
@@ -84,9 +83,12 @@ const AttendanceHistoryCard: React.FC<AttendanceHistoryCardProps> = ({ history, 
       </div>
 
       {!isUnlocked && (
-        <div className="absolute bottom-0 left-0 right-0 h-[72px] bg-[#E0DDF0]/60 backdrop-blur-md flex items-center justify-center rounded-b-[19.84px]">
+        <div 
+          className="absolute bottom-0 left-0 right-0 h-[72px] backdrop-blur-md flex items-center justify-center rounded-b-[19.84px]"
+          style={{ background: '#C8C4E5CC' }}
+        >
           <p style={{ fontFamily: '"Inter", sans-serif', fontWeight: 600, fontSize: '22.32px', lineHeight: '34.72px', letterSpacing: '0px' }} className="text-[#0F172A] m-0">
-            Enroll in a cource to see full attendance history
+            Enroll in a course to view your full attendance history.
           </p>
         </div>
       )}
