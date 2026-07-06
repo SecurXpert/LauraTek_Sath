@@ -55,9 +55,9 @@ const AboutUsSection = () => {
               </div>
 
               {/* Floating Years of Experience Card */}
-              <div className="absolute top-[10%] right-[0%] lg:right-[15%] z-20 bg-white rounded-xl shadow-2xl p-5 flex items-center gap-4 border border-gray-50 min-w-[240px] overflow-hidden">
+              <div className="absolute bottom-[20%] left-[2%] sm:bottom-auto sm:top-[10%] sm:left-auto sm:right-[0%] lg:right-[15%] z-30 bg-white rounded-xl shadow-xl p-4 sm:p-5 flex items-center gap-3 sm:gap-4 border border-gray-50 min-w-[190px] sm:min-w-[240px] overflow-hidden scale-[0.85] sm:scale-100 origin-bottom-left sm:origin-right">
                 {/* Right Gradient Border */}
-                <div className="absolute top-0 right-0 bottom-0 w-[6px]" style={{ background: 'linear-gradient(180deg, #1F3799 0%, #9F18AC 100%)' }}></div>
+                <div className="absolute top-0 right-0 bottom-0 w-[4px] sm:w-[6px]" style={{ background: 'linear-gradient(180deg, #1F3799 0%, #9F18AC 100%)' }}></div>
                 
                 <div className="relative w-14 h-14 flex items-center justify-center">
                   <svg className="absolute inset-0 w-full h-full" viewBox="0 0 36 36">

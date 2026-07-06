@@ -108,7 +108,7 @@ const GuestSidebar = ({ sidebarOpen, setSidebarOpen, isCollapsed, setIsCollapsed
     if (window.innerWidth < 1024) {
       setSidebarOpen(true);
     } else {
-      setIsCollapsed(prev => !prev);
+      setIsCollapsed(!isCollapsed);
     }
   };
 
@@ -128,7 +128,7 @@ const GuestSidebar = ({ sidebarOpen, setSidebarOpen, isCollapsed, setIsCollapsed
           sidebarOpen ? "translate-x-0 w-64 left-4" : (
              isCollapsed 
              ? "-translate-x-full lg:translate-x-0 lg:w-16 left-0 lg:left-4"
-             : "-translate-x-full lg:translate-x-0 w-64 left-4"
+             : "-translate-x-full lg:translate-x-0 w-64 left-0 lg:left-4"
           )
         )}
       >
@@ -174,28 +174,7 @@ const GuestSidebar = ({ sidebarOpen, setSidebarOpen, isCollapsed, setIsCollapsed
         </div>
 
         <div className="flex-1 overflow-y-auto scrollbar-hide mt-1">
-          {/* User Profile Badge */}
-          <div 
-            className={cn(
-              "mx-3 mb-2 mt-2 p-2 rounded-2xl flex items-center gap-3 transition-all duration-300",
-              collapsedState ? "justify-center px-0" : ""
-            )}
-            style={!collapsedState ? { background: 'linear-gradient(135deg, #F0ECFF 0%, #E0E7FF 100%)' } : {}}
-          >
-            <div className="w-10 h-10 rounded-full bg-[#5D3EFC] text-white flex items-center justify-center flex-shrink-0 shadow-guest">
-              <User className="w-5 h-5" />
-            </div>
-            {!collapsedState && (
-              <div className="flex flex-col min-w-0 overflow-hidden pr-2">
-                <span className="text-[14px] font-bold text-slate-800 truncate leading-tight capitalize">
-                  {userName}
-                </span>
-                <span className="text-[12px] text-[#5D3EFC] font-medium truncate">
-                  Guest Access
-                </span>
-              </div>
-            )}
-          </div>
+
 
           <nav className="flex flex-col space-y-0.5 py-1">
             {guestMenuItems.map((item) => {

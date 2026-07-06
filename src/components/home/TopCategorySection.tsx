@@ -47,7 +47,7 @@ const TopCategorySection = () => {
               </div>
 
               {/* Right side */}
-              <div className="w-full md:w-1/2 flex flex-col md:items-start md:justify-center mt-6 md:mt-0 md:pl-20 xl:pl-40">
+              <div className="w-full md:w-1/2 flex flex-col items-start md:justify-center mt-6 md:mt-0 md:pl-20 xl:pl-40">
                 <p className="text-gray-500 text-sm md:text-[15px] max-w-sm text-left leading-relaxed mb-4">
                   Whether you're starting out or leveling up, pick a category that matches the skill you want to build next.
                 </p>

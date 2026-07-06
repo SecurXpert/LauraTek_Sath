@@ -29,7 +29,7 @@ const TrendingCoursesSection = () => {
             {/* Header row */}
             <div className="flex flex-col md:flex-row justify-between items-end mb-16">
               {/* Left side */}
-              <div className="relative w-full md:w-1/2">
+              <div className="relative w-full lg:w-[70%]">
                 <div className="inline-flex items-center gap-2 bg-[#A800B8] text-white px-5 py-1.5 rounded-full text-[13px] font-semibold mb-6 shadow-sm relative">
                   Trending Courses
                   {/* Confetti decoration */}
@@ -40,16 +40,15 @@ const TrendingCoursesSection = () => {
                   </div>
                 </div>
                 <h2 className="font-dm-sans text-[34px] md:text-[42px] lg:text-[48px] font-extrabold text-[#050816] leading-[1.2]">
-                  What<br />
-                  Learners Are <span className="relative inline-block" style={{ background: 'linear-gradient(180deg, #1F3799 0%, #9F18AC 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                  What Learners Are <span className="relative inline-block" style={{ background: 'linear-gradient(180deg, #1F3799 0%, #9F18AC 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                   Enrolling
                   <img src={line1} alt="underline" className="absolute -bottom-4 left-0 w-full" />
-                </span> In Right<br/>Now
+                </span> In <br/> Right Now
                 </h2>
               </div>
 
               {/* Right side */}
-              <div className="w-full md:w-1/2 flex flex-col md:items-end mt-6 md:mt-0">
+              <div className="w-full lg:w-[30%] flex flex-col md:items-end mt-6 md:mt-0">
                 {/* <p className="text-gray-500 text-sm md:text-[15px] max-w-xs md:text-right leading-relaxed mb-6 font-medium">
                   Discover your interests, enroll, and start learning with confidence today!
                 </p> */}

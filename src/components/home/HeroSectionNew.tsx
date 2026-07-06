@@ -21,45 +21,38 @@ const HeroSectionNew = () => {
         {/* Grid Background */}
         <div className="absolute inset-0 z-0 opacity-[0.6]" style={{
           backgroundSize: '50px 50px',
-          backgroundImage: 'linear-gradient(to right, #FFFFFF 1.5px, transparent 1.5px), linear-gradient(to bottom, #FFFFFF 1.5px, transparent 1.5px)'
+          backgroundImage: 'linear-gradient(to right, #FFFFFF 1.5px, transparent 1.5px), linear-gradient(to bottom, #FFFFFF 1.5px, transparent 1.5px)',
+          backgroundPosition: '0 -1.5px'
         }}></div>
 
         {/* Right Side Shapes */}
         <div className="hidden lg:block absolute top-0 right-0 w-[50%] h-full z-0 overflow-hidden pointer-events-none">
-          {/* Background shapes removed as they are baked into guest40.png */}
-
           {/* Star Icon in Dark Blue */}
-          <div className="absolute top-[5%] right-[18%] text-white z-10 animate-pulse">
+          <div className="absolute top-[8%] right-[18%] text-white z-10 animate-pulse">
             <svg width="45" height="45" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
             </svg>
           </div>
         </div>
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1650px] relative z-20 flex flex-col lg:flex-row lg:items-center">
+        <div className="w-full relative z-20 flex flex-col lg:flex-row lg:items-center">
           
           {/* Left Column Content */}
-          <div className="w-full lg:w-[50%] xl:w-[50%] pt-4 pb-[100px] lg:pt-4 lg:pb-[120px] relative flex flex-col justify-center items-center lg:items-start text-center lg:text-left z-20">
+          <div className="w-full lg:w-[55%] xl:w-[55%] pt-6 pb-[80px] md:pb-[90px] lg:pt-[40px] lg:pb-[140px] xl:pb-[160px] px-4 sm:px-8 lg:px-10 xl:pl-[80px] 2xl:pl-[100px] xl:pr-6 relative flex flex-col justify-center items-center lg:items-start text-center lg:text-left z-20">
             
             {/* Floating Icons */}
             {/* Globe with Cap */}
-            <div className="absolute top-[5%] left-[2%] w-16 h-16 drop-shadow-sm hidden md:block opacity-90">
+            <div className="absolute top-[2%] left-[5%] w-14 h-14 xl:w-16 xl:h-16 drop-shadow-sm hidden md:block opacity-90 z-10">
               <img src={guest30} alt="Globe icon" className="w-full h-full object-contain" />
             </div>
 
             {/* Purple Square Guy (Mascot) */}
-            <div className="absolute top-[40%] left-[2%] w-20 h-20 opacity-95 drop-shadow-sm hidden md:block">
+            <div className="absolute top-[45%] left-[1%] xl:left-[1%] w-16 h-16 xl:w-20 xl:h-20 opacity-95 drop-shadow-sm hidden xl:block z-10">
               <img src={guest32} alt="Mascot icon" className="w-full h-full object-contain" />
             </div>
 
-            {/* Clock moved to section level to align properly with the bottom banner */}
-            <div className="absolute bottom-[20%] right-[2%] w-[60px] h-[60px] hidden lg:block opacity-90">
-              <img src={guest33} alt="Open book icon" className="w-full h-full object-contain" />
-            </div>
-
-
             {/* Yellow Asterisk */}
-            <div className="absolute bottom-[5%] right-[22%] text-[#F59E0B] w-12 h-12 drop-shadow-sm hidden md:block">
+            <div className="absolute bottom-[25%] right-[15%] lg:right-[10%] text-[#F59E0B] w-10 h-10 xl:w-12 xl:h-12 drop-shadow-sm hidden md:block z-10">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
                 <path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07L19.07 4.93" />
               </svg>
@@ -67,50 +60,52 @@ const HeroSectionNew = () => {
 
 
             {/* Text Content */}
-            <div className="relative w-full lg:w-max pl-0 lg:pl-[120px] z-20 flex justify-center lg:justify-start">
-              <div className="inline-block bg-[#9D11A5] text-white px-5 py-1.5 rounded-full text-[12px] font-semibold mb-6 shadow-sm relative">
+            <div className="relative w-full z-20 flex justify-center lg:justify-start lg:ml-2">
+              <div className="inline-block bg-[#9D11A5] text-white px-5 py-1.5 rounded-full text-[12px] font-semibold mb-6 shadow-sm relative z-30">
                 # Career-Ready Skills, Built for 2026
                 {/* Confetti (guest36) */}
-                <img src={guest36} alt="Confetti" className="absolute top-[-30px] right-[-30px] w-[50px] h-[50px] object-contain hidden md:block" />
+                <img src={guest36} alt="Confetti" className="absolute top-[-30px] right-[-30px] w-[50px] h-[50px] object-contain hidden md:block z-[-1]" />
               </div>
             </div>
 
-            <div className="pl-0 lg:pl-[120px] relative z-20 mt-2 w-full w-full flex flex-col items-center lg:items-start px-4 lg:px-0">
+            <div className="relative z-20 mt-2 w-full flex flex-col items-center lg:items-start lg:ml-2">
               
-              <h1 
-                className="mb-5 relative"
-                style={{
-                  fontFamily: '"League Spartan", sans-serif',
-                  fontWeight: 800,
-                  fontSize: '56px',
-                  lineHeight: '67.2px',
-                  letterSpacing: '0px',
-                  verticalAlign: 'middle',
-                  color: '#181818'
-                }}
-              >
-                Turn Your Ambition Into a <br />
-                <span 
+              {/* Arrow relative to h1 block */}
+              <div className="relative w-full max-w-[550px] xl:max-w-[650px] flex justify-center lg:justify-start">
+                <h1 
+                  className="mb-5 relative text-center lg:text-left"
                   style={{
-                    background: 'linear-gradient(180deg, #1F3799 0%, #9F18AC 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    color: 'transparent'
+                    fontFamily: '"League Spartan", sans-serif',
+                    fontWeight: 800,
+                    letterSpacing: '0px',
+                    color: '#181818'
                   }}
-                >Career</span> That Pays
+                >
+                  <span className="block text-[42px] leading-[48px] lg:text-[45px] lg:leading-[52px] xl:text-[54px] xl:leading-[60px]">Turn Your Ambition</span>
+                  <span className="block text-[42px] leading-[48px] lg:text-[45px] lg:leading-[52px] xl:text-[54px] xl:leading-[60px] mt-1">
+                    Into a <span 
+                      style={{
+                        background: 'linear-gradient(180deg, #1F3799 0%, #9F18AC 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                        color: 'transparent'
+                      }}
+                    >Career</span> That Pays
+                  </span>
 
-                {/* Arrow (guest34) matching Screenshot 2 */}
-                <div className="absolute left-[55%] md:left-[55%] lg:left-[60%] xl:left-[65%] top-[-40px] md:top-[-60px] lg:top-[-75px] w-[130px] md:w-[180px] lg:w-[220px] h-[70px] md:h-[100px] lg:h-[120px] z-30 hidden md:block pointer-events-none">
-                  <img src={guest34} alt="Arrow" className="w-full h-full object-contain" style={{ transform: 'scaleX(-1)' }} />
-                </div>
-              </h1>
+                  {/* Arrow (guest34) properly anchored to the top right of text area */}
+                  <div className="absolute right-[0%] lg:right-[-20%] xl:right-[-15%] top-[-40px] lg:top-[-45px] xl:top-[-50px] w-[100px] lg:w-[130px] xl:w-[150px] h-[70px] lg:h-[90px] xl:h-[100px] z-30 hidden lg:block pointer-events-none">
+                    <img src={guest34} alt="Arrow" className="w-full h-full object-contain" style={{ transform: 'scaleX(-1)' }} />
+                  </div>
+                </h1>
+              </div>
 
-              <p className="text-gray-600 text-[17px] max-w-lg leading-relaxed mb-10 font-medium">
+              <p className="text-gray-600 text-[16px] xl:text-[17px] max-w-[480px] xl:max-w-lg leading-relaxed mb-8 xl:mb-10 font-medium">
                 Choose from 4,500+ expert-led courses on Lauratek and build practical, job-ready skills you can apply from day one.
               </p>
 
-              <div className="flex flex-wrap items-center gap-5">
+              <div className="flex flex-wrap items-center gap-5 relative z-30">
                 <button 
                   onClick={() => document.getElementById('trending-courses')?.scrollIntoView({ behavior: 'smooth' })}
                   className="text-white pl-6 pr-2 py-2 rounded-full font-semibold transition-all flex items-center gap-4 shadow-lg text-[16px] shadow-purple-200 group hover:opacity-90"
@@ -129,48 +124,48 @@ const HeroSectionNew = () => {
           </div>
 
           {/* Right Column (Girl and Cards) */}
-          <div className="w-full lg:w-[50%] xl:w-[50%] flex justify-center mt-4 lg:mt-0 z-20">
-            {/* Inner relative wrapper that perfectly matches the image size */}
-            <div className="relative w-full max-w-[450px] lg:max-w-[600px] xl:max-w-[700px] 2xl:max-w-[800px]">
+          <div className="w-full lg:w-[45%] xl:w-[45%] flex justify-center lg:justify-end mt-4 lg:mt-0 pb-0 z-30 items-end self-end pointer-events-none">
+            {/* Inner relative wrapper properly sized */}
+            <div className="relative w-full max-w-[450px] lg:max-w-[550px] xl:max-w-[650px] lg:translate-x-[10px] xl:translate-x-[20px] origin-bottom-right pointer-events-auto">
               
-              {/* Robot reading book (guest35) near the top left of the purple block */}
-              <div className="absolute top-[2%] left-[-10%] md:top-[5%] md:left-[-10%] lg:top-[5%] lg:left-[-20%] xl:top-[2%] xl:left-[-15%] w-[65px] h-[65px] z-30 drop-shadow-sm hidden md:block">
+              {/* Robot reading book (guest35) */}
+              <div className="absolute top-[8%] left-[-5%] lg:top-[5%] lg:left-[-15%] xl:top-[2%] xl:left-[-10%] w-[55px] h-[55px] xl:w-[65px] xl:h-[65px] z-40 drop-shadow-sm hidden md:block">
                 <img src={guest35} alt="Robot icon" className="w-full h-full object-contain" />
               </div>
 
-              <img src={guest40} alt="Student learning" className="relative z-20 w-full object-contain drop-shadow-2xl" />
+              <img src={guest40} alt="Student learning" className="relative z-30 w-full object-contain drop-shadow-2xl translate-y-[5px]" />
 
             {/* Floating Card: Instructor */}
-            <div className="absolute top-[5%] right-[5%] md:right-[10%] lg:top-[12%] lg:right-[20%] xl:top-[12%] xl:right-[25%] z-30 bg-white rounded-[12px] shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-4 flex flex-col gap-2 min-w-[200px] border border-gray-50 animate-fade-in-up">
-              <span className="text-[15px] font-bold text-gray-900">Instructor</span>
+            <div className="absolute top-[12%] right-[5%] lg:top-[20%] lg:right-[15%] xl:top-[20%] xl:right-[18%] z-40 bg-white rounded-[12px] shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-4 flex flex-col gap-1.5 min-w-[160px] xl:min-w-[180px] border border-gray-50 animate-fade-in-up scale-[0.85] sm:scale-100 origin-right">
+              <span className="text-[14px] xl:text-[15px] font-bold text-gray-900">Instructor</span>
               <div className="flex items-center gap-3">
                 <div className="flex items-center">
-                  <img src={trainer1} className="w-[38px] h-[38px] rounded-full border-[2px] border-white object-cover" />
-                  <img src={trainer2} className="w-[38px] h-[38px] rounded-full border-[2px] border-white -ml-3 object-cover" />
-                  <img src={trainer1} className="w-[38px] h-[38px] rounded-full border-[2px] border-white -ml-3 object-cover" />
-                  <div className="w-[38px] h-[38px] rounded-full border-[2px] border-white -ml-3 bg-[#F97316] text-white flex items-center justify-center text-[18px] font-medium leading-none pb-[2px]">
+                  <img src={trainer1} className="w-[32px] h-[32px] xl:w-[38px] xl:h-[38px] rounded-full border-[2px] border-white object-cover" />
+                  <img src={trainer2} className="w-[32px] h-[32px] xl:w-[38px] xl:h-[38px] rounded-full border-[2px] border-white -ml-3 object-cover" />
+                  <img src={trainer1} className="w-[32px] h-[32px] xl:w-[38px] xl:h-[38px] rounded-full border-[2px] border-white -ml-3 object-cover" />
+                  <div className="w-[32px] h-[32px] xl:w-[38px] xl:h-[38px] rounded-full border-[2px] border-white -ml-3 bg-[#F97316] text-white flex items-center justify-center text-[16px] xl:text-[18px] font-medium leading-none pb-[2px]">
                     +
                   </div>
                 </div>
                 <div className="flex flex-col justify-center">
-                  <span className="text-[14px] font-bold leading-tight text-[#111827]">136+</span>
-                  <span className="text-[12px] text-gray-500 font-medium">Expert Instructors</span>
+                  <span className="text-[13px] xl:text-[14px] font-bold leading-tight text-[#6525a3]">136+</span>
+                  <span className="text-[11px] xl:text-[12px] text-gray-500 font-medium pt-0.5">Instructor</span>
                 </div>
               </div>
             </div>
 
             {/* Floating Card: Success Students */}
-            <div className="absolute bottom-[2%] right-[5%] md:right-[10%] lg:bottom-[20%] lg:right-[12%] xl:bottom-[20%] xl:right-[15%] z-30 bg-white rounded-[12px] shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-4 flex flex-col min-w-[180px] border border-gray-50 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+            <div className="absolute bottom-[2%] right-[5%] lg:bottom-[15%] lg:right-[8%] xl:bottom-[15%] xl:right-[10%] z-40 bg-white rounded-[12px] shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-4 flex flex-col min-w-[160px] xl:min-w-[180px] border border-gray-50 animate-fade-in-up scale-[0.85] sm:scale-100 origin-right" style={{ animationDelay: '0.2s' }}>
               <div className="flex items-center mb-2">
-                <img src={trainer1} className="w-[42px] h-[42px] rounded-full border-[2px] border-white object-cover" />
-                <img src={trainer2} className="w-[42px] h-[42px] rounded-full border-[2px] border-white -ml-3 object-cover" />
-                <div className="w-[42px] h-[42px] rounded-full border-[2px] border-white -ml-3 bg-[#F97316] text-white flex items-center justify-center text-[20px] font-medium leading-none pb-[2px]">
+                <img src={trainer1} className="w-[36px] h-[36px] xl:w-[42px] xl:h-[42px] rounded-full border-[2px] border-white object-cover" />
+                <img src={trainer2} className="w-[36px] h-[36px] xl:w-[42px] xl:h-[42px] rounded-full border-[2px] border-white -ml-3 object-cover" />
+                <div className="w-[36px] h-[36px] xl:w-[42px] xl:h-[42px] rounded-full border-[2px] border-white -ml-3 bg-[#F97316] text-white flex items-center justify-center text-[18px] xl:text-[20px] font-medium leading-none pb-[2px]">
                   +
                 </div>
               </div>
               <div className="flex flex-col mt-1">
-                <span className="text-[20px] font-extrabold leading-tight text-[#1b2a75] mb-0.5">2,562+</span>
-                <span className="text-[12px] text-gray-500 font-medium">Success Students</span>
+                <span className="text-[18px] xl:text-[20px] font-extrabold leading-tight text-[#6525a3] mb-0.5">2,562+</span>
+                <span className="text-[11px] xl:text-[12px] text-gray-500 font-medium">Success Students</span>
               </div>
             </div>
 
@@ -178,26 +173,26 @@ const HeroSectionNew = () => {
           </div>
         </div>
 
-        {/* Alarm Clock (guest31) placed relative to section bottom so it sits precisely on the blue bar */}
-        <div className="absolute bottom-[115px] md:bottom-[120px] lg:bottom-[130px] left-[10%] lg:left-[120px] w-[90px] h-[90px] hidden md:block drop-shadow-sm z-20">
+        {/* Alarm Clock (guest31) sitting perfectly flat on the bottom banner border */}
+        <div className="absolute bottom-[90px] lg:bottom-[95px] xl:bottom-[115px] 2xl:bottom-[115px] left-[20%] lg:left-[25%] xl:left-[27%] 2xl:left-[30%] w-[80px] h-[80px] xl:w-[110px] xl:h-[110px] hidden md:block drop-shadow-sm z-20">
           <img src={guest31} alt="Clock icon" className="w-full h-full object-contain" />
         </div>
 
-        {/* Bottom Info Block */}
-        <div className="absolute bottom-0 left-0 w-full md:w-[60%] lg:w-[45%] xl:w-[42%] py-6 md:py-8 bg-[#DBDFFF] z-30"
-             style={{ clipPath: 'polygon(0 0, 85% 0, 100% 100%, 0 100%)' }}>
-          <div className="flex flex-wrap justify-start items-center gap-8 md:gap-14 pl-10 lg:pl-[120px]">
-            <div className="text-center">
-              <div className="font-extrabold text-[28px] md:text-[32px] text-[#111827]">23+</div>
-              <div className="text-[13px] md:text-[14px] text-gray-600 font-medium mt-0.5">Years Experience</div>
+        {/* Bottom Info Block (z-10 so it properly goes BEHIND the Right Column image for the cut-out 3D overlap effect!) */}
+        <div className="relative lg:absolute lg:bottom-0 lg:left-0 w-[100%] md:w-[80%] lg:w-[68%] xl:w-[62%] 2xl:w-[55%] bg-[#DBDFFF] z-10 overflow-visible"
+             style={{ clipPath: 'polygon(0 0, 93% 0, 100% 100%, 0 100%)' }}>
+          <div className="flex flex-wrap justify-start items-center gap-4 lg:gap-8 xl:gap-14 px-8 lg:px-12 xl:px-[100px] py-4 lg:py-6 xl:py-8">
+            <div className="flex flex-col text-left lg:text-center mt-1 mb-1">
+              <span className="font-extrabold text-[24px] lg:text-[28px] xl:text-[32px] leading-none text-[#111827]">23+</span>
+              <span className="text-[12px] lg:text-[13px] xl:text-[14px] text-gray-700 font-semibold mt-1">Years Experience</span>
             </div>
-            <div className="text-center">
-              <div className="font-extrabold text-[28px] md:text-[32px] text-[#111827]">414+</div>
-              <div className="text-[13px] md:text-[14px] text-gray-600 font-medium mt-0.5">Our Students</div>
+            <div className="flex flex-col text-left lg:text-center mt-1 mb-1">
+              <span className="font-extrabold text-[24px] lg:text-[28px] xl:text-[32px] leading-none text-[#111827]">414+</span>
+              <span className="text-[12px] lg:text-[13px] xl:text-[14px] text-gray-700 font-semibold mt-1">Our Students</span>
             </div>
-            <div className="text-center">
-              <div className="font-extrabold text-[28px] md:text-[32px] text-[#111827]">64+</div>
-              <div className="text-[13px] md:text-[14px] text-gray-600 font-medium mt-0.5">Popular Courses</div>
+            <div className="flex flex-col text-left lg:text-center mt-1 mb-1">
+              <span className="font-extrabold text-[24px] lg:text-[28px] xl:text-[32px] leading-none text-[#111827]">64+</span>
+              <span className="text-[12px] lg:text-[13px] xl:text-[14px] text-gray-700 font-semibold mt-1">Popular Courses</span>
             </div>
           </div>
         </div>

@@ -24,7 +24,7 @@ const BrowseCategoriesSection = () => {
   return (
     <>
       {/* Browse Categories Section */}
-        <section className="relative w-full py-10 md:py-12 lg:py-16 overflow-hidden bg-gradient-to-r from-[#FDFDFD] via-[#F6F5FB] to-[#FAE8F1]">
+        <section className="relative w-full py-6 md:py-8 lg:py-10 overflow-hidden bg-gradient-to-r from-[#FDFDFD] via-[#F6F5FB] to-[#FAE8F1]">
           {/* Left Decorative Arrows */}
           <div className="absolute left-[-2%] top-[10%] flex opacity-[0.08] text-[#8B5CF6]">
             <svg width="100" height="150" viewBox="0 0 24 24" fill="currentColor" className="-mr-12">
@@ -42,7 +42,7 @@ const BrowseCategoriesSection = () => {
             
             {/* Left Text */}
             <div className="md:w-1/3 flex justify-center md:justify-start pl-0">
-              <h2 className="text-center md:text-left" style={{ fontFamily: '"League Spartan", sans-serif', fontWeight: 800, fontSize: '35px', lineHeight: '33.6px', letterSpacing: '0px', verticalAlign: 'middle', color: '#2A359B' }}>
+              <h2 className="text-center md:text-left text-[22px] sm:text-[28px] md:text-[28px] lg:text-[32px] leading-[1.2] whitespace-nowrap tracking-tight" style={{ fontFamily: '"League Spartan", sans-serif', fontWeight: 700, color: '#2A359B' }}>
                 Explore In-Demand <br />
                 Learning Categories
               </h2>

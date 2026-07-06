@@ -36,7 +36,7 @@ const Home = () => {
   }, [location]);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col overflow-x-hidden w-full max-w-[100vw]">
       {/*  SCROLLBAR HIDDEN GLOBALLY (ONLY ADDITION) */}
       <style>{`
         ::-webkit-scrollbar {
@@ -55,7 +55,7 @@ const Home = () => {
       </div>
 
       {/* Main content */}
-      <main className="flex-1 ">
+      <main className="flex-1 relative -mt-[2px] z-10 w-full">
         <HeroSectionNew />
         <BrowseCategoriesSection />
         <TopCategorySection />

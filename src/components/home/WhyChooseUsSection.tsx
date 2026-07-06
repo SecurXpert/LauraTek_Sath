@@ -113,12 +113,12 @@ const WhyChooseUsSection = () => {
               </div>
 
               {/* Overlapping Circle Image */}
-              <div className="absolute bottom-[0%] left-[-10%] z-20 w-56 h-56 rounded-full overflow-hidden border-[8px] border-white shadow-2xl">
+              <div className="absolute bottom-[0%] left-[2%] sm:left-[-5%] xl:left-[-10%] z-20 w-36 h-36 sm:w-44 sm:h-44 xl:w-56 xl:h-56 rounded-full overflow-hidden border-[4px] sm:border-[6px] xl:border-[8px] border-white shadow-2xl">
                 <img src={trainer2} alt="Instructor smiling" className="w-full h-full object-cover" />
               </div>
 
               {/* Top Left Floating Box */}
-              <div className="absolute top-[10%] left-[-15%] z-30 bg-white rounded-xl shadow-xl p-4 flex flex-col gap-2 min-w-[190px] border border-gray-50">
+              <div className="absolute top-[5%] left-[2%] sm:left-[-5%] xl:top-[10%] xl:left-[-15%] z-30 bg-white rounded-xl shadow-xl p-3 xl:p-4 flex flex-col gap-2 min-w-[160px] xl:min-w-[190px] border border-gray-50 scale-[0.85] sm:scale-100 origin-top-left">
                 <span className="text-[14px] font-bold text-gray-800">Instructor</span>
                 <div className="flex items-center mt-1">
                   <img src={trainer1} className="w-9 h-9 rounded-full border-2 border-white object-cover" />
@@ -132,7 +132,7 @@ const WhyChooseUsSection = () => {
               </div>
 
               {/* Bottom Right Floating Box */}
-              <div className="absolute bottom-[10%] right-[-10%] z-30 bg-white rounded-xl shadow-xl p-4 flex items-center gap-3 border border-gray-50 pr-8">
+              <div className="absolute bottom-[10%] right-[5%] sm:right-[5%] xl:right-[8%] 2xl:right-[-5%] z-30 bg-white rounded-xl shadow-xl p-3 xl:p-4 flex items-center gap-2 sm:gap-3 border border-gray-50 pr-4 sm:pr-8 scale-[0.85] sm:scale-100 origin-bottom-right">
                 <div className="w-11 h-11 rounded-md bg-[#F59E0B] flex items-center justify-center shadow-md">
                   <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 2a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L10 14.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L2.82 8.125a.75.75 0 01.416-1.28l4.21-.611L9.327 2.418A.75.75 0 0110 2z" clipRule="evenodd" />
