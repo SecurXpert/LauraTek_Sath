@@ -10,7 +10,7 @@ const NewsletterFooterSection = () => {
   return (
     <>
       {/* ================== NEWSLETTER & FOOTER SECTION ================== */}
-        <div className="w-full mt-12 md:mt-24 lg:mt-32 relative">
+        <div className="w-full mt-4 md:mt-8 relative z-20">
           
           {/* Overlapping Newsletter Banner - Natural Flow */}
           <div className="relative w-full z-10 px-4 sm:px-6">

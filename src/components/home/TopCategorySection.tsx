@@ -24,7 +24,7 @@ const TopCategorySection = () => {
   return (
     <>
       {/* Top Category Section */}
-        <section className="py-10 md:py-16 lg:py-20 bg-[#FDFDFD]">
+        <section className="py-10 lg:py-12 bg-[#FDFDFD]">
           <div className="container mx-auto px-4 sm:px-6 lg:px-[120px] max-w-[1650px]">
             {/* Header row */}
             <div className="flex flex-col md:flex-row justify-between items-end mb-12">

@@ -75,7 +75,7 @@ const Header = () => {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container h-12 2xs:h-12 xs:h-14 2sm:h-14 sm:h-16 md:h-16 lg:h-18 xl:h-18 2xl:h-20 3xl:h-20 flex items-center justify-between w-full max-w-[1920px] px-2 xs:px-3 sm:px-4 md:px-4 lg:px-6 xl:px-8 2xl:px-10 3xl:px-12">
         {/* Mobile Layout */}
-        <div className="flex md:hidden items-center justify-between w-full">
+        <div className="flex lg:hidden items-center justify-between w-full">
           <Link to="/" className="flex items-center">
             <img src={techLogo} alt="Logo" className="h-6 xs:h-7 2sm:h-8 sm:h-8 w-auto object-contain" />
           </Link>
@@ -169,7 +169,7 @@ const Header = () => {
         {/* Mobile Menu */}
       {/* Mobile Menu - FIXED with Sign In / Sign Up */}
 {isMenuOpen && (
-  <div className="md:hidden absolute top-full left-0 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b">
+  <div className="lg:hidden absolute top-full left-0 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b">
     <nav className="flex flex-col items-center py-8 space-y-6 px-4">
       {/* Company Logo + Profile (if logged in) */}
       <div className="flex items-center space-x-6 mb-4">

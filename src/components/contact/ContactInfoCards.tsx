@@ -3,7 +3,7 @@ import { Phone, Mail, MapPin } from 'lucide-react';
 
 const ContactInfoCards: React.FC = () => {
   return (
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1100px] mt-16 relative z-20 mb-24">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1100px] mt-16 relative z-20 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             
             {/* Card 1 */}

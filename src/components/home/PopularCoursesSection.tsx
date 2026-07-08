@@ -25,7 +25,7 @@ const PopularCoursesSection = ({ activeCourseTab, setActiveCourseTab }: any) => 
   return (
     <>
       {/* Popular Courses Section */}
-        <section id="courses" className="py-20 bg-white relative">
+        <section id="courses" className="py-12 md:py-16 bg-white relative">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1650px]">
             {/* Header row */}
             <div className="flex flex-col md:flex-row justify-between items-end mb-12">

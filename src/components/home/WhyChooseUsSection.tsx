@@ -29,7 +29,7 @@ const WhyChooseUsSection = () => {
   return (
     <>
       {/* Why Choose Us Section */}
-        <section className="py-24 relative overflow-hidden bg-gradient-to-r from-[#F4F4FD] via-[#FDFDFD] to-[#FCF4F7]">
+        <section className="py-12 md:py-16 relative overflow-hidden bg-gradient-to-r from-[#F4F4FD] via-[#FDFDFD] to-[#FCF4F7]">
           {/* Background decorations */}
           {/* Top left globe */}
           <div className="absolute -top-4 left-4 md:-top-2 md:left-8 lg:top-0 lg:left-16 w-[70px] h-[70px] opacity-80 z-0">
@@ -113,12 +113,12 @@ const WhyChooseUsSection = () => {
               </div>
 
               {/* Overlapping Circle Image */}
-              <div className="absolute bottom-[0%] left-[2%] sm:left-[-5%] xl:left-[-10%] z-20 w-36 h-36 sm:w-44 sm:h-44 xl:w-56 xl:h-56 rounded-full overflow-hidden border-[4px] sm:border-[6px] xl:border-[8px] border-white shadow-2xl">
+              <div className="absolute bottom-[0%] left-[5%] sm:left-[10%] xl:left-[-10%] z-20 w-36 h-36 sm:w-44 sm:h-44 xl:w-56 xl:h-56 rounded-full overflow-hidden border-[4px] sm:border-[6px] xl:border-[8px] border-white shadow-2xl">
                 <img src={trainer2} alt="Instructor smiling" className="w-full h-full object-cover" />
               </div>
 
               {/* Top Left Floating Box */}
-              <div className="absolute top-[5%] left-[2%] sm:left-[-5%] xl:top-[10%] xl:left-[-15%] z-30 bg-white rounded-xl shadow-xl p-3 xl:p-4 flex flex-col gap-2 min-w-[160px] xl:min-w-[190px] border border-gray-50 scale-[0.85] sm:scale-100 origin-top-left">
+              <div className="absolute top-[5%] left-[2%] sm:left-[5%] xl:top-[10%] xl:left-[-15%] z-30 bg-white rounded-xl shadow-xl p-3 xl:p-4 flex flex-col gap-2 min-w-[160px] xl:min-w-[190px] border border-gray-50 scale-[0.85] sm:scale-100 origin-top-left">
                 <span className="text-[14px] font-bold text-gray-800">Instructor</span>
                 <div className="flex items-center mt-1">
                   <img src={trainer1} className="w-9 h-9 rounded-full border-2 border-white object-cover" />

@@ -45,7 +45,7 @@ const WorkshopTestimonialSection = () => {
   return (
     <>
       {/* ================== COMBINED WORKSHOP & TESTIMONIAL SECTION ================== */}
-        <section id="success-stories" className="py-12 md:py-16 lg:py-24 relative overflow-hidden bg-gradient-to-b from-[#F4F4FD] via-[#FDFDFD] to-[#FCF4F7]">
+        <section id="success-stories" className="py-12 md:py-16 relative overflow-hidden bg-gradient-to-b from-[#F4F4FD] via-[#FDFDFD] to-[#FCF4F7]">
           
           {/* Background Decorations for Top Part */}
           <div className="absolute top-[8%] left-[4%] text-[#D1D5F5] opacity-80 z-0">
@@ -67,7 +67,7 @@ const WorkshopTestimonialSection = () => {
           </div>
 
           
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1650px] relative z-10 mb-20 md:mb-24 mt-10">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1650px] relative z-10 mb-12 mt-10">
           <div className="w-full flex flex-col md:flex-row items-center h-full">
 
               

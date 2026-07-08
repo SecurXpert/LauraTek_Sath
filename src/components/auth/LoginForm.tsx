@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import authApi from "@/api/authApi";
 import guestApi from "@/api/guestApi";
 import { VITE_API_URL } from "@/services/api/api";
+import { decodeJWT } from "@/lib/jwtUtils";
 
 interface LoginFormProps {
   onMfaRequired: (token: string) => void;
@@ -29,11 +30,13 @@ export default function LoginForm({ onMfaRequired, onNavigateSignup, onNavigateF
  
     try {
       let res;
+      let usedGuestApi = false;
       try {
         res = await authApi.login({ email, password });
       } catch (err: any) {
         if (err.response?.status === 401 || err.response?.status === 404) {
           res = await guestApi.login({ email, password });
+          usedGuestApi = true;
         } else {
           throw err;
         }
@@ -47,13 +50,11 @@ export default function LoginForm({ onMfaRequired, onNavigateSignup, onNavigateF
         let actualRole = "student";
         try {
           const checkRes = await fetch(`${VITE_API_URL}/student/me`, {
-            headers: { Authorization: `Bearer ${data.access_token}` }
+            headers: { Authorization: `Bearer ${data.access_token}` },
           });
-          if (!checkRes.ok) {
-            actualRole = "guest";
-          }
-        } catch (err) {
-          actualRole = "guest";
+          if (!checkRes.ok) actualRole = "guest";
+        } catch (error) {
+          // ignore
         }
         
         localStorage.setItem("userRole", actualRole);
@@ -69,6 +70,7 @@ export default function LoginForm({ onMfaRequired, onNavigateSignup, onNavigateF
       }
  
       if (data.temp_token) {
+        localStorage.setItem("userRole", usedGuestApi ? "guest" : "student");
         onMfaRequired(data.temp_token);
       }
     } catch (err: any) {

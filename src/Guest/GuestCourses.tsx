@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Search, ChevronDown, BookOpen, Clock, Users, Star, Lock, User, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import guest1 from '../assets/guest1.png';
-import guest2 from '../assets/guest2.png';
-import guest16 from '../assets/guest16.png';
-import guest6 from '../assets/guest6.png';
 import Contactus from '../components/ui/contactus';
 import { VITE_API_URL } from '../services/api/api';
+import guest16 from '../assets/guest16.png';
+
+const FALLBACK_COURSE_IMG = "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=600";
 
 const GuestCourses = () => {
   const navigate = useNavigate();
@@ -55,7 +54,7 @@ const GuestCourses = () => {
           title: c.title || '',
           description: c.description || "",
           hours: c.duration ? `${c.duration}h` : '',
-          image: c.image || guest6
+          image: c.image || FALLBACK_COURSE_IMG
         }));
         setCourses(formattedCourses);
       } catch (error) {
@@ -300,14 +299,16 @@ const GuestCourses = () => {
           </div>
           <h3 className="text-xl font-bold text-slate-800 mb-2">No Courses Available</h3>
           <p className="text-gray-500 max-w-md text-center">
-            We couldn't find any courses matching your current filters or search query. Try adjusting your selection or selecting "All".
+            We couldn't find any courses matching your current filters{/* or search query. Try adjusting your selection or selecting "All". */}
           </p>
+          {/*
           <button 
             onClick={() => { setActiveFilter('All'); setSearchQuery(''); setStatusFilter('All Status'); }}
             className="mt-6 px-6 py-2.5 bg-[#5B4FFF] text-white font-medium rounded-xl hover:bg-[#4a3fdb] transition-colors"
           >
             Clear Filters
           </button>
+          */}
         </div>
       )}
 

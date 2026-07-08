@@ -161,11 +161,11 @@ const ContactFaqSection = () => {
   return (
     <>
       {/* ================== CONTACT & FAQ SECTION ================== */}
-        <section className="py-12 md:py-16 lg:py-24 bg-white">
+        <section className="pt-12 md:pt-16 lg:pt-24 pb-4 md:pb-8 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1650px]">
             
             {/* Top Row: Map & Contact Form */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-24">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
               
               {/* Map Column */}
               <div className="rounded-[24px] overflow-hidden shadow-sm h-full min-h-[500px]">

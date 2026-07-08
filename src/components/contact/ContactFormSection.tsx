@@ -137,7 +137,7 @@ const ContactFormSection: React.FC = () => {
   return (
         <section className="py-12 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1650px]">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-24">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
               
               {/* Map Column */}
               <div className="rounded-[24px] overflow-hidden shadow-sm h-full min-h-[300px] md:min-h-[400px] lg:min-h-[500px]">

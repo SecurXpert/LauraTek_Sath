@@ -18,8 +18,10 @@ export default defineConfig(({ mode }) => ({
     componentTagger(),
   ].filter(Boolean),
   resolve: {
+    dedupe: ["react", "react-dom", "react-router-dom", "@tanstack/react-query"],
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "@instructor": path.resolve(__dirname, "./src/Instructor/src"),
     },
   },
 }));

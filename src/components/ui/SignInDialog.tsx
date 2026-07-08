@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
 import authApi from "@/api/authApi";
 import guestApi from "@/api/guestApi";
+import { VITE_API_URL } from "@/services/api/api";
  
 import logo from "@/assets/techlogo.png";
 import mainImage from "@/assets/userside.png";
@@ -268,17 +269,33 @@ export default function SignInDialog() {
  
       if (data.access_token) {
         localStorage.setItem("access_token", data.access_token);
-        localStorage.setItem("token", data.access_token); // ✅ add this line
-        localStorage.setItem("userRole", userRole);
-        localStorage.setItem("role", userRole);
+        localStorage.setItem("token", data.access_token);
+
+        let finalRole = userRole;
+        try {
+          const checkRes = await fetch(`${VITE_API_URL}/student/me`, {
+            headers: { Authorization: `Bearer ${data.access_token}` },
+          });
+          if (!checkRes.ok) finalRole = "guest";
+        } catch (e) {}
+
+        localStorage.setItem("userRole", finalRole);
+        localStorage.setItem("role", finalRole);
+
         setTimeout(() => {
-          navigate("/dashboard");
+          if (finalRole === "guest") {
+            navigate("/guest");
+          } else {
+            navigate("/dashboard");
+          }
           setOpen(false);
         }, 1000);
         return;
       }
  
       if (data.temp_token) {
+        localStorage.setItem("userRole", userRole); // fallback for MFA flow
+        localStorage.setItem("role", userRole);
         setTempToken(data.temp_token);
         setStep("mfa");
         setSuccess("Enter your 2FA code");
@@ -308,12 +325,28 @@ export default function SignInDialog() {
  
     try {
       const res = await authApi.verifyMfa({ temp_token: tempToken, code: otp });
-      localStorage.setItem("access_token", res.data.access_token);
-localStorage.setItem("token", res.data.access_token); // ✅ add this line
+      const accessToken = res.data.access_token;
+      localStorage.setItem("access_token", accessToken);
+      localStorage.setItem("token", accessToken);
+
+      let finalRole = localStorage.getItem("userRole") || "student";
+      try {
+        const checkRes = await fetch(`${VITE_API_URL}/student/me`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        if (!checkRes.ok) finalRole = "guest";
+      } catch (e) {}
+
+      localStorage.setItem("userRole", finalRole);
+      localStorage.setItem("role", finalRole);
       
       setSuccess("Login successful!");
       setTimeout(() => {
-        navigate("/dashboard");
+        if (finalRole === "guest") {
+          navigate("/guest");
+        } else {
+          navigate("/dashboard");
+        }
         setOpen(false);
       }, 1000);
     } catch (err: any) {
@@ -395,11 +428,28 @@ localStorage.setItem("token", res.data.access_token); // ✅ add this line
  
     try {
       const res = await authApi.verifyMfa({ temp_token: tempToken, code: otp });
-      localStorage.setItem("access_token", res.data.access_token);
-localStorage.setItem("token", res.data.access_token); // ✅ add this line
+      const accessToken = res.data.access_token;
+      localStorage.setItem("access_token", accessToken);
+      localStorage.setItem("token", accessToken);
+      
+      let finalRole = localStorage.getItem("userRole") || "student";
+      try {
+        const checkRes = await fetch(`${VITE_API_URL}/student/me`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        if (!checkRes.ok) finalRole = "guest";
+      } catch (e) {}
+
+      localStorage.setItem("userRole", finalRole);
+      localStorage.setItem("role", finalRole);
+
       setSuccess("Welcome back!");
       setTimeout(() => {
-        navigate("/dashboard");
+        if (finalRole === "guest") {
+          navigate("/guest");
+        } else {
+          navigate("/dashboard");
+        }
         setOpen(false);
       }, 1000);
     } catch (err: any) {

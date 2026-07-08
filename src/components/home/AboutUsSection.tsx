@@ -26,7 +26,7 @@ const AboutUsSection = () => {
   return (
     <>
       {/* About Us Section */}
-        <section id="about-us" className="py-20 md:py-28 relative overflow-hidden bg-gradient-to-r from-[#F4F4FD] via-[#FDFDFD] to-[#FCF4F7]">
+        <section id="about-us" className="py-12 md:py-16 relative overflow-hidden bg-gradient-to-r from-[#F4F4FD] via-[#FDFDFD] to-[#FCF4F7]">
           {/* Background decorations */}
           {/* Top left star */}
           <div className="absolute top-[10%] left-[5%] text-[#D8B4FE] opacity-60">

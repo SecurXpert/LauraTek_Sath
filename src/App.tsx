@@ -44,6 +44,16 @@ import Review from "./pages/Review";
 import LoginPage from "./pages/LoginPage";
 import ExamResults from "./pages/ExamResults";
 
+
+import InstructorLogin from "@instructor/pages/Login";
+import { AuthProvider as InstructorAuthProvider } from "@instructor/contexts/AuthContext";
+
+const InstructorLoginWrapper = () => (
+  <InstructorAuthProvider>
+    <InstructorLogin />
+  </InstructorAuthProvider>
+);
+
 // Guest Pages
 import GuestLayout from "./Guest/GuestLayout";
 import GuestDashboard from "./Guest/GuestDashboard";
@@ -81,7 +91,10 @@ const App = () => (
         
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<LoginPage />} />
-            <Route path="/dashboard" element={<Dashboard/>}/>
+          <Route path="/instructor-login" element={<InstructorLoginWrapper />} />
+          <Route path="/instuctor-login" element={<InstructorLoginWrapper />} />
+          <Route path="/instrutor-login" element={<InstructorLoginWrapper />} />
+          <Route path="/dashboard" element={<Dashboard/>}/>
           <Route path="/courses" element={<Courses />} />
           <Route path="/jobs" element={<Jobs/>}/>
           {/* <Route path="/dashboard" element={<Dashboard/>}/> */}

@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import authApi from "@/api/authApi";
 import { useNavigate } from "react-router-dom";
 import { VITE_API_URL } from "@/services/api/api";
+import { decodeJWT } from "@/lib/jwtUtils";
 
 interface MfaFlowProps {
   step: "mfa" | "enroll" | "reenroll" | "backupCodes" | "finalMfa";
@@ -46,13 +47,16 @@ export default function MfaFlow({ step, setStep, tempToken }: MfaFlowProps) {
       
       let actualRole = "student";
       try {
-        const checkRes = await fetch(`${VITE_API_URL}/student/me`, {
-          headers: { Authorization: `Bearer ${res.data.access_token}` }
-        });
-        if (!checkRes.ok) {
-          actualRole = "guest";
+        const decoded = decodeJWT(res.data.access_token);
+        if (decoded && decoded.role) {
+          if (decoded.role.toLowerCase() === "guest") {
+            actualRole = "guest";
+          } else {
+            actualRole = decoded.role;
+          }
         }
       } catch (err) {
+        console.error("Failed to decode token", err);
         actualRole = "guest";
       }
 
@@ -147,13 +151,16 @@ export default function MfaFlow({ step, setStep, tempToken }: MfaFlowProps) {
       
       let actualRole = "student";
       try {
-        const checkRes = await fetch(`${VITE_API_URL}/student/me`, {
-          headers: { Authorization: `Bearer ${res.data.access_token}` }
-        });
-        if (!checkRes.ok) {
-          actualRole = "guest";
+        const decoded = decodeJWT(res.data.access_token);
+        if (decoded && decoded.role) {
+          if (decoded.role.toLowerCase() === "guest") {
+            actualRole = "guest";
+          } else {
+            actualRole = decoded.role;
+          }
         }
       } catch (err) {
+        console.error("Failed to decode token", err);
         actualRole = "guest";
       }
 
