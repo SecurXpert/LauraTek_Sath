@@ -1005,7 +1005,7 @@ export default function ChatSystem() {
                         {typeof msg.id === 'string' && msg.id.startsWith('temp-') && (
                           <span className="text-yellow-500">• sending…</span>
                         )}
-                        {isMe && (
+                        {msg.reply_to_message_id && isMe && (
                           <div className="flex items-center gap-1.5 ml-1">
                             <Reply className="w-[12px] h-[12px] cursor-pointer hover:text-gray-600 transition-colors" onClick={(e) => {
                               e.stopPropagation();

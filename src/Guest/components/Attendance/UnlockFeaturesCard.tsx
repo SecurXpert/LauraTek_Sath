@@ -33,11 +33,17 @@ const UnlockFeaturesCard: React.FC<UnlockFeaturesCardProps> = ({ setContactOpen 
         ))}
       </ul>
 
-      <div className="w-[160px] h-[160px] self-center my-6 pointer-events-none">
+      {/* Desktop absolute positioned image */}
+      <div className="hidden md:block absolute right-8 top-8 lg:right-20 lg:top-[15%] w-[200px] h-[200px] lg:w-[260px] lg:h-[260px] xl:w-[320px] xl:h-[320px] pointer-events-none z-0">
+        <img src={guest10} alt="Unlock Features" className="w-full h-full object-contain drop-shadow-sm hover:scale-105 transition-transform duration-500" />
+      </div>
+
+      {/* Mobile inline image */}
+      <div className="md:hidden w-[160px] h-[160px] self-center my-6 pointer-events-none">
         <img src={guest10} alt="Unlock Features" className="w-full h-full object-contain drop-shadow-sm" />
       </div>
 
-      <div className="mt-auto flex flex-col gap-4 z-10">
+      <div className="mt-auto flex flex-col gap-4 z-10 md:mt-12">
         <button 
           onClick={() => setContactOpen(true)}
           className="w-full bg-[#4A3AFF] text-white py-[14px] rounded-[14px] font-semibold text-[16px] flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"

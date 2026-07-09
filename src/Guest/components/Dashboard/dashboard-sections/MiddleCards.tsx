@@ -25,7 +25,14 @@ export const MiddleCards: React.FC<MiddleCardsProps> = ({
         {/* Upcoming live classes */}
         <div className="relative overflow-hidden bg-slate-900 group flex flex-col mx-auto w-full min-h-[200px] lg:h-full" style={{ maxWidth: '348.13px', borderRadius: '13.89px' }}>
           {upcomingLiveClass && (
-            <img src={upcomingLiveClass.image || liveClassImg} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+            <div className="absolute inset-0 w-full h-full bg-slate-800">
+              <img 
+                src={upcomingLiveClass.image || liveClassImg} 
+                className="absolute inset-0 w-full h-full object-cover transition-all duration-700 opacity-0 group-hover:scale-105" 
+                loading="lazy"
+                onLoad={(e) => (e.target as HTMLImageElement).classList.remove('opacity-0')}
+              />
+            </div>
           )}
           
           <div className="relative z-10 p-5 flex flex-col h-full">
@@ -77,7 +84,14 @@ export const MiddleCards: React.FC<MiddleCardsProps> = ({
 
         <div className="relative overflow-hidden bg-white group flex flex-col mx-auto w-full min-h-[200px] lg:h-full border border-gray-100 shadow-guest" style={{ maxWidth: '348.13px', borderRadius: '13.89px' }}>
           {featuredCourse && (
-            <img src={featuredCourse.image || discussionImg} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+            <div className="absolute inset-0 w-full h-full bg-slate-100">
+              <img 
+                src={featuredCourse.image || discussionImg} 
+                className="absolute inset-0 w-full h-full object-cover transition-all duration-700 opacity-0 group-hover:scale-105" 
+                loading="lazy"
+                onLoad={(e) => (e.target as HTMLImageElement).classList.remove('opacity-0')}
+              />
+            </div>
           )}
           
           <div className="relative z-10 p-5 flex flex-col h-full bg-gradient-to-t from-white/90 via-white/40 to-white/10">

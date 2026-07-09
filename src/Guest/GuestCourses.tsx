@@ -250,8 +250,18 @@ const GuestCourses = () => {
               }}
             >
               {/* Background Image Container */}
-              <div className="absolute top-0 left-0 w-full h-[65%]">
-                <img src={course.image} alt={course.title} className="w-full h-full object-cover" />
+              <div className="absolute top-0 left-0 w-full h-[65%] bg-[#4A3EE0]">
+                <img 
+                  src={course.image} 
+                  alt={course.title} 
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-opacity duration-500 opacity-0"
+                  onLoad={(e) => (e.target as HTMLImageElement).classList.remove('opacity-0')}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = FALLBACK_COURSE_IMG;
+                    (e.target as HTMLImageElement).classList.remove('opacity-0');
+                  }}
+                />
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#5B4FFF]"></div>
               </div>
               
