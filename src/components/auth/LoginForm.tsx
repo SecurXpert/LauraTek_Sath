@@ -31,39 +31,42 @@ export default function LoginForm({ onMfaRequired, onNavigateSignup, onNavigateF
     try {
       let res;
       let usedGuestApi = false;
-      try {
-        res = await authApi.login({ email, password });
-      } catch (err: any) {
-        if (err.response?.status === 401 || err.response?.status === 404) {
-          res = await guestApi.login({ email, password });
-          usedGuestApi = true;
-        } else {
-          throw err;
-        }
-      }
+      res = await authApi.login({ email, password });
       const data = res.data;
  
       if (data.access_token) {
         localStorage.setItem("access_token", data.access_token);
         localStorage.setItem("token", data.access_token);
         
-        let actualRole = "student";
-        try {
-          const checkRes = await fetch(`${VITE_API_URL}/student/me`, {
-            headers: { Authorization: `Bearer ${data.access_token}` },
-          });
-          if (!checkRes.ok) actualRole = "guest";
-        } catch (error) {
-          // ignore
+        const decoded = decodeJWT(data.access_token);
+        let actualRole = (decoded?.role || "").toLowerCase().trim();
+
+        // Always blindly check /student/me for non-instructors because the JWT role mapping might be 'user' or missing
+        if (actualRole !== "instructor" && actualRole !== "trainer") {
+          try {
+            const checkRes = await fetch(`${VITE_API_URL}/student/me`, {
+              headers: { Authorization: `Bearer ${data.access_token}` },
+            });
+            if (checkRes.ok) {
+              actualRole = "student";
+            } else {
+              actualRole = "guest";
+            }
+          } catch (error) {
+            actualRole = "guest";
+          }
         }
         
         localStorage.setItem("userRole", actualRole);
         localStorage.setItem("role", actualRole);
+
         setTimeout(() => {
-          if (actualRole === "guest") {
-            navigate("/guest");
+          if (actualRole === "instructor" || actualRole === "trainer") {
+            window.location.href = "/instructor/dashboard";
+          } else if (actualRole === "guest") {
+            window.location.href = "/guest";
           } else {
-            navigate("/dashboard");
+            window.location.href = "/dashboard";
           }
         }, 1000);
         return;

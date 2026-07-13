@@ -3,11 +3,11 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
-import Home from "./pages/Home";
-import Courses from "./pages/Courses";
-import CourseDetail from "./pages/CourseDetail";
-import Exams from "./pages/Exams";
-import NotFound from "./pages/NotFound";
+import Home from "./pages/user/Home";
+import Courses from "./pages/user/Courses";
+import CourseDetail from "./pages/user/CourseDetail";
+import Exams from "./pages/user/Exams";
+import NotFound from "./pages/user/NotFound";
 import Jobs from "./components/ui/jobs";
 import Dashboard from "./components/ui/Dashboard";
 // import Analytics from "./components/ui/Analytics";
@@ -18,7 +18,7 @@ import Compiler from "./components/ui/compiler";
 import Attendance from "./components/ui/attendance";
 import MyCourses from "./components/mycourses";
 import SuccessStories from "./components/ui/Successstories";
-import AboutUs from "./pages/aboutus";
+import AboutUs from "./pages/user/aboutus";
 import Terms from "./components/ui/Terms";
 import Policy from "./components/ui/Policy";
 import Support from "./components/ui/Support";
@@ -29,25 +29,25 @@ import StudentProfileDashboard from "./components/ui/StudentProfileDashboard";
 import Bootcamp from "./components/Bootcamp";
 // import StudentCourseDetail from "./pages/StudentCourseDetails"; // File does not exist
 import Profileheader from "./components/ui/Profileheader";
-import ProfilePage from "./pages/ProfilePage";
+import ProfilePage from "./pages/user/ProfilePage";
 import ScrollToTop from "./components/ScrollToTop";
-import Alumni from "./pages/Alumni";
+import Alumni from "./pages/user/Alumni";
 import Resume from "./components/ui/Resume";
 // import Discussion from "./pages/Discussion";
-import LiveClasses from "./pages/LiveClasses";
+import LiveClasses from "./pages/user/LiveClasses";
 import ChatSystem from "./components/ChatSystem";
-import Recording from "./pages/Recording";
-import QuizPage from "./pages/QuizPage";
-import Materials from "./pages/Materials";
-import Course1 from "./pages/Course1";
-import Review from "./pages/Review";
-import LoginPage from "./pages/LoginPage";
-import ExamResults from "./pages/ExamResults";
+import Recording from "./pages/user/Recording";
+import QuizPage from "./pages/user/QuizPage";
+import Materials from "./pages/user/Materials";
+import Course1 from "./pages/user/Course1";
+import Review from "./pages/user/Review";
+import LoginPage from "./pages/user/LoginPage";
+import ExamResults from "./pages/user/ExamResults";
 
 
-import InstructorLogin from "@instructor/pages/Login";
-import { AuthProvider as InstructorAuthProvider } from "@instructor/contexts/AuthContext";
-
+import InstructorLogin from "@/pages/instructor/Login";
+import { AuthProvider as InstructorAuthProvider } from "@/context/instructor/AuthContext";
+import { InstructorRoutes } from "@/pages/instructor/InstructorRoutes";
 const InstructorLoginWrapper = () => (
   <InstructorAuthProvider>
     <InstructorLogin />
@@ -55,23 +55,23 @@ const InstructorLoginWrapper = () => (
 );
 
 // Guest Pages
-import GuestLayout from "./Guest/GuestLayout";
-import GuestDashboard from "./Guest/GuestDashboard";
-import GuestAttendance from "./Guest/GuestAttendance";
-import GuestQuizzes from "./Guest/GuestQuizzes";
-import GuestQuizTake from "./Guest/GuestQuizTake";
-import GuestProfile from "./Guest/GuestProfile";
-import GuestEnrollments from "./Guest/GuestEnrollments";
-import GuestCertificates from "./Guest/GuestCertificates";
-import GuestCompiler from "./Guest/GuestCompiler";
-import GuestLiveClasses from "./Guest/GuestLiveClasses";
-import GuestQuizResults from "./Guest/GuestQuizResults";
-import GuestQuizDetailedResult from "./Guest/GuestQuizDetailedResult";
-import GuestCourses from "./Guest/GuestCourses";
-import GuestCourseDetails from "./Guest/GuestCourseDetails";
+import GuestLayout from "./layouts/GuestLayout";
+import GuestDashboard from "./pages/guest/GuestDashboard";
+import GuestAttendance from "./pages/guest/GuestAttendance";
+import GuestQuizzes from "./pages/guest/GuestQuizzes";
+import GuestQuizTake from "./pages/guest/GuestQuizTake";
+import GuestProfile from "./pages/guest/GuestProfile";
+import GuestEnrollments from "./pages/guest/GuestEnrollments";
+import GuestCertificates from "./pages/guest/GuestCertificates";
+import GuestCompiler from "./pages/guest/GuestCompiler";
+import GuestLiveClasses from "./pages/guest/GuestLiveClasses";
+import GuestQuizResults from "./pages/guest/GuestQuizResults";
+import GuestQuizDetailedResult from "./pages/guest/GuestQuizDetailedResult";
+import GuestCourses from "./pages/guest/GuestCourses";
+import GuestCourseDetails from "./pages/guest/GuestCourseDetails";
 
 import Contactus from "./components/ui/contactus";
-import ContactUs from "./pages/ContactUs";
+import ContactUs from "./pages/user/ContactUs";
 
 const queryClient = new QueryClient();
 
@@ -161,6 +161,9 @@ const App = () => (
           <Route path="/course1/:id" element={<Course1/>} />
           <Route path="/dashboard/review" element={<Review/>} />
           <Route path="/review" element={<Review/>} />
+
+          {/* Instructor Routes */}
+          {InstructorRoutes}
 
           {/* Guest Routes */}
           <Route path="/guest" element={<GuestLayout />}>

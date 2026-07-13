@@ -45,19 +45,22 @@ export default function MfaFlow({ step, setStep, tempToken }: MfaFlowProps) {
       localStorage.setItem("access_token", res.data.access_token);
       localStorage.setItem("token", res.data.access_token);
       
-      let actualRole = "student";
-      try {
-        const decoded = decodeJWT(res.data.access_token);
-        if (decoded && decoded.role) {
-          if (decoded.role.toLowerCase() === "guest") {
-            actualRole = "guest";
+      const decoded = decodeJWT(res.data.access_token);
+      let actualRole = (decoded?.role || "").toLowerCase().trim();
+
+      if (actualRole !== "instructor" && actualRole !== "trainer") {
+        try {
+          const checkRes = await fetch(`${VITE_API_URL}/student/me`, {
+            headers: { Authorization: `Bearer ${res.data.access_token}` },
+          });
+          if (checkRes.ok) {
+            actualRole = "student";
           } else {
-            actualRole = decoded.role;
+            actualRole = "guest";
           }
+        } catch (error) {
+          actualRole = "guest";
         }
-      } catch (err) {
-        console.error("Failed to decode token", err);
-        actualRole = "guest";
       }
 
       localStorage.setItem("userRole", actualRole);
@@ -65,10 +68,12 @@ export default function MfaFlow({ step, setStep, tempToken }: MfaFlowProps) {
       
       setSuccess("Login successful!");
       setTimeout(() => {
-        if (actualRole === "guest") {
-          navigate("/guest");
+        if (actualRole === "instructor" || actualRole === "trainer") {
+          window.location.href = "/instructor/dashboard";
+        } else if (actualRole === "guest") {
+          window.location.href = "/guest";
         } else {
-          navigate("/dashboard");
+          window.location.href = "/dashboard";
         }
       }, 1000);
     } catch (err: any) {
@@ -149,19 +154,22 @@ export default function MfaFlow({ step, setStep, tempToken }: MfaFlowProps) {
       localStorage.setItem("access_token", res.data.access_token);
       localStorage.setItem("token", res.data.access_token);
       
-      let actualRole = "student";
-      try {
-        const decoded = decodeJWT(res.data.access_token);
-        if (decoded && decoded.role) {
-          if (decoded.role.toLowerCase() === "guest") {
-            actualRole = "guest";
+      const decoded = decodeJWT(res.data.access_token);
+      let actualRole = (decoded?.role || "").toLowerCase().trim();
+
+      if (actualRole !== "instructor" && actualRole !== "trainer") {
+        try {
+          const checkRes = await fetch(`${VITE_API_URL}/student/me`, {
+            headers: { Authorization: `Bearer ${res.data.access_token}` },
+          });
+          if (checkRes.ok) {
+            actualRole = "student";
           } else {
-            actualRole = decoded.role;
+            actualRole = "guest";
           }
+        } catch (error) {
+          actualRole = "guest";
         }
-      } catch (err) {
-        console.error("Failed to decode token", err);
-        actualRole = "guest";
       }
 
       localStorage.setItem("userRole", actualRole);
@@ -169,10 +177,12 @@ export default function MfaFlow({ step, setStep, tempToken }: MfaFlowProps) {
 
       setSuccess("Welcome back!");
       setTimeout(() => {
-        if (actualRole === "guest") {
-          navigate("/guest");
+        if (actualRole === "instructor" || actualRole === "trainer") {
+          window.location.href = "/instructor/dashboard";
+        } else if (actualRole === "guest") {
+          window.location.href = "/guest";
         } else {
-          navigate("/dashboard");
+          window.location.href = "/dashboard";
         }
       }, 1000);
     } catch (err: any) {

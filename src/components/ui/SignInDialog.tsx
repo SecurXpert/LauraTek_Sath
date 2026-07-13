@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import authApi from "@/api/authApi";
 import guestApi from "@/api/guestApi";
 import { VITE_API_URL } from "@/services/api/api";
+import { decodeJWT } from "@/lib/jwtUtils";
  
 import logo from "@/assets/techlogo.png";
 import mainImage from "@/assets/userside.png";
@@ -254,39 +255,42 @@ export default function SignInDialog() {
     try {
       let res;
       let userRole = "student";
-      try {
-        res = await authApi.login({ email, password });
-        userRole = "student";
-      } catch (err: any) {
-        if (err.response?.status === 401 || err.response?.status === 404) {
-          res = await guestApi.login({ email, password });
-          userRole = "guest";
-        } else {
-          throw err;
-        }
-      }
+      res = await authApi.login({ email, password });
+      userRole = "student";
       const data = res.data;
  
       if (data.access_token) {
         localStorage.setItem("access_token", data.access_token);
         localStorage.setItem("token", data.access_token);
 
-        let finalRole = userRole;
-        try {
-          const checkRes = await fetch(`${VITE_API_URL}/student/me`, {
-            headers: { Authorization: `Bearer ${data.access_token}` },
-          });
-          if (!checkRes.ok) finalRole = "guest";
-        } catch (e) {}
+        const decoded = decodeJWT(data.access_token);
+        let finalRole = (decoded?.role || "").toLowerCase().trim();
+
+        if (finalRole !== "instructor" && finalRole !== "trainer") {
+          try {
+            const checkRes = await fetch(`${VITE_API_URL}/student/me`, {
+              headers: { Authorization: `Bearer ${data.access_token}` },
+            });
+            if (checkRes.ok) {
+              finalRole = "student";
+            } else {
+              finalRole = "guest";
+            }
+          } catch (e) {
+            finalRole = "guest";
+          }
+        }
 
         localStorage.setItem("userRole", finalRole);
         localStorage.setItem("role", finalRole);
 
         setTimeout(() => {
-          if (finalRole === "guest") {
-            navigate("/guest");
+          if (finalRole === "instructor" || finalRole === "trainer") {
+            window.location.href = "/instructor/dashboard";
+          } else if (finalRole === "guest") {
+            window.location.href = "/guest";
           } else {
-            navigate("/dashboard");
+            window.location.href = "/dashboard";
           }
           setOpen(false);
         }, 1000);
@@ -329,23 +333,35 @@ export default function SignInDialog() {
       localStorage.setItem("access_token", accessToken);
       localStorage.setItem("token", accessToken);
 
-      let finalRole = localStorage.getItem("userRole") || "student";
-      try {
-        const checkRes = await fetch(`${VITE_API_URL}/student/me`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
-        if (!checkRes.ok) finalRole = "guest";
-      } catch (e) {}
+      const decoded = decodeJWT(accessToken);
+      let finalRole = (decoded?.role || "").toLowerCase().trim();
+
+      if (finalRole !== "instructor" && finalRole !== "trainer") {
+        try {
+          const checkRes = await fetch(`${VITE_API_URL}/student/me`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          });
+          if (checkRes.ok) {
+            finalRole = "student";
+          } else {
+            finalRole = "guest";
+          }
+        } catch (e) {
+          finalRole = "guest";
+        }
+      }
 
       localStorage.setItem("userRole", finalRole);
       localStorage.setItem("role", finalRole);
       
       setSuccess("Login successful!");
       setTimeout(() => {
-        if (finalRole === "guest") {
-          navigate("/guest");
+        if (finalRole === "instructor" || finalRole === "trainer") {
+          window.location.href = "/instructor/dashboard";
+        } else if (finalRole === "guest") {
+          window.location.href = "/guest";
         } else {
-          navigate("/dashboard");
+          window.location.href = "/dashboard";
         }
         setOpen(false);
       }, 1000);
@@ -432,23 +448,35 @@ export default function SignInDialog() {
       localStorage.setItem("access_token", accessToken);
       localStorage.setItem("token", accessToken);
       
-      let finalRole = localStorage.getItem("userRole") || "student";
-      try {
-        const checkRes = await fetch(`${VITE_API_URL}/student/me`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
-        if (!checkRes.ok) finalRole = "guest";
-      } catch (e) {}
+      const decoded = decodeJWT(accessToken);
+      let finalRole = (decoded?.role || "").toLowerCase().trim();
+
+      if (finalRole !== "instructor" && finalRole !== "trainer") {
+        try {
+          const checkRes = await fetch(`${VITE_API_URL}/student/me`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          });
+          if (checkRes.ok) {
+            finalRole = "student";
+          } else {
+            finalRole = "guest";
+          }
+        } catch (e) {
+          finalRole = "guest";
+        }
+      }
 
       localStorage.setItem("userRole", finalRole);
       localStorage.setItem("role", finalRole);
 
       setSuccess("Welcome back!");
       setTimeout(() => {
-        if (finalRole === "guest") {
-          navigate("/guest");
+        if (finalRole === "instructor" || finalRole === "trainer") {
+          window.location.href = "/instructor/dashboard";
+        } else if (finalRole === "guest") {
+          window.location.href = "/guest";
         } else {
-          navigate("/dashboard");
+          window.location.href = "/dashboard";
         }
         setOpen(false);
       }, 1000);

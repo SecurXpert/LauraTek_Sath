@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
-import InstructorApp from '@instructor/App.tsx'
+// import InstructorApp from '@instructor/App.tsx' // InstructorApp appears to be deleted/moved
 import './index.css'
 
 if (!sessionStorage.getItem("is_active_session")) {
@@ -18,9 +18,9 @@ const Root = () => {
 
   // Only mount the Instructor App if explicitly logged in as instructor, NOT on the public homepage, and NOT on a login route.
   // This ensures localhost:8080/ always shows the User side <Home /> and all login paths route correctly.
-  if (role === "instructor" && path !== "/" && !isLoginRoute) {
-    return <InstructorApp />;
-  }
+  // if (role === "instructor" && path !== "/" && !isLoginRoute) {
+  //   return <InstructorApp />;
+  // }
   return <App />;
 };
 

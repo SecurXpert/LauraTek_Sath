@@ -18,6 +18,7 @@ interface ProfileheaderProps {
 }
 
 let cachedUserToken: string | null = null;
+let profileFetchPromise: Promise<void> | null = null;
 
 const globalSearchOptions = [
   { title: "Dashboard Overview", path: "/dashboard" },
@@ -52,45 +53,67 @@ const Profileheader = ({ onMenuClick }: ProfileheaderProps) => { // Added onMenu
         if (!token) return;
         
         if (cachedUserToken === token) {
+          // If we already fetched for this token successfully, we are good.
+          return;
+        }
+
+        if (profileFetchPromise) {
+          // If a request is already in flight, wait for it
+          await profileFetchPromise;
+          setUserData({
+            name: localStorage.getItem("user_name") || "",
+            role: localStorage.getItem("user_role") || "",
+            profilePicture: localStorage.getItem("user_profile_pic") || null,
+          });
           return;
         }
 
         const BASE_URL = VITE_API_URL;
-        let res = await fetch(`${BASE_URL}/student/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
 
-        let isGuest = false;
-        if (!res.ok) {
-          res = await fetch(`${BASE_URL}/guest/my-profile`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          isGuest = true;
-        }
+        profileFetchPromise = (async () => {
+          try {
+            let res = await fetch(`${BASE_URL}/student/me`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
 
-        if (res.ok) {
-          cachedUserToken = token;
-          const data = await res.json();
-          const newName = data.name || "";
-          const newRole = data.role ? data.role.charAt(0).toUpperCase() + data.role.slice(1) : (isGuest ? "Guest" : "Student");
-          const newPic = data.profile_picture || null;
-          
-          setUserData({
-            name: newName,
-            role: newRole,
-            profilePicture: newPic,
-          });
-          
-          if (newName) localStorage.setItem("user_name", newName);
-          if (newRole) localStorage.setItem("user_role", newRole);
-          if (newPic) localStorage.setItem("user_profile_pic", newPic);
-          
-          window.dispatchEvent(new Event("user-name-updated"));
-        } else if (res.status === 401) {
-          localStorage.removeItem("access_token");
-          localStorage.removeItem("token");
-          window.location.href = "/login";
-        }
+            let isGuest = false;
+            if (!res.ok) {
+              res = await fetch(`${BASE_URL}/guest/my-profile`, {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              isGuest = true;
+            }
+
+            if (res.ok) {
+              cachedUserToken = token;
+              const data = await res.json();
+              const newName = data.name || "";
+              const newRole = data.role ? data.role.charAt(0).toUpperCase() + data.role.slice(1) : (isGuest ? "Guest" : "Student");
+              const newPic = data.profile_picture || null;
+              
+              setUserData({
+                name: newName,
+                role: newRole,
+                profilePicture: newPic,
+              });
+              
+              if (newName) localStorage.setItem("user_name", newName);
+              if (newRole) localStorage.setItem("user_role", newRole);
+              if (newPic) localStorage.setItem("user_profile_pic", newPic);
+              
+              window.dispatchEvent(new Event("user-name-updated"));
+            } else if (res.status === 401) {
+              localStorage.removeItem("access_token");
+              localStorage.removeItem("token");
+              window.location.href = "/login";
+            }
+          } catch (e) {
+            profileFetchPromise = null; // Reset so we can retry on failure
+            throw e;
+          }
+        })();
+
+        await profileFetchPromise;
       } catch (err) {
         console.error("Failed to fetch user profile in header:", err);
       }
